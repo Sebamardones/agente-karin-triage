@@ -1,6 +1,7 @@
 """Nodos con dependencias inyectadas y auditoría limitada a metadatos."""
 
 import json
+import logging
 import unicodedata
 from collections.abc import Callable
 from dataclasses import asdict, dataclass
@@ -9,6 +10,7 @@ from hashlib import sha256
 from pathlib import Path
 from uuid import uuid4
 
+import anthropic
 from sqlalchemy import select
 from sqlalchemy.orm import Session
 
@@ -35,6 +37,8 @@ SENALES_INYECCION = (
     "nueva instruccion", "instruccion del sistema", "system:", "assistant:",
     "olvida lo anterior", "eres un asistente", "responde solo",
 )
+logger = logging.getLogger(__name__)
+
 MARCAS_CORTE = {"PII_RESIDUAL", "LLM_REFUSAL", "PRESUPUESTO_AGOTADO"}
 
 
@@ -136,6 +140,15 @@ def fabricar_nodos(contexto: Contexto) -> dict[str, Callable[[EstadoTriage], dic
             )
         except PresupuestoAgotado:
             return {"marcas": estado["marcas"] + ["PRESUPUESTO_AGOTADO"], "propuesta": None}
+        except (anthropic.APIConnectionError, anthropic.APIStatusError) as exc:
+            # El proveedor rechazó la llamada tras los reintentos de `llamar`: límite
+            # de gasto de la consola, cuota, clave revocada o caída. El caso no se
+            # pierde: queda en la cola humana sin propuesta (RD-16). Solo se registra
+            # el código de estado; el cuerpo del error no se expone.
+            logger.warning("nodo=%s error_proveedor=%s status=%s", nombre,
+                           type(exc).__name__, getattr(exc, "status_code", None))
+            return {"reglas": agregar(estado, [rd_16(error_tras_reintentos=True)]),
+                    "marcas": estado["marcas"] + ["LLM_REFUSAL"], "propuesta": None}
         cambios = {k: estado.get(k, 0) + getattr(respuesta, k) for k in
                    ("tokens_entrada", "tokens_salida", "cache_read_tokens", "costo_usd")}
         cambios["llamadas_llm"] = estado["llamadas_llm"] + 1

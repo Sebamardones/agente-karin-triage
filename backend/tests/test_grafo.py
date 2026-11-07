@@ -3,6 +3,8 @@
 import json
 from pathlib import Path
 
+import anthropic
+import httpx
 import pytest
 from sqlalchemy import create_engine, select
 from sqlalchemy.orm import Session
@@ -34,8 +36,10 @@ def sesion(tmp_path):
 
 
 class ModeloFalso:
-    def __init__(self, *, sexual=False, invalidas=0, refusal_en=None, presupuesto_en=None):
+    def __init__(self, *, sexual=False, invalidas=0, refusal_en=None, presupuesto_en=None,
+                 error_en=None):
         self.sexual = sexual
+        self.error_en = error_en
         self.invalidas = invalidas
         self.refusal_en = refusal_en
         self.presupuesto_en = presupuesto_en
@@ -47,6 +51,8 @@ class ModeloFalso:
         n = len(self.llamadas)
         if self.presupuesto_en == n:
             raise PresupuestoAgotado
+        if self.error_en == n:
+            raise self.error
         refusal = self.refusal_en == n
         texto = kw["contenido_usuario"].split("<denuncia>\n", 1)[1].split("\n</denuncia>")[0]
         citas = [{"texto_literal": texto, "fuente": "denuncia"}]
@@ -136,6 +142,27 @@ def test_07_presupuesto(sesion):
     _, fila, _ = ejecutar(sesion, modelo=ModeloFalso(presupuesto_en=1))
     assert fila.decision is None and fila.prioridad == 0
     assert "PRESUPUESTO_AGOTADO" in fila.marcas_pipeline
+
+
+def _error_proveedor(codigo):
+    request = httpx.Request("POST", "https://example.invalid")
+    if codigo is None:
+        return anthropic.APIConnectionError(request=request)
+    return anthropic.APIStatusError(
+        "sintetico", response=httpx.Response(codigo, request=request), body=None)
+
+
+@pytest.mark.parametrize("codigo", [400, 429, 500, None])
+@pytest.mark.parametrize("error_en", [1, 2])
+def test_07b_error_del_proveedor_va_a_cola_manual(sesion, codigo, error_en):
+    """Regresión: un rechazo del proveedor (p. ej. límite de gasto de la consola)
+    hacía fallar el grafo y el caso no se guardaba. Ahora queda en la cola humana."""
+    modelo = ModeloFalso(error_en=error_en)
+    modelo.error = _error_proveedor(codigo)
+    _, fila, _ = ejecutar(sesion, modelo=modelo)
+    assert fila.decision is None and fila.prioridad == 0
+    assert "LLM_REFUSAL" in fila.marcas_pipeline
+    assert "RD-16" in fila.reglas_aplicadas
 
 
 def test_08_reintento_exitoso(sesion):
