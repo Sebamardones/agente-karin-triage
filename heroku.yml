@@ -1,0 +1,14 @@
+# Stack de contenedor. La imagen es la misma que corre en local.
+#
+# `release` aplica las migraciones ANTES de que el dyno web reciba trafico. Si
+# falla, Heroku aborta el despliegue y la version anterior sigue sirviendo: es
+# lo que evita que una migracion a medias quede en produccion.
+build:
+  docker:
+    web: Dockerfile
+release:
+  image: web
+  command:
+    - alembic -c backend/alembic.ini upgrade head
+run:
+  web: sh -c "exec uvicorn karin_triage.api.main:app --host 0.0.0.0 --port ${PORT} --proxy-headers --forwarded-allow-ips='*'"
