@@ -2,7 +2,18 @@
 <html lang="es">
 <head><meta charset="utf-8"><meta name="viewport" content="width=device-width, initial-scale=1">
 <title>Karin Triage</title><link rel="stylesheet" href="/estaticos/estilo.css">
-<script src="/estaticos/htmx.min.js" defer></script></head>
+<script src="/estaticos/htmx.min.js" defer></script>
+<script>
+// htmx no intercambia respuestas 4xx/5xx: sin esto, un rechazo del servidor no se ve.
+document.addEventListener("htmx:responseError", function (e) {
+  var aviso = document.getElementById("aviso-revision");
+  if (!aviso) return;
+  var texto = "No se pudo registrar la revisión.";
+  try { texto = JSON.parse(e.detail.xhr.responseText).detail || texto; } catch (_) {}
+  aviso.textContent = texto;
+  aviso.hidden = false;
+});
+</script></head>
 <body><header><h1><a href="/">Karin Triage</a></h1>
 <strong>Datos sinteticos · el agente propone, una persona decide</strong>
 {% if usuario %}<p>{{ usuario.nombre }} · {{ usuario.rol }} · <a href="/salir">Salir</a></p>{% endif %}
