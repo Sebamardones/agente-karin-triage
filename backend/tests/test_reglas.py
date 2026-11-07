@@ -118,6 +118,15 @@ def test_rd_12_asimetrica(propuesta, hechos):
     assert r.rd_12(propuesta, "", hechos).aplico
 
 
+def test_rd12_distingue_amenaza_laboral_de_fisica(propuesta, hechos):
+    hechos.indicios_riesgo_inmediato = ["Amenaza de dejar sin turnos"]
+    assert not r.rd_12(propuesta, "Me dijo que me dejaría sin turnos", hechos).aplico
+    assert r.rd_12(propuesta, "Amenaza de despido y de golpearme hoy", hechos).aplico
+    copia = propuesta.model_copy(update={"urgencia_resguardo": True})
+    salida, _ = r.aplicar_reglas_post(copia, "Amenaza de despido", hechos)
+    assert salida.urgencia_resguardo
+
+
 @pytest.mark.parametrize("confianza,aplica", [(0.74, True), (0.75, False), (1, False)])
 def test_rd_13(propuesta, confianza, aplica):
     assert r.rd_13(propuesta.model_copy(update={"confianza": confianza})).aplico is aplica

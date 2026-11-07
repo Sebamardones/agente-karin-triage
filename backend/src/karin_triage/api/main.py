@@ -4,9 +4,11 @@ import json
 import os
 import secrets
 from contextlib import asynccontextmanager
+from datetime import date
 from pathlib import Path
 from threading import Lock
 from typing import Annotated
+from uuid import uuid4
 
 from fastapi import BackgroundTasks, Depends, FastAPI, Form, HTTPException, Request
 from fastapi.responses import RedirectResponse, Response
@@ -21,8 +23,10 @@ from starlette.middleware.sessions import SessionMiddleware
 from karin_triage.agent.grafo import procesar_caso
 from karin_triage.agent.nodos import Contexto
 from karin_triage.api.dependencias import obtener_sesion, usuario_actual
+from karin_triage.api.etiquetas import etiqueta
 from karin_triage.config import Ajustes
-from karin_triage.core.taxonomia import Decision
+from karin_triage.core.reglas import EXPRESIONES_FALTA_PRUEBA, _normalizar
+from karin_triage.core.taxonomia import Decision, MotivoDescarte
 from karin_triage.models.tablas import (
     Denuncia,
     Preclasificacion,
@@ -35,6 +39,11 @@ Sesion = Annotated[Session, Depends(obtener_sesion)]
 
 DIRECTORIO = Path(__file__).resolve().parent
 plantillas = Jinja2Templates(directory=DIRECTORIO / "plantillas")
+plantillas.env.filters["etiqueta"] = etiqueta
+
+
+def contradice_rd10(propuesta, decision):
+    return "ACOSO_SEXUAL" in propuesta.tipo_conducta and decision == "DERIVA_MEDIACION"
 
 
 def resolver_golden_set():
@@ -61,13 +70,16 @@ def estado_revision(historial, propuesta):
     """Estado humano del caso para la bandeja: lo decide la última firma, no el agente."""
     if not historial:
         return "Pendiente de revisión humana"
+    if any(r.decision_final == "DESCARTADO" and not r.motivo_descarte for r in historial):
+        return "Revisión histórica · fundamento de descarte no capturado; usar nueva tanda"
     ultima = historial[-1]
-    firma = f"{ultima.decision_final} ({ultima.funcionario})"
+    firma = f"{etiqueta(ultima.decision_final)} ({ultima.funcionario})"
     if len(historial) == 1:
-        if propuesta.decision == "DESCARTADO" or ultima.decision_final == "DESCARTADO":
+        if (propuesta.decision == "DESCARTADO" or ultima.decision_final == "DESCARTADO"
+                or contradice_rd10(propuesta, ultima.decision_final)):
             return f"Pendiente de validación por un supervisor · nivel 1: {firma}"
-        return f"Revisado: {firma}"
-    return f"Validado: {firma}"
+        return f"Revisado · segunda revisión disponible: {firma}"
+    return f"Validación humana completada: {firma}"
 
 
 def datos_fila(sesion, denuncia, propuesta):
@@ -126,14 +138,14 @@ def crear_app(ajustes=None, motor=None):
     carga_lock = Lock()
     carga_estado = {"en_curso": False, "procesados": 0, "saltados": 0, "fallidos": 0}
 
-    def cargar_en_segundo_plano():
+    def cargar_en_segundo_plano(registros=None):
         try:
             with Session(motor) as sesion:
-                for linea in resolver_golden_set().read_text(encoding="utf-8").splitlines():
-                    if not linea.strip():
-                        continue
+                entradas = registros if registros is not None else [
+                    json.loads(linea)["entrada"] for linea in
+                    resolver_golden_set().read_text(encoding="utf-8").splitlines() if linea.strip()]
+                for registro in entradas:
                     try:
-                        registro = json.loads(linea)["entrada"]
                         if sesion.scalar(select(Denuncia.id).where(
                             Denuncia.id_externo_dt == registro["id_externo_dt"]
                         )):
@@ -205,7 +217,8 @@ def crear_app(ajustes=None, motor=None):
         filas = sesion.execute(select(Denuncia, Preclasificacion).join(
             Preclasificacion, Preclasificacion.denuncia_id == Denuncia.id
         ).order_by(Preclasificacion.prioridad, Preclasificacion.creado_en)).all()
-        return {"filas": [datos_fila(sesion, d, p) for d, p in filas], "carga": estado_carga}
+        return {"filas": [datos_fila(sesion, d, p) for d, p in filas], "carga": estado_carga,
+                "total_casos": len(filas)}
 
     @app.get("/")
     def bandeja(request: Request, usuario: Usuario, sesion: Sesion):
@@ -228,6 +241,49 @@ def crear_app(ajustes=None, motor=None):
         request.session["mensaje"] = "Carga solicitada. Los casos aparecerán en la bandeja."
         return RedirectResponse("/", 303)
 
+    def programar_demo(registros, background_tasks):
+        with carga_lock:
+            if carga_estado["en_curso"]:
+                raise HTTPException(409, "Hay una carga en curso; espera antes de crear otra.")
+            carga_estado.update(en_curso=True, procesados=0, saltados=0, fallidos=0)
+            background_tasks.add_task(cargar_en_segundo_plano, registros)
+
+    @app.get("/demo/nuevo")
+    def formulario_demo(request: Request, usuario: Usuario):
+        if usuario["rol"] != "analista":
+            raise HTTPException(403, "Solo el analista puede crear casos sintéticos")
+        return vista(request, "nuevo.html", usuario)
+
+    @app.post("/demo/nuevo")
+    def nuevo_demo(request: Request, usuario: Usuario, background_tasks: BackgroundTasks,
+                   relato: Annotated[str, Form(min_length=40, max_length=6000)],
+                   confirmar_sintetico: Annotated[bool, Form()] = False):
+        if usuario["rol"] != "analista":
+            raise HTTPException(403, "Solo el analista puede crear casos sintéticos")
+        if not confirmar_sintetico:
+            raise HTTPException(422, "Debes confirmar que el relato es ficticio y sin datos reales")
+        registro = {"id_externo_dt": f"DEMO-{uuid4().hex[:12]}", "relato": relato,
+                    "tipo_ingreso": "DIRECTA", "fecha_denuncia": date.today().isoformat(),
+                    "empleador": "EMPRESA_SINTETICA", "sector_empleador": "PRIVADO"}
+        programar_demo([registro], background_tasks)
+        request.session["mensaje"] = "Caso sintético enviado a la IA. Verás el resultado en la bandeja."
+        return RedirectResponse("/", 303)
+
+    @app.post("/demo/nueva-tanda")
+    def nueva_tanda(request: Request, usuario: Usuario, background_tasks: BackgroundTasks):
+        if usuario["rol"] != "analista":
+            raise HTTPException(403, "Solo el analista puede crear una tanda de demo")
+        tanda = uuid4().hex[:8]
+        registros = []
+        for linea in resolver_golden_set().read_text(encoding="utf-8").splitlines():
+            if linea.strip():
+                registro = dict(json.loads(linea)["entrada"])
+                registro["id_externo_dt"] = f"DEMO-{tanda}-{registro['id_externo_dt']}"
+                registros.append(registro)
+        programar_demo(registros, background_tasks)
+        request.session["mensaje"] = "Nueva tanda en proceso. Se conservaron los casos y revisiones anteriores."
+        return RedirectResponse("/", 303)
+
     @app.get("/casos/{identificador}")
     def caso(identificador: str, request: Request, usuario: Usuario,
              sesion: Sesion):
@@ -238,6 +294,7 @@ def crear_app(ajustes=None, motor=None):
         if not fila["historial"] and usuario["rol"] != "analista":
             decisiones.remove(Decision.DESCARTADO)
         return vista(request, "caso.html", usuario, **fila, decisiones=decisiones,
+                     motivos=list(MotivoDescarte),
                      bloqueo=bloqueo[1] if bloqueo else None)
 
     @app.get("/casos/{identificador}/estado")
@@ -248,7 +305,9 @@ def crear_app(ajustes=None, motor=None):
     @app.post("/casos/{identificador}/revision")
     def revisar(identificador: str, request: Request, decision_final: Annotated[Decision, Form()],
                 version: Annotated[int, Form()], usuario: Usuario, sesion: Sesion,
-                comentario: Annotated[str, Form()] = ""):
+                comentario: Annotated[str, Form()] = "",
+                motivo_descarte: Annotated[str, Form()] = "",
+                cita_respaldo: Annotated[str, Form()] = ""):
         d, p = buscar(sesion, identificador)
         historial = revisiones(sesion, p)
         actual = historial[0].version if historial else 0
@@ -261,6 +320,22 @@ def crear_app(ajustes=None, motor=None):
         if nivel == 1 and decision_final == Decision.DESCARTADO and usuario["rol"] != "analista":
             # Un descarte iniciado por el supervisor no tendría quién lo validara.
             raise HTTPException(403, "La primera revisión de un descarte la hace el analista")
+        excepcion = contradice_rd10(p, decision_final.value)
+        if excepcion:
+            if not comentario.strip():
+                raise HTTPException(422, "RD-10: la excepción requiere fundamento y validación de supervisor")
+            if nivel == 1 and usuario["rol"] != "analista":
+                raise HTTPException(403, "La excepción RD-10 debe iniciarla el analista y validarla otro supervisor")
+        if decision_final == Decision.DESCARTADO:
+            if motivo_descarte not in {m.value for m in MotivoDescarte} or not comentario.strip():
+                raise HTTPException(422, "El descarte requiere un motivo del catálogo y un comentario")
+            cita = " ".join(cita_respaldo.split())
+            if not cita or cita not in " ".join(d.texto_seudonimizado.split()):
+                raise HTTPException(422, "El descarte requiere una cita literal del relato seudonimizado")
+            if any(t in _normalizar(comentario) for t in EXPRESIONES_FALTA_PRUEBA):
+                raise HTTPException(422, "No se permite descartar por falta de prueba")
+        else:
+            motivo_descarte, cita_respaldo = "", ""
         try:
             if historial:
                 # CAS atómico y versionado ORM: dos solicitudes no pueden firmar a la vez.
@@ -277,11 +352,14 @@ def crear_app(ajustes=None, motor=None):
             sesion.add(RevisionHumana(
                 preclasificacion_id=p.id, funcionario=usuario["nombre"], rol=usuario["rol"],
                 nivel=nivel, decision_final=decision_final.value, comentario=comentario,
+                motivo_descarte=motivo_descarte or None, cita_respaldo=cita_respaldo or None,
+                excepcion_rd10=excepcion,
                 coincide_con_agente=coincide,
             ))
             registrar_evento(sesion, d.id, usuario["nombre"], "revision", {
                 "nivel": nivel, "rol": usuario["rol"], "decision_final": decision_final.value,
                 "coincide_con_agente": coincide,
+                "motivo_descarte": motivo_descarte or None, "excepcion_rd10": excepcion,
             })
             sesion.commit()
         except (StaleDataError, IntegrityError):

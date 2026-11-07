@@ -42,7 +42,7 @@ MARCAS_CORTE = {"PII_RESIDUAL", "LLM_REFUSAL", "PRESUPUESTO_AGOTADO"}
 class Contexto:
     sesion: Session
     llamar_llm: Callable = llamar
-    prompt_tipificacion: str = "tipificar_v2.md"
+    prompt_tipificacion: str = "tipificar_v3.md"
 
 
 def fabricar_nodos(contexto: Contexto) -> dict[str, Callable[[EstadoTriage], dict]]:
@@ -162,7 +162,8 @@ def fabricar_nodos(contexto: Contexto) -> dict[str, Callable[[EstadoTriage], dic
 
     def validar_salida(estado):
         resultado = rd_15(PropuestaClasificacion.model_validate(estado["propuesta"]),
-                          estado["texto_seudonimizado"], estado["intentos_validacion"])
+                          estado["texto_seudonimizado"], estado["intentos_validacion"],
+                          resolver_prefijo().read_text(encoding="utf-8"))
         cambios = {"reglas": agregar(estado, [resultado])}
         if resultado.aplico and estado["intentos_validacion"] == 0:
             cambios["intentos_validacion"] = 1
@@ -178,6 +179,7 @@ def fabricar_nodos(contexto: Contexto) -> dict[str, Callable[[EstadoTriage], dic
         propuesta, resultados = aplicar_reglas_post(
             PropuestaClasificacion.model_validate(estado["propuesta"]),
             estado["texto_seudonimizado"], HechosExtraidos.model_validate(estado["hechos"]),
+            prefijo_normativo=resolver_prefijo().read_text(encoding="utf-8"),
         )
         return {"decision_modelo": decision_modelo,
                 "propuesta": propuesta.model_dump(mode="json"),
@@ -200,7 +202,7 @@ def fabricar_nodos(contexto: Contexto) -> dict[str, Callable[[EstadoTriage], dic
         version = Path(contexto.prompt_tipificacion).stem
         fila = Preclasificacion(
             denuncia_id=estado["denuncia_id"],
-            version_pipeline=f"{version}+reglas1+{AjustesNucleo().modelo}",
+            version_pipeline=f"{version}+reglas2+{AjustesNucleo().modelo}",
             decision=p.get("decision"), estado_auxiliar=estado["estado_auxiliar"],
             marcas_pipeline=",".join(estado["marcas"]), tipo_conducta=",".join(
                 p.get("tipo_conducta", [])), reglas_aplicadas=",".join(ids),

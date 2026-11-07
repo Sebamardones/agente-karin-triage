@@ -126,7 +126,7 @@ la carpeta `prompts/` abierta.
 > prefijo normativo cacheado que lleva el texto literal de la ley.
 >
 > Los prompts están versionados en el repositorio y medidos: comparamos la
-> versión 1 contra la versión 2 sobre ocho casos sintéticos, con cuatro
+> versión 2 contra la versión 3 sobre once casos sintéticos, con cuatro
 > métricas. Dos de ellas no se compensan con nada: **cero casos de acoso sexual
 > a mediación y cero falsos descartes.** Si una versión del prompt falla ahí, no
 > se publica, aunque el resto esté perfecto.
@@ -155,3 +155,23 @@ la carpeta `prompts/` abierta.
 - No leas la pantalla en voz alta. Di lo que la pantalla **no** muestra.
 - No pidas disculpas por lo que falta. Tres minutos alcanzan para una cosa bien
   mostrada, no para un inventario.
+
+
+## Actualización de la grabación tras la evaluación
+
+Antes de grabar: usar la nueva tanda y dejar un caso sin revisar. No mostrar
+Config Vars ni contraseñas. La grabación real sigue pendiente del equipo.
+
+- 0:00-0:25: problema, cliente y precio propuesto de la ficha; no afirmar ahorro
+  de tiempo medido ni una contratación ya validada.
+- 0:25-1:30: entrar como analista, abrir «Probar IA con un relato sintético
+  nuevo», pegar ficción sin datos personales y enviar. Mostrar estado de carga,
+  propuesta, citas y reglas. Explicar cualquier espera; no simular IA con
+  respuestas escritas a mano.
+- 1:30-2:10: mostrar descarte con motivo, comentario y cita; validarlo desde
+  otra sesión como supervisor. Mostrar advertencia de excepción RD-10 si aplica.
+- 2:10-2:45: abrir prompts v2/v3 y el informe de medición; citar resultados
+  reales, los denominadores y los límites. No llamar JSON a una métrica de citas.
+- 2:45-3:00: URL y repositorio; siguiente paso de validación institucional.
+
+Una secuencia de capturas o el guion no sustituye el video de la demo en vivo.

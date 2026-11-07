@@ -85,6 +85,9 @@ class RevisionHumana(Base):
     decision_final: Mapped[str] = mapped_column(String(100))
     coincide_con_agente: Mapped[bool] = mapped_column(Boolean)
     comentario: Mapped[str] = mapped_column(Text)
+    motivo_descarte: Mapped[str | None] = mapped_column(String(100))
+    cita_respaldo: Mapped[str | None] = mapped_column(Text)
+    excepcion_rd10: Mapped[bool] = mapped_column(Boolean, default=False, nullable=False)
     version: Mapped[int] = mapped_column(Integer, default=1, nullable=False)
     creado_en: Mapped[datetime] = mapped_column(DateTime, default=ahora)
     __mapper_args__: ClassVar[dict] = {"version_id_col": version}

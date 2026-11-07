@@ -13,7 +13,7 @@ def _casos():
     if not ruta.is_file():
         pytest.fail("Falta golden_set/denuncias.jsonl: no es posible comprobar la fuga de PII")
     casos = [json.loads(linea) for linea in ruta.read_text(encoding="utf-8").splitlines()]
-    assert len(casos) == 8, "El golden set debe contener los ocho casos sintéticos"
+    assert len(casos) >= 11, "El golden set debe contener los ocho casos sintéticos"
     return casos
 
 

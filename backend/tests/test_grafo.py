@@ -103,7 +103,7 @@ def test_03_propuesta_valida(sesion):
     assert fila.tokens_entrada == 200 and fila.tokens_salida == 40
     assert fila.cache_read_tokens == 100 and fila.costo_usd == 0.002
     assert estado["llamadas_llm"] == len(modelo.llamadas) == 2
-    assert fila.version_pipeline.startswith("tipificar_v2+reglas1+")
+    assert fila.version_pipeline.startswith("tipificar_v3+reglas2+")
     assert modelo.llamadas[0]["effort"] == "low"
     assert modelo.llamadas[1]["effort"] == "medium"
     assert "<dictamenes>\n</dictamenes>" in modelo.llamadas[1]["contenido_usuario"]

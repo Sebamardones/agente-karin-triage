@@ -30,8 +30,8 @@ entrega.
 6. **El LLM no tiene herramientas.** No escribe en la base de datos, no
    re-identifica personas y no decide competencia. Solo devuelve una estructura
    validada con Pydantic.
-7. **Las citas son literales.** Si una cita no aparece tal cual en el texto
-   seudonimizado, la propuesta es inválida (RD-15). Jamás se parafrasea dentro
+7. **Las citas son literales.** Las citas de denuncia deben aparecer tal cual en el texto
+   seudonimizado y las normativas en el prefijo normativo versionado; en otro caso, la propuesta es inválida (RD-15). Jamás se parafrasea dentro
    de una cita.
 8. **Prohibido descartar por falta de prueba.** `DESCARTADO` exige un motivo del
    catálogo y una cita que lo respalde (RD-11).

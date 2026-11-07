@@ -52,7 +52,7 @@ corrigió queda registrado.
 | # | Requisito |
 |---|---|
 | R1 | Grafo determinista con los nodos: ingestar y validar, reglas previas, seudonimizar, control de PII residual, extraer hechos (LLM), tipificar y proponer (LLM), validar salida, reglas duras posteriores, calcular ruta, cola de revisión humana, registrar decisión auditada |
-| R2 | Reglas duras RD-01 a RD-16 en código, con la precedencia declarada, un test por regla y constancia en `reglas_aplicadas[]` |
+| R2 | Reglas duras RD-01 a RD-06 y RD-10 a RD-16 en código (RD-07 a RD-09 reservadas), con la precedencia declarada, un test por regla y constancia en `reglas_aplicadas[]` |
 | R3 | Seudonimización antes de cualquier llamada al LLM, y corte del flujo si queda PII residual (RD-06) |
 | R4 | Salida del LLM validada con Pydantic y citas verificadas literalmente contra el texto seudonimizado (RD-15) |
 | R5 | Bandeja web con orden por prioridad, detalle del caso con sus citas, acciones de confirmar y corregir, y doble revisión obligatoria de los descartes (RD-14) |
@@ -67,7 +67,7 @@ corrigió queda registrado.
 | E2 | Reglas del proyecto | `CLAUDE.md` y `AGENTS.md` |
 | E3 | Idea, uso, arquitectura, integrantes y hoja de ruta | `README.md` |
 | E4 | Prompt de sistema de cada función de IA, versionado | `prompts/` |
-| E5 | Golden set de 8 casos con su salida esperada | `golden_set/denuncias.jsonl` |
+| E5 | Golden set de 11 casos (8 base y 3 independientes) con su salida esperada | `golden_set/denuncias.jsonl` |
 | E6 | Mejora medida entre versiones del prompt | `docs/MEJORA_PROMPTS.md` |
 | E7 | Imagen que construye y arranca la aplicación | `Dockerfile`, `heroku.yml` |
 | E8 | Decisiones de diseño y sus desviaciones | `docs/adr/` |
@@ -188,3 +188,14 @@ El esquema de equipo multi-rol con bitácora por ciclo y gates de la Parte B de
 `docs/ARQUITECTURA.md` **no se usa en esta edición**: cada ciclo consume tiempo
 y tokens antes de escribir código, y el horizonte es de seis días. Queda para
 la etapa de piloto.
+
+
+## Ampliación por evaluación del 7 de noviembre
+
+Se conservan los ocho casos originales y se agregan G-09, G-10 y G-11. El set
+ampliado tiene nueve decisiones esperadas, dos estados auxiliares y tres
+positivos de urgencia. No se rebajan las metas originales: se informan también
+los denominadores ampliados y los errores como fallos. JSON crudo no observable
+con el SDK parseado se declara como tal, sin convertir ausencia de reintento
+en evidencia de sintaxis JSON. El formulario de demo solo admite situaciones
+declaradas ficticias; las revisiones siguen siendo humanas.

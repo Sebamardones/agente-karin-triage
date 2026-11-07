@@ -71,6 +71,8 @@ def login(cliente, rol="analista"):
 def revision(cliente, identificador, version=0, decision="DESCARTADO", **kw):
     return cliente.post(f"/casos/{identificador}/revision", data={
         "version": version, "decision_final": decision, "comentario": "Comentario sintético",
+        "motivo_descarte": "NO_CONFIGURA_CONDUCTA",
+        "cita_respaldo": "Relato sintético para revisión.",
         **kw,
     }, headers={"HX-Request": "true"})
 
@@ -115,10 +117,10 @@ def test_05_orden_prioridad(entorno):
 def test_06_carga_idempotente(entorno):
     cliente, motor = entorno
     login(cliente)
-    assert "procesados: 8" in cliente.post("/cargar-golden-set").text
-    assert "saltados: 8" in cliente.post("/cargar-golden-set").text
+    assert "procesados: 11" in cliente.post("/cargar-golden-set").text
+    assert "saltados: 11" in cliente.post("/cargar-golden-set").text
     with Session(motor) as s:
-        assert len(list(s.scalars(select(Denuncia)))) == 8
+        assert len(list(s.scalars(select(Denuncia)))) == 11
 
 
 def test_07_detalle_propuesta(entorno):
@@ -210,7 +212,8 @@ def test_13_auditoria_sin_comentario(entorno):
         evento = s.scalar(select(EventoAuditoria))
         assert evento.accion == "revision"
         assert "Comentario sintético" not in json.dumps(evento.detalle, ensure_ascii=False)
-        assert set(evento.detalle) == {"nivel", "rol", "decision_final", "coincide_con_agente"}
+        assert set(evento.detalle) == {"nivel", "rol", "decision_final", "coincide_con_agente",
+                                      "motivo_descarte", "excepcion_rd10"}
         assert verificar_cadena(s, identificador)
 
 
@@ -241,7 +244,7 @@ def test_carga_continua_tras_fallo(entorno, monkeypatch):
     monkeypatch.setattr(main, "procesar_caso", fallar_primero)
     login(entorno[0])
     html = entorno[0].post("/cargar-golden-set").text
-    assert "procesados: 7" in html and "fallidos: 1" in html
+    assert "procesados: 10" in html and "fallidos: 1" in html
 
 
 def test_logout_roles_y_rutas_protegidas(entorno):
@@ -280,7 +283,7 @@ def test_carga_programada_responde_sin_esperar_y_no_duplica(entorno, monkeypatch
     funcion, args, kwargs = pendientes.pop()
     funcion(*args, **kwargs)
     html = cliente.get("/").text
-    assert "procesados: 8" in html and "Carga en curso" not in html
+    assert "procesados: 11" in html and "Carga en curso" not in html
 
 
 def test_exito_htmx_recarga_la_pagina(entorno):
@@ -315,11 +318,11 @@ def test_bandeja_muestra_el_estado_humano_y_se_refresca(entorno):
     assert revision(cliente, descarte).status_code == 200
     html = cliente.get("/bandeja/contenido").text
     assert 'id="bandeja-viva"' in html and "every 5s" in html
-    assert "Revisado: DERIVA_MEDIACION (analista_demo)" in html
-    assert "Pendiente de validación por un supervisor · nivel 1: DESCARTADO" in html
+    assert "Revisado · segunda revisión disponible: Deriva a mediación (analista_demo)" in html
+    assert "Pendiente de validación por un supervisor · nivel 1: No corresponde a Ley Karin" in html
     login(cliente, "supervisor")
     assert revision(cliente, descarte, version=1).status_code == 200
-    assert "Validado: DESCARTADO (supervisor_demo)" in cliente.get("/").text
+    assert "Validación humana completada: No corresponde a Ley Karin · reconducir (supervisor_demo)" in cliente.get("/").text
     estado = cliente.get(f"/casos/{descarte}/estado").text
     assert 'id="estado-caso"' in estado and "Nivel 2 · supervisor_demo" in estado
 
@@ -342,4 +345,78 @@ def test_nivel_dos_siempre_supervisor_distinto(entorno):
     assert 'name="decision_final"' not in html
     login(cliente, "supervisor")
     assert revision(cliente, identificador, version=1, decision="DESCARTADO").status_code == 200
-    assert "Validado: DESCARTADO (supervisor_demo)" in cliente.get("/").text
+    assert "Validación humana completada: No corresponde a Ley Karin · reconducir (supervisor_demo)" in cliente.get("/").text
+
+
+@pytest.mark.parametrize("datos", [
+    {}, {"motivo_descarte": "INVENTADO", "comentario": "Fundamento"},
+    {"motivo_descarte": "NO_CONFIGURA_CONDUCTA", "comentario": "Sin pruebas"},
+    {"motivo_descarte": "NO_CONFIGURA_CONDUCTA", "comentario": "Fundamento", "cita_respaldo": "Inventada"},
+])
+def test_descarte_humano_exige_fundamento_y_cita(entorno, datos):
+    identificador = caso(entorno)
+    login(entorno[0])
+    r = entorno[0].post(f"/casos/{identificador}/revision", data={
+        "decision_final": "DESCARTADO", "version": 0, **datos})
+    assert r.status_code == 422
+    with Session(entorno[1]) as sesion:
+        assert not list(sesion.scalars(select(RevisionHumana)))
+
+
+def test_descarte_persiste_fundamento(entorno):
+    identificador = caso(entorno)
+    login(entorno[0])
+    assert revision(entorno[0], identificador).status_code == 200
+    with Session(entorno[1]) as sesion:
+        fila = sesion.scalar(select(RevisionHumana))
+        assert fila.motivo_descarte == "NO_CONFIGURA_CONDUCTA"
+        assert fila.cita_respaldo == "Relato sintético para revisión."
+
+
+def test_excepcion_rd10_exige_comentario_y_supervisor(entorno):
+    identificador = caso(entorno)
+    with Session(entorno[1]) as sesion:
+        sesion.scalar(select(Preclasificacion)).tipo_conducta = "ACOSO_SEXUAL"
+        sesion.commit()
+    cliente = entorno[0]
+    login(cliente)
+    assert "Advertencia RD-10" in cliente.get(f"/casos/{identificador}").text
+    assert revision(cliente, identificador, decision="DERIVA_MEDIACION", comentario="").status_code == 422
+    assert revision(cliente, identificador, decision="DERIVA_MEDIACION").status_code == 200
+    assert "Pendiente de validación" in cliente.get("/").text
+    assert revision(cliente, identificador, version=1, decision="DERIVA_MEDIACION").status_code == 403
+    login(cliente, "supervisor")
+    assert revision(cliente, identificador, version=1, decision="DERIVA_MEDIACION").status_code == 200
+    with Session(entorno[1]) as sesion:
+        assert all(r.excepcion_rd10 for r in sesion.scalars(select(RevisionHumana)))
+
+
+def test_demo_nueva_exige_confirmacion_y_no_borra_historial(entorno):
+    cliente, motor = entorno
+    identificador = caso(entorno)
+    login(cliente)
+    revision(cliente, identificador)
+    relato = "Este es un relato completamente inventado de hostigamiento en una empresa ficticia."
+    assert cliente.post("/demo/nuevo", data={"relato": relato}).status_code == 422
+    assert cliente.post("/demo/nuevo", data={"relato": relato, "confirmar_sintetico": True}).status_code == 200
+    with Session(motor) as sesion:
+        assert len(list(sesion.scalars(select(Denuncia)))) == 2
+        assert len(list(sesion.scalars(select(RevisionHumana)))) == 1
+    login(cliente, "supervisor")
+    assert cliente.post("/demo/nueva-tanda").status_code == 403
+
+
+def test_tandas_generan_casos_nuevos_sin_borrar(entorno):
+    cliente, motor = entorno
+    login(cliente)
+    cliente.post("/demo/nueva-tanda")
+    cliente.post("/demo/nueva-tanda")
+    with Session(motor) as sesion:
+        assert len(list(sesion.scalars(select(Denuncia)))) == 22
+
+
+def test_bandeja_sin_contadores_de_carga_vacios(entorno):
+    login(entorno[0])
+    html = entorno[0].get("/").text
+    assert "Total de casos guardados: 0" in html
+    assert "procesados: 0" not in html and "Datos sintéticos" in html

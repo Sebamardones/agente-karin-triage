@@ -1,6 +1,6 @@
 <tr id="fila-{{ denuncia.id }}"><td><a href="/casos/{{ denuncia.id }}">{{ denuncia.id_externo_dt }}</a></td>
-<td>{{ p.decision or p.estado_auxiliar or 'Sin propuesta' }}</td><td>{{ p.tipo_conducta }}</td>
+<td>{{ (p.decision or p.estado_auxiliar)|etiqueta if (p.decision or p.estado_auxiliar) else 'Sin propuesta' }}</td><td>{{ p.tipo_conducta|etiqueta if p.tipo_conducta else 'Sin conducta tipificada' }}</td>
 <td>{% if p.urgencia_resguardo %}<strong>⚠ Urgencia de resguardo</strong>{% else %}Sin urgencia marcada{% endif %}</td>
 <td>{{ p.confianza if p.confianza is not none else 'No disponible' }}</td>
-<td>{{ p.marcas_pipeline }}</td><td>{{ p.prioridad }}</td>
+<td>{{ p.marcas_pipeline|etiqueta }}</td><td>{{ p.prioridad }}</td>
 <td>{{ estado_revision }}</td></tr>

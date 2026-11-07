@@ -15,6 +15,6 @@ document.addEventListener("htmx:responseError", function (e) {
 });
 </script></head>
 <body><header><h1><a href="/">Karin Triage</a></h1>
-<strong>Datos sinteticos · el agente propone, una persona decide</strong>
+<strong>Datos sintéticos · el agente propone, una persona decide</strong>
 {% if usuario %}<p>{{ usuario.nombre }} · {{ usuario.rol }} · <a href="/salir">Salir</a></p>{% endif %}
 </header><main>{% block contenido %}{% endblock %}</main></body></html>

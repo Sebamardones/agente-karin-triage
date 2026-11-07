@@ -70,7 +70,7 @@ El caso de negocio completo está en [`docs/FICHA_NEGOCIO.md`](docs/FICHA_NEGOCI
    - `analista_demo` — revisa y confirma o corrige pre-clasificaciones.
    - `supervisor_demo` — además hace la segunda revisión obligatoria de los
      descartes.
-3. En la bandeja, carga uno de los 8 casos sintéticos del golden set.
+3. En la bandeja, carga los once casos sintéticos del golden set o crea un relato ficticio nuevo.
 4. Abre el caso. Verás la propuesta, su justificación, las **citas literales**
    que la sostienen y la lista de **reglas duras aplicadas**.
 5. Confirma o corrige. Si la decisión propuesta es `DESCARTADO`, el caso queda
@@ -150,7 +150,7 @@ demás.
    Nombres, RUT, correos, teléfonos y direcciones se sustituyen por tokens. Un
    detector vuelve a escanear el resultado y, si encuentra algo,
    **corta el flujo sin llamar al modelo** (RD-06).
-3. **Dos nodos LLM acotados** (`agent/nodes/`). Uno extrae hechos, el otro
+3. **Dos nodos LLM acotados** (`agent/nodos.py`). Uno extrae hechos, el otro
    tipifica y propone. Salida validada con Pydantic, citas verificadas carácter
    por carácter, y reglas duras posteriores que pueden corregir al modelo.
 
@@ -166,7 +166,7 @@ mediación previa, y la letra a) es el acoso sexual. Enviar un caso de acoso
 sexual a mediación obligaría a la persona afectada a negociar con quien la
 acosó.
 
-Es también uno de los 8 casos del golden set, y una de las dos metas que **no
+Es también uno de los once casos del golden set, y una de las dos metas que **no
 se compensan**: si una versión del prompt falla aquí, esa versión no se publica.
 
 ### Prompts
@@ -197,7 +197,7 @@ distinto invalida el caché, y se nota en `usage.cache_read_input_tokens`.
 ├── CLAUDE.md · AGENTS.md      # reglas inviolables
 ├── Dockerfile · heroku.yml
 ├── prompts/                   # prompts de sistema versionados
-├── golden_set/denuncias.jsonl # 8 casos sintéticos con salida esperada
+├── golden_set/denuncias.jsonl # 11 casos sintéticos con salida esperada
 ├── evals/                     # runner y métricas por versión de prompt
 ├── backend/
 │   ├── pyproject.toml
@@ -214,7 +214,7 @@ distinto invalida el caché, y se nota en `usage.cache_read_input_tokens`.
     ├── MEJORA_PROMPTS.md
     ├── GUION_VIDEO.md
     ├── adr/
-    └── investigacion/
+    └── INFORME_ARQUITECTURA_Y_AUDITORIA.md
 ```
 
 ## Seguridad y datos
@@ -226,7 +226,7 @@ distinto invalida el caché, y se nota en `usage.cache_read_input_tokens`.
 - **El texto de la denuncia es dato, nunca instrucción.** Va delimitado en
   `<denuncia>` y el modelo no tiene herramientas. Hay un caso del golden set que
   intenta una inyección explícita.
-- **Tope de gasto doble**: límite de USD 20 en la consola de Anthropic, más un
+- **Tope de gasto doble**: límite objetivo de USD 20 en la consola de Anthropic (pendiente de evidencia del operador), más un
   tope diario de llamadas y de dólares en el código. Al alcanzarlo, el caso se
   marca `PRESUPUESTO_AGOTADO` y pasa a cola manual.
 
@@ -271,3 +271,25 @@ y **no** está implementado aquí, por decisión explícita:
 Prevención y Protección contra el Acoso Laboral, Sexual y Violencia en el
 Trabajo», ingresadas entre 1° agosto 2024 y 30 de junio 2025*, julio de 2025.
 <https://www.dt.gob.cl/portal/1626/articles-128897_archivo_01.pdf>
+
+
+## Correcciones de la evaluación del equipo
+
+- Demo en vivo: el analista puede enviar un relato ficticio nuevo desde
+  `/demo/nuevo`. La confirmación de datos sintéticos es obligatoria; no se
+  admite usar esta edición para denuncias reales.
+- El botón de nueva tanda crea copias sin revisiones y conserva las anteriores.
+  No borra la base. Cada tanda y cada relato nuevo consumen presupuesto de IA.
+- El catálogo implementa RD-01 a RD-06 y RD-10 a RD-16; RD-07 a RD-09 están
+  reservadas. RD-12 sigue sin bajar urgencias ya activas; distingue las amenazas
+  exclusivamente laborales de evidencia física inmediata.
+- Un descarte humano exige motivo del catálogo, comentario y cita literal.
+  La urgencia no se elimina. Una excepción humana a RD-10 requiere fundamento
+  y validación de supervisor distinto; no se presenta como decisión de la IA.
+- `<dictamenes>` se envía vacío. No hay búsqueda documental ni RAG implementado.
+- El límite en consola no se da por aplicado sin evidencia. Los topes de código
+  no reemplazan el control del proveedor ni garantizan una reserva exacta de gasto.
+
+Ver [trazabilidad de correcciones](docs/CORRECCIONES_EVALUACION.md) y
+[comparación medida](docs/MEJORA_PROMPTS.md). Precio propuesto del piloto y
+costos observados/presupuestados: [ficha de negocio](docs/FICHA_NEGOCIO.md).

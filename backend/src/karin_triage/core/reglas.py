@@ -13,6 +13,7 @@ Precedencia: RD-02/RD-03 > RD-06 > RD-01 > RD-05 > LLM > RD-10 > RD-11/RD-15
 > RD-12 > RD-13/RD-14.
 """
 
+import re
 import unicodedata
 from dataclasses import dataclass, field
 from datetime import date
@@ -122,10 +123,22 @@ def rd_12(propuesta: PropuestaClasificacion, texto_seudonimizado: str,
           hechos: HechosExtraidos) -> ResultadoRegla:
     if propuesta.urgencia_resguardo:
         return ResultadoRegla("RD-12", False, None, "Urgencia ya activa; se conserva.")
-    texto = _normalizar(" ".join([
+    fragmentos = [
         texto_seudonimizado, *hechos.conductas_descritas,
         *hechos.indicios_riesgo_inmediato, *hechos.efectos_declarados,
-    ]))
+    ]
+    calibrados = []
+    for fragmento in fragmentos:
+        normalizado = _normalizar(fragmento)
+        # Una amenaza exclusivamente laboral no acredita por sí sola daño físico
+        # inmediato. Conservar cualquier señal física y toda urgencia ya marcada.
+        laboral = any(t in normalizado for t in (
+            "sin turnos", "despido", "desped", "perder el empleo", "sin trabajo", "bono"))
+        fisico = any(t in normalizado for t in ("golp", "fisic", "arma", "muerte", "herir"))
+        if laboral and not fisico:
+            normalizado = re.sub(r"\bamenaz\w*\b", "", normalizado)
+        calibrados.append(normalizado)
+    texto = " ".join(calibrados)
     riesgo = (
         "ACOSO_SEXUAL" in propuesta.tipo_conducta or any(t in texto for t in TERMINOS_RIESGO)
     )
@@ -143,7 +156,7 @@ def rd_14(propuesta: PropuestaClasificacion) -> ResultadoRegla:
 
 
 def rd_15(propuesta: PropuestaClasificacion, texto_seudonimizado: str,
-          reintentos: int = 0) -> ResultadoRegla:
+          reintentos: int = 0, prefijo_normativo: str = "") -> ResultadoRegla:
     """Verificación literal de las citas, y exigencia de que exista al menos una.
 
     La comparación normaliza **solo** los espacios en blanco consecutivos: un
@@ -159,7 +172,9 @@ def rd_15(propuesta: PropuestaClasificacion, texto_seudonimizado: str,
     """
     texto = " ".join(texto_seudonimizado.split())
     sin_citas = not propuesta.citas
-    no_literal = any(not (cita := " ".join(c.texto_literal.split())) or cita not in texto
+    norma = " ".join(prefijo_normativo.split())
+    no_literal = any(not (cita := " ".join(c.texto_literal.split()))
+                     or cita not in (norma if c.fuente == "normativa" else texto)
                      for c in propuesta.citas)
     efecto = "REINTENTO" if reintentos == 0 else "REVISION_PRIORITARIA"
     detalle = ("Propuesta sin ninguna cita: no es auditable." if sin_citas else
@@ -194,6 +209,7 @@ def aplicar_reglas_previas(
 
 def aplicar_reglas_post(
     propuesta: PropuestaClasificacion, texto_seudonimizado: str, hechos: HechosExtraidos,
+    prefijo_normativo: str = "",
 ) -> tuple[PropuestaClasificacion, list[ResultadoRegla]]:
     """Corregir una copia y conservar toda evaluación en el orden prescrito."""
     copia = propuesta.model_copy(deep=True)
@@ -201,7 +217,8 @@ def aplicar_reglas_post(
     resultados = [resultado]
     if resultado.aplico:
         copia = copia.model_copy(update={"decision": "PROCEDE_INVESTIGACION"})
-    resultados.extend([rd_11(copia), rd_15(copia, texto_seudonimizado)])
+    resultados.extend([rd_11(copia), rd_15(copia, texto_seudonimizado,
+                                        prefijo_normativo=prefijo_normativo)])
     urgencia = rd_12(copia, texto_seudonimizado, hechos)
     resultados.append(urgencia)
     if urgencia.aplico:
