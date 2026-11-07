@@ -19,3 +19,4 @@ dd, p, li { overflow-wrap: anywhere; } dt { font-weight: bold; } dd { margin-bot
   padding: .75rem 1rem;
   margin: 1rem 0;
 }
+.nota { color: #4a5c68; font-size: .9rem; }

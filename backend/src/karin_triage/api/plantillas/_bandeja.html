@@ -1,0 +1,10 @@
+<div id="bandeja-viva" hx-get="/bandeja/contenido" hx-swap="outerHTML"
+ hx-trigger="every 5s [document.visibilityState === 'visible']">
+{% if carga %}<p role="status">{% if carga.en_curso %}Carga en curso. {% endif %}procesados: {{ carga.procesados }}, saltados: {{ carga.saltados }}, fallidos: {{ carga.fallidos }}.</p>{% endif %}
+{% if filas %}<div class="tabla"><table><thead><tr>
+<th>Caso</th><th>Propuesta del agente</th><th>Conductas</th><th>Resguardo</th>
+<th>Confianza</th><th>Pipeline</th><th>Prioridad</th><th>Estado de revisión</th>
+</tr></thead><tbody>{% for fila in filas %}{% with denuncia=fila.denuncia, p=fila.p, historial=fila.historial, estado_revision=fila.estado_revision %}
+{% include '_fila.html' %}{% endwith %}{% endfor %}</tbody></table></div>
+{% else %}<p>No hay casos en la bandeja.</p>{% endif %}
+<p class="nota">Se actualiza sola cada 5 segundos.</p></div>

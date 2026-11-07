@@ -9,7 +9,7 @@ from threading import Lock
 from typing import Annotated
 
 from fastapi import BackgroundTasks, Depends, FastAPI, Form, HTTPException, Request
-from fastapi.responses import RedirectResponse
+from fastapi.responses import RedirectResponse, Response
 from fastapi.staticfiles import StaticFiles
 from fastapi.templating import Jinja2Templates
 from sqlalchemy import create_engine, select, update
@@ -57,10 +57,24 @@ def revisiones(sesion, propuesta):
     ).order_by(RevisionHumana.nivel, RevisionHumana.creado_en)))
 
 
+def estado_revision(historial, propuesta):
+    """Estado humano del caso para la bandeja: lo decide la última firma, no el agente."""
+    if not historial:
+        return "Pendiente de revisión humana"
+    ultima = historial[-1]
+    firma = f"{ultima.decision_final} ({ultima.funcionario})"
+    if len(historial) == 1:
+        if propuesta.decision == "DESCARTADO" or ultima.decision_final == "DESCARTADO":
+            return f"Pendiente de validación por un supervisor · nivel 1: {firma}"
+        return f"Revisado: {firma}"
+    return f"Validado: {firma}"
+
+
 def datos_fila(sesion, denuncia, propuesta):
     historial = revisiones(sesion, propuesta)
     return {"denuncia": denuncia, "p": propuesta, "historial": historial,
-            "version": historial[0].version if historial else 0}
+            "version": historial[0].version if historial else 0,
+            "estado_revision": estado_revision(historial, propuesta)}
 
 
 def motivo_bloqueo(historial, propuesta, usuario):
@@ -147,6 +161,9 @@ def crear_app(ajustes=None, motor=None):
         if (request.url.path not in publicas
                 and not request.url.path.startswith("/estaticos/")
                 and request.session.get("usuario") not in {"analista_demo", "supervisor_demo"}):
+            if request.headers.get("HX-Request") == "true":
+                # Un refresco periódico con la sesión vencida no debe pintar el login en la tabla.
+                return Response(headers={"HX-Redirect": "/entrar"})
             return RedirectResponse("/entrar", 303)
         return await call_next(request)
 
@@ -181,16 +198,23 @@ def crear_app(ajustes=None, motor=None):
         request.session.clear()
         return RedirectResponse("/entrar", 303)
 
-    @app.get("/")
-    def bandeja(request: Request, usuario: Usuario, sesion: Sesion):
+    def datos_bandeja(sesion):
         with carga_lock:
             estado_carga = dict(carga_estado)
         filas = sesion.execute(select(Denuncia, Preclasificacion).join(
             Preclasificacion, Preclasificacion.denuncia_id == Denuncia.id
         ).order_by(Preclasificacion.prioridad, Preclasificacion.creado_en)).all()
-        return vista(request, "bandeja.html", usuario,
-                     filas=[datos_fila(sesion, d, p) for d, p in filas],
-                     mensaje=request.session.pop("mensaje", None), carga=estado_carga)
+        return {"filas": [datos_fila(sesion, d, p) for d, p in filas], "carga": estado_carga}
+
+    @app.get("/")
+    def bandeja(request: Request, usuario: Usuario, sesion: Sesion):
+        return vista(request, "bandeja.html", usuario, **datos_bandeja(sesion),
+                     mensaje=request.session.pop("mensaje", None))
+
+    @app.get("/bandeja/contenido")
+    def bandeja_contenido(request: Request, usuario: Usuario, sesion: Sesion):
+        # Refresco periódico: lo firmado por otro funcionario aparece sin recargar.
+        return vista(request, "_bandeja.html", usuario, **datos_bandeja(sesion))
 
     @app.post("/cargar-golden-set")
     def cargar(request: Request, usuario: Usuario, background_tasks: BackgroundTasks):
@@ -214,6 +238,11 @@ def crear_app(ajustes=None, motor=None):
             decisiones.remove(Decision.DESCARTADO)
         return vista(request, "caso.html", usuario, **fila, decisiones=decisiones,
                      bloqueo=bloqueo[1] if bloqueo else None)
+
+    @app.get("/casos/{identificador}/estado")
+    def caso_estado(identificador: str, request: Request, usuario: Usuario, sesion: Sesion):
+        d, p = buscar(sesion, identificador)
+        return vista(request, "_estado_caso.html", usuario, **datos_fila(sesion, d, p))
 
     @app.post("/casos/{identificador}/revision")
     def revisar(identificador: str, request: Request, decision_final: Annotated[Decision, Form()],
