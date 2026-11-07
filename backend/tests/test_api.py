@@ -139,10 +139,29 @@ def test_08_version_vieja(entorno):
 
 def test_09_descarte_misma_persona(entorno):
     identificador = caso(entorno, decision="DESCARTADO")
-    login(entorno[0], "supervisor")
+    login(entorno[0])
     assert revision(entorno[0], identificador).status_code == 200
     r = revision(entorno[0], identificador, version=1)
     assert r.status_code == 403 and "distinto" in r.text
+
+
+def test_descarte_lo_inicia_el_analista(entorno):
+    cliente, _ = entorno
+    propuesto = caso(entorno, externo="PROPUESTO", decision="DESCARTADO")
+    otro = caso(entorno, externo="OTRO")
+    login(cliente, "supervisor")
+    # El supervisor no abre un descarte: ni el propuesto por el agente ni uno propio.
+    r = revision(cliente, propuesto, decision="DERIVA_MEDIACION")
+    assert r.status_code == 403 and "analista" in r.text
+    r = revision(cliente, otro, decision="DESCARTADO")
+    assert r.status_code == 403 and "analista" in r.text
+    assert 'value="DESCARTADO"' not in cliente.get(f"/casos/{otro}").text
+    assert revision(cliente, otro, decision="PROCEDE_INVESTIGACION").status_code == 200
+    # Flujo completo: analista primero, supervisor valida.
+    login(cliente)
+    assert revision(cliente, propuesto).status_code == 200
+    login(cliente, "supervisor")
+    assert revision(cliente, propuesto, version=1).status_code == 200
 
 
 def test_10_descarte_rol_y_supervisor(entorno):
@@ -262,3 +281,25 @@ def test_carga_programada_responde_sin_esperar_y_no_duplica(entorno, monkeypatch
     funcion(*args, **kwargs)
     html = cliente.get("/").text
     assert "procesados: 8" in html and "Carga en curso" not in html
+
+
+def test_exito_htmx_recarga_la_pagina(entorno):
+    identificador = caso(entorno)
+    login(entorno[0])
+    r = revision(entorno[0], identificador)
+    assert r.status_code == 200 and r.headers["HX-Refresh"] == "true"
+
+
+def test_formulario_oculto_si_el_usuario_no_puede_revisar(entorno):
+    identificador = caso(entorno, decision="DESCARTADO")
+    cliente, _ = entorno
+    login(cliente, "supervisor")
+    html = cliente.get(f"/casos/{identificador}").text
+    assert 'name="decision_final"' not in html and "la hace el analista" in html
+    login(cliente)
+    assert 'name="decision_final"' in cliente.get(f"/casos/{identificador}").text
+    assert revision(cliente, identificador).status_code == 200
+    html = cliente.get(f"/casos/{identificador}").text
+    assert 'name="decision_final"' not in html and "funcionario distinto" in html
+    login(cliente, "supervisor")
+    assert 'name="decision_final"' in cliente.get(f"/casos/{identificador}").text

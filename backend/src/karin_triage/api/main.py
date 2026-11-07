@@ -63,6 +63,28 @@ def datos_fila(sesion, denuncia, propuesta):
             "version": historial[0].version if historial else 0}
 
 
+def motivo_bloqueo(historial, propuesta, usuario):
+    """Por qué este usuario no puede registrar una revisión ahora; None si puede.
+
+    Flujo de un descarte: el analista hace la primera revisión y un supervisor
+    distinto la valida. Si el supervisor firmara primero, la demo (un solo
+    supervisor) no tendría quién hiciera la segunda y el caso quedaría trabado.
+    """
+    if len(historial) >= 2:
+        return 409, "El caso ya tiene dos revisiones humanas"
+    if not historial and propuesta.decision == "DESCARTADO" and usuario["rol"] != "analista":
+        return 403, "La primera revisión de un descarte la hace el analista"
+    descarte = propuesta.decision == "DESCARTADO" or (
+        historial and historial[0].decision_final == "DESCARTADO"
+    )
+    if historial and descarte:
+        if historial[0].funcionario == usuario["nombre"]:
+            return 403, "La segunda revisión exige un funcionario distinto"
+        if usuario["rol"] != "supervisor":
+            return 403, "La segunda revisión de un descarte exige supervisor"
+    return None
+
+
 def buscar(sesion, identificador):
     denuncia = sesion.get(Denuncia, identificador)
     propuesta = sesion.scalar(select(Preclasificacion).where(
@@ -185,8 +207,13 @@ def crear_app(ajustes=None, motor=None):
     def caso(identificador: str, request: Request, usuario: Usuario,
              sesion: Sesion):
         d, p = buscar(sesion, identificador)
-        return vista(request, "caso.html", usuario, **datos_fila(sesion, d, p),
-                     decisiones=list(Decision))
+        fila = datos_fila(sesion, d, p)
+        bloqueo = motivo_bloqueo(fila["historial"], p, usuario)
+        decisiones = list(Decision)
+        if not fila["historial"] and usuario["rol"] != "analista":
+            decisiones.remove(Decision.DESCARTADO)
+        return vista(request, "caso.html", usuario, **fila, decisiones=decisiones,
+                     bloqueo=bloqueo[1] if bloqueo else None)
 
     @app.post("/casos/{identificador}/revision")
     def revisar(identificador: str, request: Request, decision_final: Annotated[Decision, Form()],
@@ -197,18 +224,13 @@ def crear_app(ajustes=None, motor=None):
         actual = historial[0].version if historial else 0
         if version != actual:
             raise HTTPException(409, "Otro funcionario revisó el caso mientras tanto; recarga.")
-        if len(historial) >= 2:
-            raise HTTPException(409, "El caso ya tiene dos revisiones humanas")
+        bloqueo = motivo_bloqueo(historial, p, usuario)
+        if bloqueo:
+            raise HTTPException(*bloqueo)
         nivel = 2 if historial else 1
-        # También se protege un descarte introducido por la primera persona.
-        descarte = p.decision == "DESCARTADO" or (
-            historial and historial[0].decision_final == "DESCARTADO"
-        )
-        if nivel == 2 and descarte:
-            if historial[0].funcionario == usuario["nombre"]:
-                raise HTTPException(403, "La segunda revisión exige un funcionario distinto")
-            if usuario["rol"] != "supervisor":
-                raise HTTPException(403, "La segunda revisión de un descarte exige supervisor")
+        if nivel == 1 and decision_final == Decision.DESCARTADO and usuario["rol"] != "analista":
+            # Un descarte iniciado por el supervisor no tendría quién lo validara.
+            raise HTTPException(403, "La primera revisión de un descarte la hace el analista")
         try:
             if historial:
                 # CAS atómico y versionado ORM: dos solicitudes no pueden firmar a la vez.
@@ -236,7 +258,10 @@ def crear_app(ajustes=None, motor=None):
             sesion.rollback()
             raise HTTPException(409, "Otro funcionario revisó el caso mientras tanto") from None
         if request.headers.get("HX-Request") == "true":
-            return vista(request, "_fila.html", usuario, **datos_fila(sesion, d, p))
+            # Recarga completa: el historial y el formulario también deben reflejar la firma.
+            respuesta = vista(request, "_fila.html", usuario, **datos_fila(sesion, d, p))
+            respuesta.headers["HX-Refresh"] = "true"
+            return respuesta
         return RedirectResponse(f"/casos/{d.id}", 303)
 
     app.add_middleware(
