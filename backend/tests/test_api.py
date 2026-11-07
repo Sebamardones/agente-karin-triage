@@ -242,3 +242,23 @@ def test_resolver_directorio_entorno(entorno, monkeypatch, tmp_path):
     ruta = tmp_path / "denuncias.jsonl"
     ruta.write_text("", encoding="utf-8")
     assert main.resolver_golden_set() == ruta
+
+
+def test_carga_programada_responde_sin_esperar_y_no_duplica(entorno, monkeypatch):
+    pendientes = []
+
+    def programar(self, funcion, *args, **kwargs):
+        pendientes.append((funcion, args, kwargs))
+
+    monkeypatch.setattr(main.BackgroundTasks, "add_task", programar)
+    cliente, _ = entorno
+    login(cliente)
+    respuesta = cliente.post("/cargar-golden-set")
+    assert respuesta.status_code == 200 and "Carga en curso" in respuesta.text
+    assert "procesados: 0" in respuesta.text
+    cliente.post("/cargar-golden-set")
+    assert len(pendientes) == 1
+    funcion, args, kwargs = pendientes.pop()
+    funcion(*args, **kwargs)
+    html = cliente.get("/").text
+    assert "procesados: 8" in html and "Carga en curso" not in html

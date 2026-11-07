@@ -5,6 +5,19 @@ funcionarios de la Dirección del Trabajo.
 
 **El agente propone. Una persona decide.**
 
+**Aplicación pública:** https://karin-triage-grupo7-c7c6a3fb2988.herokuapp.com/
+
+Acceso con `analista_demo` y `supervisor_demo`. Las contraseñas se entregan por
+la plataforma del curso; no están en este repositorio. El operador puede
+consultarlas en Config Vars de la aplicación Heroku. Solo casos sintéticos.
+
+La carga del golden set se ejecuta en segundo plano: pulsar una vez y usar
+«Actualizar bandeja» para ver el avance. Los casos procesados se conservan en
+Postgres. La tarea y sus contadores viven en un único proceso web; si el dyno
+se reinicia, volver a solicitar la carga omite los casos ya guardados. Esta
+implementación se limita a un dyno y un worker, sin cola durable distribuida.
+
+
 > **Estado de este repositorio.** Es la *edición de entrega* del Proyecto Final:
 > un prototipo público que opera con denuncias **sintéticas**. El piloto
 > institucional —ClaveÚnica, GKE, Langfuse, datos reales— está documentado en

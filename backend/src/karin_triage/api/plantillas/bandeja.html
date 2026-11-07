@@ -3,6 +3,7 @@
 {% if mensaje %}<p role="status">{{ mensaje }}</p>{% endif %}
 {% if usuario.rol == 'analista' %}<form method="post" action="/cargar-golden-set">
 <button>Cargar los 8 casos sintéticos del golden set</button></form>{% endif %}
+{% if carga %}<p role="status">{% if carga.en_curso %}Carga en curso. {% endif %}procesados: {{ carga.procesados }}, saltados: {{ carga.saltados }}, fallidos: {{ carga.fallidos }}. <a href="/">Actualizar bandeja</a></p>{% endif %}
 {% if filas %}<div class="tabla"><table><thead><tr>
 <th>Caso</th><th>Propuesta / estado</th><th>Conductas</th><th>Resguardo</th>
 <th>Confianza</th><th>Pipeline</th><th>Prioridad</th><th>Revisión</th>

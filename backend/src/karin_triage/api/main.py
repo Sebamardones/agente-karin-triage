@@ -5,9 +5,10 @@ import os
 import secrets
 from contextlib import asynccontextmanager
 from pathlib import Path
+from threading import Lock
 from typing import Annotated
 
-from fastapi import Depends, FastAPI, Form, HTTPException, Request
+from fastapi import BackgroundTasks, Depends, FastAPI, Form, HTTPException, Request
 from fastapi.responses import RedirectResponse
 from fastapi.staticfiles import StaticFiles
 from fastapi.templating import Jinja2Templates
@@ -85,6 +86,37 @@ def crear_app(ajustes=None, motor=None):
 
     app = FastAPI(title="Karin Triage", lifespan=lifespan)
     app.state.motor = motor
+    carga_lock = Lock()
+    carga_estado = {"en_curso": False, "procesados": 0, "saltados": 0, "fallidos": 0}
+
+    def cargar_en_segundo_plano():
+        try:
+            with Session(motor) as sesion:
+                for linea in resolver_golden_set().read_text(encoding="utf-8").splitlines():
+                    if not linea.strip():
+                        continue
+                    try:
+                        registro = json.loads(linea)["entrada"]
+                        if sesion.scalar(select(Denuncia.id).where(
+                            Denuncia.id_externo_dt == registro["id_externo_dt"]
+                        )):
+                            resultado = "saltados"
+                        else:
+                            procesar_caso(registro, Contexto(sesion))
+                            sesion.commit()
+                            resultado = "procesados"
+                    except Exception:  # noqa: BLE001 - no exponer datos del proveedor
+                        sesion.rollback()
+                        resultado = "fallidos"
+                    with carga_lock:
+                        carga_estado[resultado] += 1
+        except Exception:  # noqa: BLE001 - archivo o infraestructura no disponibles
+            with carga_lock:
+                carga_estado["fallidos"] += 1
+        finally:
+            with carga_lock:
+                carga_estado["en_curso"] = False
+
     app.mount("/estaticos", StaticFiles(directory=DIRECTORIO / "estaticos"), name="estaticos")
 
     @app.middleware("http")
@@ -129,36 +161,24 @@ def crear_app(ajustes=None, motor=None):
 
     @app.get("/")
     def bandeja(request: Request, usuario: Usuario, sesion: Sesion):
+        with carga_lock:
+            estado_carga = dict(carga_estado)
         filas = sesion.execute(select(Denuncia, Preclasificacion).join(
             Preclasificacion, Preclasificacion.denuncia_id == Denuncia.id
         ).order_by(Preclasificacion.prioridad, Preclasificacion.creado_en)).all()
         return vista(request, "bandeja.html", usuario,
                      filas=[datos_fila(sesion, d, p) for d, p in filas],
-                     mensaje=request.session.pop("mensaje", None))
+                     mensaje=request.session.pop("mensaje", None), carga=estado_carga)
 
     @app.post("/cargar-golden-set")
-    def cargar(request: Request, usuario: Usuario, sesion: Sesion):
+    def cargar(request: Request, usuario: Usuario, background_tasks: BackgroundTasks):
         if usuario["rol"] != "analista":
             raise HTTPException(403, "Solo el analista puede cargar casos sintéticos")
-        conteo = {"procesados": 0, "saltados": 0, "fallidos": 0}
-        for linea in resolver_golden_set().read_text(encoding="utf-8").splitlines():
-            if not linea.strip():
-                continue
-            try:
-                registro = json.loads(linea)["entrada"]
-                if sesion.scalar(select(Denuncia.id).where(
-                    Denuncia.id_externo_dt == registro["id_externo_dt"]
-                )):
-                    conteo["saltados"] += 1
-                    continue
-                procesar_caso(registro, Contexto(sesion))
-                sesion.commit()
-                conteo["procesados"] += 1
-            except Exception:  # noqa: BLE001 - aislar cada caso y no revelar datos del proveedor
-                # Nunca exponer el relato, los secretos ni la excepción del proveedor.
-                sesion.rollback()
-                conteo["fallidos"] += 1
-        request.session["mensaje"] = ", ".join(f"{k}: {v}" for k, v in conteo.items())
+        with carga_lock:
+            if not carga_estado["en_curso"]:
+                carga_estado.update(en_curso=True, procesados=0, saltados=0, fallidos=0)
+                background_tasks.add_task(cargar_en_segundo_plano)
+        request.session["mensaje"] = "Carga solicitada. Los casos aparecerán en la bandeja."
         return RedirectResponse("/", 303)
 
     @app.get("/casos/{identificador}")
