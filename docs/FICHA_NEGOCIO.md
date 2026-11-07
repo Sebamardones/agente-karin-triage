@@ -35,23 +35,46 @@ dentro de **100 UTM** y se cumplen las condiciones del procedimiento. Solicita
 al menos tres cotizaciones y promueve participación de empresas de menor tamaño;
 no garantiza adjudicación. Verificar UTM, impuestos y elegibilidad al cotizar.
 
-## Costos estimados de operación
+## Consumo mensual estimado de operación
 
-| Concepto | Costo mensual |
-|---|---:|
-| Heroku Basic | USD 7 |
-| Postgres Essential-0 | USD 5 |
-| Inferencia de demostración, según uso | Presupuesto USD 3 |
-| **Demo, total referencial** | **USD 15** |
+Escenario de operación: **10 analistas, 5 supervisores y 1.581 casos ingresados
+al mes**, unos 75 por día hábil (supuesto: 21 días hábiles al mes).
 
-En la corrida histórica v2 se estimaron USD 0,1889 / 6 casos con LLM =
-**USD 0,0315 por caso** (incluidos reintentos de esa muestra). No es costo
-garantizado ni tarifa del proveedor conciliada. La nueva corrida v3 estima
-USD 0,1600 / 9 casos = **USD 0,0178 por caso**. **USD 0,10 por caso es un
-presupuesto conservador**, aproximadamente tres veces ese valor, para variación
-de longitud y reintentos; no es el costo observado. A 1.000 casos/mes: presupuesto
-de inferencia USD 100, más USD 12 de infraestructura, antes de soporte y desarrollo.
-Las tarifas codificadas aún deben conciliarse con factura vigente.
+| Concepto | Observado | Presupuesto |
+|---|---:|---:|
+| Inferencia por caso | USD 0,0178 | USD 0,10 |
+| Inferencia, 1.581 casos | USD 28,11 | USD 158,10 |
+| Heroku Basic + Postgres Essential-0 | USD 12 | USD 12 |
+| **Total mensual** | **USD 40,11** | **USD 170,10** |
+| Costo total por caso | USD 0,025 | USD 0,108 |
+
+El costo observado sale de la corrida v3: USD 0,16 para nueve casos con IA
+(dos llamadas por caso). Se supone que todos los casos usan IA; los que las
+reglas deterministas resuelven antes (sector público, registro incompleto)
+cuestan cero, así que el cálculo es conservador. **USD 0,10 por caso es el
+presupuesto de planificación**, unas cinco veces lo observado, para cubrir
+relatos más largos y reintentos. Las tarifas del código siguen pendientes de
+conciliar con la factura del proveedor.
+
+**Carga por persona.** Cada analista revisa unos 158 casos al mes (7,5 por día
+hábil). La segunda firma de los descartes recae en los supervisores: si se
+mantiene la proporción del balance oficial (40,7% preclasificado como no Ley
+Karin), son unos 643 descartes al mes, 129 por supervisor (6 por día hábil).
+El número de usuarios no cambia el costo de IA, que depende solo de los casos.
+
+**Capacidad.** Un dyno Basic atiende a 15 usuarios con esta carga. Postgres
+Essential-0 tiene 1 GB: con un supuesto conservador de 50 KB por caso,
+incluida la auditoría, se usan unos 77 MB al mes y alcanza para cerca de un
+año; después corresponde Essential-1 (USD 9, 10 GB).
+
+**Topes de gasto para operar.** Los topes de la demo (200 llamadas y USD 3 al
+día) frenarían la operación: en un día normal se hacen unas 150 llamadas, hasta
+226 con reintentos, y el presupuesto diario es USD 7,53. Para operar se fijan
+**400 llamadas y USD 8 al día** en código, y **USD 170 al mes** en la consola
+de Anthropic.
+
+**Relación con el precio.** El plan propuesto cubre hasta 1.000 casos al mes:
+este escenario lo supera en 581 casos, que se cotizan como volumen adicional.
 
 ## Adopción, protección y validación
 
