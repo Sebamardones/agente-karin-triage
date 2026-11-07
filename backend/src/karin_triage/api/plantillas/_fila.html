@@ -3,4 +3,4 @@
 <td>{% if p.urgencia_resguardo %}<strong>⚠ Urgencia de resguardo</strong>{% else %}Sin urgencia marcada{% endif %}</td>
 <td>{{ p.confianza if p.confianza is not none else 'No disponible' }}</td>
 <td>{{ p.marcas_pipeline }}</td><td>{{ p.prioridad }}</td>
-<td>{% if not historial %}Pendiente de revisión humana{% elif historial|length == 1 and (p.decision == 'DESCARTADO' or historial[0].decision_final == 'DESCARTADO') %}Pendiente de validación por un supervisor{% else %}{{ historial|length }} revisión(es) registrada(s){% endif %}</td></tr>
+<td>{{ estado_revision }}</td></tr>

@@ -1,0 +1,5 @@
+<div id="estado-caso" hx-get="/casos/{{ denuncia.id }}/estado" hx-swap="outerHTML"
+ hx-trigger="every 5s [document.visibilityState === 'visible']">
+<div class="tabla"><table><tbody>{% include '_fila.html' %}</tbody></table></div>
+<h3>Historial</h3><ul>{% for revision in historial %}<li>Nivel {{ revision.nivel }} · {{ revision.funcionario }} · {{ revision.rol }} · {{ revision.decision_final }}<p>{{ revision.comentario }}</p></li>{% else %}<li>Sin revisiones registradas</li>{% endfor %}</ul>
+</div>

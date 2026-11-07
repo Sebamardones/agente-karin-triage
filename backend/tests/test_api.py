@@ -303,3 +303,28 @@ def test_formulario_oculto_si_el_usuario_no_puede_revisar(entorno):
     assert 'name="decision_final"' not in html and "funcionario distinto" in html
     login(cliente, "supervisor")
     assert 'name="decision_final"' in cliente.get(f"/casos/{identificador}").text
+
+
+def test_bandeja_muestra_el_estado_humano_y_se_refresca(entorno):
+    cliente, _ = entorno
+    descarte = caso(entorno, externo="DESCARTE", decision="DESCARTADO")
+    simple = caso(entorno, externo="SIMPLE")
+    login(cliente)
+    assert "Pendiente de revisión humana" in cliente.get("/bandeja/contenido").text
+    assert revision(cliente, simple, decision="DERIVA_MEDIACION").status_code == 200
+    assert revision(cliente, descarte).status_code == 200
+    html = cliente.get("/bandeja/contenido").text
+    assert 'id="bandeja-viva"' in html and "every 5s" in html
+    assert "Revisado: DERIVA_MEDIACION (analista_demo)" in html
+    assert "Pendiente de validación por un supervisor · nivel 1: DESCARTADO" in html
+    login(cliente, "supervisor")
+    assert revision(cliente, descarte, version=1).status_code == 200
+    assert "Validado: DESCARTADO (supervisor_demo)" in cliente.get("/").text
+    estado = cliente.get(f"/casos/{descarte}/estado").text
+    assert 'id="estado-caso"' in estado and "Nivel 2 · supervisor_demo" in estado
+
+
+def test_refresco_con_sesion_vencida_redirige_sin_pintar_login(entorno):
+    r = entorno[0].get("/bandeja/contenido", headers={"HX-Request": "true"},
+                       follow_redirects=False)
+    assert r.status_code == 200 and r.headers["HX-Redirect"] == "/entrar" and r.text == ""

@@ -24,7 +24,7 @@ constancia de lo que propuso.</p>
 {% if bloque.supuestos %}<p>Supuestos: {{ bloque.supuestos|join('; ') }}</p>{% endif %}{% endfor %}
 <h3>Reglas aplicadas</h3><p>{{ p.reglas_aplicadas or 'Sin reglas registradas' }}</p>
 <h3>Revisión humana</h3>
-<div class="tabla"><table><tbody>{% include '_fila.html' %}</tbody></table></div>
+{% include '_estado_caso.html' %}
 {% if bloqueo %}<p role="status"><strong>No puedes registrar una revisión en este caso:</strong> {{ bloqueo }}.</p>
 {% else %}<p id="aviso-revision" role="alert" hidden></p>
 <form method="post" action="/casos/{{ denuncia.id }}/revision"
@@ -35,5 +35,4 @@ constancia de lo que propuso.</p>
 {% for decision in decisiones %}<option value="{{ decision.value }}" {% if decision.value == p.decision %}selected{% endif %}>{{ decision.value }}</option>{% endfor %}</select></label>
 <label>Comentario <textarea name="comentario" rows="4"></textarea></label>
 <button>Registrar revisión</button></form>{% endif %}
-<h3>Historial</h3><ul>{% for revision in historial %}<li>Nivel {{ revision.nivel }} · {{ revision.funcionario }} · {{ revision.rol }} · {{ revision.decision_final }}<p>{{ revision.comentario }}</p></li>{% else %}<li>Sin revisiones registradas</li>{% endfor %}</ul>
 {% endblock %}
