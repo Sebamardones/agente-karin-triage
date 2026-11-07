@@ -19,8 +19,11 @@ Además, la interfaz no mostraba esos rechazos: htmx no intercambia respuestas
 
 - La primera revisión de un descarte la hace siempre el analista: el supervisor
   no puede abrir un caso con propuesta `DESCARTADO` ni registrar `DESCARTADO` en
-  una primera revisión. La validación de nivel 2 sigue exigiendo supervisor y
-  funcionario distinto.
+  una primera revisión.
+- El nivel 2 es siempre una validación: lo firma un supervisor distinto de quien
+  firmó el nivel 1, sea cual sea la decisión. Antes esa exigencia solo se
+  activaba si el descarte venía de la propuesta o del nivel 1, así que un
+  descarte firmado recién en el nivel 2 pasaba sin supervisor (SINT-0001).
 - La ficha del caso oculta el formulario y explica el motivo cuando el usuario
   conectado no puede revisar; el supervisor no ve la opción `DESCARTADO` en una
   primera revisión.

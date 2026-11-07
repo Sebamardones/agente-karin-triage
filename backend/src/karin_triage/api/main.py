@@ -80,22 +80,23 @@ def datos_fila(sesion, denuncia, propuesta):
 def motivo_bloqueo(historial, propuesta, usuario):
     """Por qué este usuario no puede registrar una revisión ahora; None si puede.
 
-    Flujo de un descarte: el analista hace la primera revisión y un supervisor
-    distinto la valida. Si el supervisor firmara primero, la demo (un solo
+    El nivel 2 es siempre la validación de un supervisor distinto de quien
+    firmó el nivel 1. Flujo de un descarte: el analista hace la primera revisión
+    y un supervisor la valida. Si el supervisor firmara primero, la demo (un solo
     supervisor) no tendría quién hiciera la segunda y el caso quedaría trabado.
     """
     if len(historial) >= 2:
         return 409, "El caso ya tiene dos revisiones humanas"
     if not historial and propuesta.decision == "DESCARTADO" and usuario["rol"] != "analista":
         return 403, "La primera revisión de un descarte la hace el analista"
-    descarte = propuesta.decision == "DESCARTADO" or (
-        historial and historial[0].decision_final == "DESCARTADO"
-    )
-    if historial and descarte:
+    if historial:
+        # El nivel 2 es siempre una validación: supervisor y persona distinta.
+        # Si dependiera de que el descarte viniera de antes, un descarte firmado
+        # recién en el nivel 2 quedaría sin validar (ocurrió con SINT-0001).
         if historial[0].funcionario == usuario["nombre"]:
             return 403, "La segunda revisión exige un funcionario distinto"
         if usuario["rol"] != "supervisor":
-            return 403, "La segunda revisión de un descarte exige supervisor"
+            return 403, "La segunda revisión exige supervisor"
     return None
 
 

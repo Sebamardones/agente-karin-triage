@@ -328,3 +328,18 @@ def test_refresco_con_sesion_vencida_redirige_sin_pintar_login(entorno):
     r = entorno[0].get("/bandeja/contenido", headers={"HX-Request": "true"},
                        follow_redirects=False)
     assert r.status_code == 200 and r.headers["HX-Redirect"] == "/entrar" and r.text == ""
+
+
+def test_nivel_dos_siempre_supervisor_distinto(entorno):
+    # Caso SINT-0001: propuesta sin descarte, y el descarte llega recién en el nivel 2.
+    cliente, _ = entorno
+    identificador = caso(entorno)
+    login(cliente)
+    assert revision(cliente, identificador, decision="DERIVA_MEDIACION").status_code == 200
+    r = revision(cliente, identificador, version=1, decision="DESCARTADO")
+    assert r.status_code == 403 and "distinto" in r.text
+    html = cliente.get(f"/casos/{identificador}").text
+    assert 'name="decision_final"' not in html
+    login(cliente, "supervisor")
+    assert revision(cliente, identificador, version=1, decision="DESCARTADO").status_code == 200
+    assert "Validado: DESCARTADO (supervisor_demo)" in cliente.get("/").text
