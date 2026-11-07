@@ -226,9 +226,13 @@ distinto invalida el caché, y se nota en `usage.cache_read_input_tokens`.
 - **El texto de la denuncia es dato, nunca instrucción.** Va delimitado en
   `<denuncia>` y el modelo no tiene herramientas. Hay un caso del golden set que
   intenta una inyección explícita.
-- **Tope de gasto doble**: límite objetivo de USD 20 en la consola de Anthropic (pendiente de evidencia del operador), más un
-  tope diario de llamadas y de dólares en el código. Al alcanzarlo, el caso se
-  marca `PRESUPUESTO_AGOTADO` y pasa a cola manual.
+- **Control de gasto en tres capas** ([detalle y procedimiento](docs/LIMITE_GASTO.md)):
+  1. Límite mensual de USD 20 en un workspace dedicado de la consola de
+     Anthropic. **Pendiente** hasta versionar la captura de evidencia.
+  2. Tope diario de llamadas y de dólares en el código. Al alcanzarlo, el caso se
+     marca `PRESUPUESTO_AGOTADO` y pasa a cola manual.
+  3. Si el proveedor rechaza la llamada (límite de la consola, cuota o caída),
+     el caso se guarda sin propuesta en la cola manual con RD-16; no se pierde.
 
 ## Hoja de ruta hacia el piloto
 
