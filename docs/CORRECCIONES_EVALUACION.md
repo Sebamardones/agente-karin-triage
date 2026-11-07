@@ -32,6 +32,12 @@ SQLite upgrade/downgrade, controles de revisión humana, fuentes de citas,
 denominadores de métricas, creación de ficción y tandas sin borrar historial.
 La evidencia final del despliegue se agrega a VERIFICACION_PUBLICA.md.
 
+Verificación final: commit 2ed92a2, release Heroku v10 succeeded. Migración
+Postgres 0002 confirmada. Formulario real con IA y respuesta de envío 0,86 s;
+rechazo de descarte incompleto y revisión persistida entre sesiones comprobados.
+La tanda final quedó con once casos, cero revisiones y pipeline v3/reglas2.
+Después de preparar esa tanda se hicieron solo consultas de lectura.
+
 Medición final bajo el mismo pipeline reglas2: decisiones 9/9 en ambas,
 citas v2 25/29 frente a v3 22/22, salida válida sin reintento 5/9 frente a 9/9,
 urgencia 9/9 y positivos 3/3 en ambas. Costo estimado 0,2142 a 0,16 USD (25,3%

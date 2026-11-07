@@ -1,3 +1,31 @@
+# Actualización de arquitectura y auditoría: correcciones aplicadas
+
+El código vigente publicado corresponde a **2ed92a2**, release Heroku **v10**.
+[Código exacto](https://github.com/Sebamardones/agente-karin-triage/tree/2ed92a2).
+[Resultados actuales](VERIFICACION_PUBLICA.md) y
+[trazabilidad completa](CORRECCIONES_EVALUACION.md).
+
+Cambios sobre el corte histórico inferior: formulario de ficción nuevo y
+tandas renovables sin borrar historial; revisiones humanas fundadas con motivo,
+comentario y cita; advertencia/validación RD-10; migración 0002; etiquetas
+legibles; RD-15 por fuente y RD-12 calibrada sin bajar urgencias activas.
+Once casos, tres positivos de urgencia y prompt v3; no hay RAG. La cadena hash
+y los límites de contabilidad señalados en el informe histórico siguen siendo
+observaciones pendientes; no se afirma haberlos resuelto con esta entrega.
+
+La suite actual tiene 253 pruebas aprobadas. La nueva comparación v2/v3 y sus
+cuatro corridas están publicadas, con fallos iniciales y límites metodológicos.
+Los JSON crudos de esta nueva revisión sí están en evals/evidencia/ (sin relatos
+ni secretos). La evidencia histórica anterior sigue en poder del operador.
+
+La grabación real del video, la inspección visual en incógnito y el límite de
+proyecto en consola requieren comprobación externa. No se declara cerrada toda
+la rúbrica. El resto del documento se conserva como corte histórico auditado.
+
+---
+
+## Corte histórico de arquitectura (primera publicación)
+
 # KARIN triage: informe de arquitectura, desarrollo y verificación
 
 **Fecha:** 7 de noviembre de 2026. **Destinatarios:** equipo del Grupo 7.
@@ -20,7 +48,7 @@ ni una validación jurídica institucional.
 | Ficha de negocio PDF | [FICHA_NEGOCIO.pdf](FICHA_NEGOCIO.pdf) |
 | Guion de demostración | [GUION_VIDEO.md](GUION_VIDEO.md) |
 
-El código publicado en Heroku corresponde al commit **5175195**, release **v6**,
+El código de la primera publicación correspondía al commit **5175195**, release **v6**,
 con estado `succeeded`. El commit posterior **bbfae39** agregó documentación de
 verificación. Este informe documenta esa base; no introduce cambios al software.
 La rama de trabajo y publicación es `entrega/codex-revision`.

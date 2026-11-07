@@ -1,3 +1,63 @@
+# Verificación actualizada tras EVALUACION_KARIN_TRIAGE
+
+Fecha: 2026-11-07. Código desplegado: **2ed92a2**, Heroku **release v10**,
+estado **succeeded**. [Árbol exacto](https://github.com/Sebamardones/agente-karin-triage/tree/2ed92a2).
+Aplicación: https://karin-triage-grupo7-c7c6a3fb2988.herokuapp.com/
+
+## Evidencia nueva
+
+- 253 pruebas aprobadas en 14,60 s; Ruff sin hallazgos.
+- Build Docker y release correctos; migración aditiva 0002 para fundamentos
+  de revisión humana, sin borrar casos ni revisiones existentes.
+- Formulario de ficción accesible al analista y bloqueado al supervisor.
+- Un relato ficticio nuevo respondió al envío en 0,86 segundos, sin timeout;
+  apareció con propuesta real de Claude y citas.
+- El servidor rechazó un descarte humano sin fundamento con HTTP 422.
+- Una revisión válida persistió y fue visible desde otra sesión con supervisor.
+- Se solicitó una tanda nueva de once casos y no se registrarán revisiones sobre
+  esa tanda durante las pruebas. Se conserva el historial previo.
+- Consulta posterior de solo lectura: Postgres en migración 0002 y tanda
+  completada con **11 casos, 0 revisiones y 11 pipelines tipificar_v3/reglas2**.
+- Comparación real final: v3 decisiones 9/9, urgencia 9/9, positivos 3/3,
+  citas 22/22 y salida validada sin reintento 9/9. Ver MEJORA_PROMPTS.md y
+  evals/evidencia/; no se declara medición de JSON crudo.
+
+Las comprobaciones públicas son HTTPS con cookies independientes, no inspección
+visual en incógnito. La automatización del navegador no está disponible. La
+grabación real del video y evidencia del límite de proyecto USD 20 en consola
+Anthropic siguen pendientes del equipo/operador. No se cambió la clave.
+
+## Comandos y archivos
+
+```powershell
+git clone --branch entrega/codex-revision https://github.com/Sebamardones/agente-karin-triage.git karin-correcciones
+git switch -c correcciones/evaluacion-integral
+uv run --python 3.12 --extra dev pytest -q -p no:cacheprovider --basetemp 'D:\AI Command Center\codex\tmp\evaluacion-final'
+uv run --python 3.12 --extra dev ruff check .
+uv run --python 3.12 python ../evals/runner.py --prompt tipificar_v2.md
+uv run --python 3.12 python ../evals/runner.py --prompt tipificar_v3.md
+git push origin HEAD:entrega/codex-revision
+git push heroku HEAD:main
+```
+
+Los dos comandos de eval se ejecutaron mediante un wrapper local que usa en
+memoria la clave existente de la plataforma, sin guardarla en el clon. Se
+hicieron dos iteraciones por versión y se conservan los cuatro resultados.
+
+Archivos de producto: API y plantillas, etiquetas, reglas RD-12/RD-15, nodos y
+versión del pipeline, tabla RevisionHumana y migración 0002. Pruebas de API,
+reglas, grafo, fuga de PII y métricas. Documentación: README, reglas del proyecto,
+prompt maestro, ADR-020, trazabilidad, ficha MD/PDF y guion. Nuevo prompt v3,
+golden set ampliado y evidencia JSON versionada.
+
+Riesgos y pendientes: los descritos en CORRECCIONES_EVALUACION.md y ADR-020.
+El precio de CLP 3.600.000 + IVA anual es una hipótesis comercial, no una venta
+validada. La ficha identifica costos observados y presupuesto por separado.
+
+---
+
+## Registro histórico de la primera publicación (no es la versión vigente)
+
 # Despliegue y verificación pública - KARIN triage
 
 Fecha: 2026-11-07. Objetivo: publicar el prototipo y comprobar el flujo público

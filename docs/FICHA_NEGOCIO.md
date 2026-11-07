@@ -46,7 +46,8 @@ no garantiza adjudicación. Verificar UTM, impuestos y elegibilidad al cotizar.
 
 En la corrida histórica v2 se estimaron USD 0,1889 / 6 casos con LLM =
 **USD 0,0315 por caso** (incluidos reintentos de esa muestra). No es costo
-garantizado ni tarifa del proveedor conciliada. **USD 0,10 por caso es un
+garantizado ni tarifa del proveedor conciliada. La nueva corrida v3 estima
+USD 0,1600 / 9 casos = **USD 0,0178 por caso**. **USD 0,10 por caso es un
 presupuesto conservador**, aproximadamente tres veces ese valor, para variación
 de longitud y reintentos; no es el costo observado. A 1.000 casos/mes: presupuesto
 de inferencia USD 100, más USD 12 de infraestructura, antes de soporte y desarrollo.
