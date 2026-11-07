@@ -1,0 +1,32 @@
+# Secretos: nunca entran al repositorio ni a su historial.
+.env
+.env.*
+!.env.example
+*.pem
+*.key
+secrets/
+
+# Python
+__pycache__/
+*.py[cod]
+.venv/
+.pytest_cache/
+.ruff_cache/
+.mypy_cache/
+*.egg-info/
+
+# Base de datos local de desarrollo
+*.db
+*.sqlite
+*.sqlite3
+
+# Salidas de evaluación (se versiona el informe, no las corridas crudas)
+evals/salidas/
+
+# Encargos de delegacion: evidencia de orquestacion, no parte del entregable.
+.encargos/
+
+# Directorios temporales que dejan las corridas de pruebas delegadas.
+backend/.test-cache/
+backend/.test-tmp/
+backend/.tmp-*/

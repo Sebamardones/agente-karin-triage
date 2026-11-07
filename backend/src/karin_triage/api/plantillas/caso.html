@@ -1,0 +1,37 @@
+{% extends "base.html" %}
+{% block contenido %}<p><a href="/">Volver a la bandeja</a></p><h2>{{ denuncia.id_externo_dt }}</h2>
+<h3>Texto seudonimizado</h3><pre>{{ denuncia.texto_seudonimizado }}</pre>
+{% if not p.decision %}<p role="status">Sin propuesta: {{ p.estado_auxiliar or p.marcas_pipeline or 'Evaluación no disponible' }}. Requiere revisión humana.</p>{% endif %}
+<h3>Propuesta completa</h3><dl>
+<dt>Decisión</dt><dd>{{ p.decision or 'Sin propuesta' }}</dd>
+<dt>Conductas</dt><dd>{{ p.tipo_conducta }}</dd>
+<dt>Vulneración de derechos fundamentales</dt><dd>{{ 'Sí' if p.vulneracion_ddff else 'No marcada' }}</dd>
+<dt>Urgencia</dt><dd>{{ '⚠ Urgencia de resguardo' if p.urgencia_resguardo else 'Sin urgencia marcada' }}</dd>
+<dt>Motivo de descarte</dt><dd>{{ p.motivo_descarte or 'No corresponde' }}</dd>
+<dt>Confianza</dt><dd>{{ p.confianza if p.confianza is not none else 'No disponible' }}</dd>
+<dt>Marcas del pipeline</dt><dd>{{ p.marcas_pipeline }}</dd></dl>
+{% for bloque in p.justificacion_y_citas %}
+{% if bloque.decision_modelo and bloque.decision_modelo != p.decision %}
+<p class="correccion" role="alert"><strong>Una regla dura corrigió la propuesta del modelo.</strong>
+El modelo propuso <strong>{{ bloque.decision_modelo }}</strong> y la decisión quedó en
+<strong>{{ p.decision }}</strong> por {{ p.reglas_aplicadas }}.
+La justificación de abajo es la que escribió el modelo <em>antes</em> de la corrección, así que
+puede argumentar a favor de la decisión descartada. Se conserva sin editar para que quede
+constancia de lo que propuso.</p>
+{% endif %}
+<p>{{ bloque.justificacion }}</p>
+<h3>Citas</h3><ul>{% for cita in bloque.citas %}<li><q>{{ cita.texto_literal }}</q> · Fuente: {{ cita.fuente }} · Referencia: {{ cita.referencia or 'Sin referencia' }}</li>{% endfor %}</ul>
+{% if bloque.supuestos %}<p>Supuestos: {{ bloque.supuestos|join('; ') }}</p>{% endif %}{% endfor %}
+<h3>Reglas aplicadas</h3><p>{{ p.reglas_aplicadas or 'Sin reglas registradas' }}</p>
+<h3>Revisión humana</h3>
+<div class="tabla"><table><tbody>{% include '_fila.html' %}</tbody></table></div>
+<form method="post" action="/casos/{{ denuncia.id }}/revision"
+ hx-post="/casos/{{ denuncia.id }}/revision" hx-target="#fila-{{ denuncia.id }}" hx-swap="outerHTML"
+ hx-on::after-request="if(event.detail.successful) this.elements.version.value = Number(this.elements.version.value) + 1">
+<input type="hidden" name="version" value="{{ version }}">
+<label>Decisión final de la revisión <select name="decision_final" required>
+{% for decision in decisiones %}<option value="{{ decision.value }}" {% if decision.value == p.decision %}selected{% endif %}>{{ decision.value }}</option>{% endfor %}</select></label>
+<label>Comentario <textarea name="comentario" rows="4"></textarea></label>
+<button>Registrar revisión</button></form>
+<h3>Historial</h3><ul>{% for revision in historial %}<li>Nivel {{ revision.nivel }} · {{ revision.funcionario }} · {{ revision.rol }} · {{ revision.decision_final }}<p>{{ revision.comentario }}</p></li>{% else %}<li>Sin revisiones registradas</li>{% endfor %}</ul>
+{% endblock %}

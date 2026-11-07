@@ -1,0 +1,11 @@
+{% extends "base.html" %}
+{% block contenido %}<h2>Bandeja de revisión humana</h2>
+{% if mensaje %}<p role="status">{{ mensaje }}</p>{% endif %}
+{% if usuario.rol == 'analista' %}<form method="post" action="/cargar-golden-set">
+<button>Cargar los 8 casos sintéticos del golden set</button></form>{% endif %}
+{% if filas %}<div class="tabla"><table><thead><tr>
+<th>Caso</th><th>Propuesta / estado</th><th>Conductas</th><th>Resguardo</th>
+<th>Confianza</th><th>Pipeline</th><th>Prioridad</th><th>Revisión</th>
+</tr></thead><tbody>{% for fila in filas %}{% with denuncia=fila.denuncia, p=fila.p, historial=fila.historial %}
+{% include '_fila.html' %}{% endwith %}{% endfor %}</tbody></table></div>
+{% else %}<p>No hay casos en la bandeja.</p>{% endif %}{% endblock %}

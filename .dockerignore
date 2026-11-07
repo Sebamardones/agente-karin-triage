@@ -1,0 +1,28 @@
+# Nada de esto entra a la imagen.
+.git
+.gitignore
+.encargos/
+**/.venv/
+**/__pycache__/
+**/*.py[cod]
+**/.pytest_cache/
+**/.ruff_cache/
+**/.mypy_cache/
+*.db
+*.sqlite
+*.sqlite3
+.env
+.env.*
+!.env.example
+docs/
+README.md
+PROMPT_MAESTRO.md
+CLAUDE.md
+AGENTS.md
+evals/salidas/
+
+# Temporales de pruebas delegadas. Quedaron con permisos restringidos y
+# romperian la lectura del contexto de build si no se excluyen.
+backend/.test-cache/
+backend/.test-tmp/
+backend/.tmp-*/

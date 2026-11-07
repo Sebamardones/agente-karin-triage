@@ -1,0 +1,9 @@
+<!doctype html>
+<html lang="es">
+<head><meta charset="utf-8"><meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Karin Triage</title><link rel="stylesheet" href="/estaticos/estilo.css">
+<script src="/estaticos/htmx.min.js" defer></script></head>
+<body><header><h1><a href="/">Karin Triage</a></h1>
+<strong>Datos sinteticos · el agente propone, una persona decide</strong>
+{% if usuario %}<p>{{ usuario.nombre }} · {{ usuario.rol }} · <a href="/salir">Salir</a></p>{% endif %}
+</header><main>{% block contenido %}{% endblock %}</main></body></html>

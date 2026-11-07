@@ -1,0 +1,21 @@
+:root { font-family: system-ui, sans-serif; color: #182b39; background: #f5f7f8; }
+body { margin: 0; } header, main { padding: 1rem; max-width: 76rem; margin: auto; }
+header { border-bottom: 3px solid #245877; } a { color: #174a70; }
+main { background: white; } label { display: block; margin: 1rem 0; }
+input, select, textarea, button { font: inherit; padding: .6rem; max-width: 100%; box-sizing: border-box; }
+textarea { width: 100%; } button { cursor: pointer; background: #174a70; color: white; border: 0; }
+.tabla { overflow-x: auto; } table { border-collapse: collapse; width: 100%; }
+td, th { padding: .7rem; border-bottom: 1px solid #bcc8cf; text-align: left; }
+pre { white-space: pre-wrap; overflow-wrap: anywhere; font: inherit; padding: 1rem; background: #eef2f4; }
+dd, p, li { overflow-wrap: anywhere; } dt { font-weight: bold; } dd { margin-bottom: .6rem; }
+:focus-visible { outline: 3px solid #a15b00; outline-offset: 3px; }
+@media (max-width: 40rem) { header, main { padding: .7rem; } input, select { width: 100%; } }
+
+/* Aviso de correccion por regla dura. Se distingue por borde y peso, no solo
+   por color: un funcionario que no distingue rojo de verde tiene que verlo. */
+.correccion {
+  border-left: 6px solid #8a3a00;
+  background: #fff4e5;
+  padding: .75rem 1rem;
+  margin: 1rem 0;
+}
