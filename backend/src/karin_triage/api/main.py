@@ -1,5 +1,6 @@
 """API y vistas renderizadas: toda propuesta permanece bajo revisión humana."""
 
+import hashlib
 import json
 import os
 import re
@@ -41,6 +42,10 @@ Sesion = Annotated[Session, Depends(obtener_sesion)]
 DIRECTORIO = Path(__file__).resolve().parent
 plantillas = Jinja2Templates(directory=DIRECTORIO / "plantillas")
 plantillas.env.filters["etiqueta"] = etiqueta
+# Huella del CSS en su URL: sin esto, un navegador que ya visitó el sitio sigue
+# usando la hoja anterior tras un despliegue (StaticFiles no envía Cache-Control).
+plantillas.env.globals["version_css"] = hashlib.sha256(
+    (DIRECTORIO / "estaticos" / "estilo.css").read_bytes()).hexdigest()[:12]
 
 
 def contradice_rd10(propuesta, decision):

@@ -485,3 +485,11 @@ def test_revision_registrada_confirma_en_la_ficha(entorno):
     html = cliente.get(f"/casos/{identificador}").text
     assert 'class="confirmacion"' in html and "Revisión registrada." in html
     assert "Revisión registrada." not in cliente.get(f"/casos/{identificador}").text
+
+
+def test_css_versionado_por_contenido(entorno):
+    cliente, _ = entorno
+    huella = main.plantillas.env.globals["version_css"]
+    assert len(huella) == 12
+    assert f'/estaticos/estilo.css?v={huella}"' in cliente.get("/entrar").text
+    assert cliente.get(f"/estaticos/estilo.css?v={huella}").status_code == 200
