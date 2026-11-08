@@ -1,8 +1,9 @@
-<div id="estado-caso" hx-get="/casos/{{ denuncia.id }}/estado" hx-swap="outerHTML"
+<div id="estado-caso" class="estado-caso" hx-get="/casos/{{ denuncia.id }}/estado" hx-swap="outerHTML"
  hx-trigger="every 5s [document.visibilityState === 'visible']">
-<div class="tabla"><table><tbody>{% include '_fila.html' %}</tbody></table></div>
-<h3>Historial</h3><ul class="historial">{% for revision in historial %}<li><strong>Nivel {{ revision.nivel }} · {{ revision.funcionario }} · {{ revision.rol }} · {{ revision.decision_final|etiqueta }}</strong><p>{{ revision.comentario }}</p>
+<p class="estado-actual"><span class="nota">Estado:</span> <strong>{{ estado_revision }}</strong></p>
+{% if historial %}<ol class="historial">{% for revision in historial %}<li><strong>Nivel {{ revision.nivel }} · {{ revision.funcionario }} · {{ revision.rol }} · {{ revision.decision_final|etiqueta }}</strong>
+{% if revision.comentario %}<p>{{ revision.comentario }}</p>{% endif %}
 {% if revision.motivo_descarte %}<p>Motivo: {{ revision.motivo_descarte|etiqueta }} · Cita: <q>{{ revision.cita_respaldo }}</q></p>{% endif %}
 {% if revision.excepcion_rd10 %}<p>Excepción a RD-10 registrada; requiere validación humana de nivel 2.</p>{% endif %}
-</li>{% else %}<li>Sin revisiones registradas</li>{% endfor %}</ul>
+</li>{% endfor %}</ol>{% endif %}
 </div>

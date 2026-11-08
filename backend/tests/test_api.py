@@ -222,7 +222,7 @@ def test_sin_propuesta_y_sin_javascript(entorno):
     cliente, _ = entorno
     login(cliente)
     html = cliente.get(f"/casos/{identificador}").text
-    assert "Sin propuesta: LLM_REFUSAL" in html
+    assert "Sin propuesta: Modelo no disponible · revisión manual" in html
     assert 'name="decision_final"' in html
     r = cliente.post(f"/casos/{identificador}/revision", data={
         "version": 0, "decision_final": "PROCEDE_INVESTIGACION", "comentario": "Sintético",
@@ -290,7 +290,11 @@ def test_exito_htmx_recarga_la_pagina(entorno):
     identificador = caso(entorno)
     login(entorno[0])
     r = revision(entorno[0], identificador)
-    assert r.status_code == 200 and r.headers["HX-Refresh"] == "true"
+    evento = json.loads(r.headers["HX-Trigger"])["revisionRegistrada"]
+    # Sin recarga: la interfaz recibe a qué bandeja pasó el caso y cuál sigue.
+    assert r.status_code == 200 and evento["caso"] == identificador
+    assert evento["bandeja"] == "por-revisar" and evento["siguiente"] is None
+    assert evento["mensaje"] == "Enviado a un supervisor para su validación"
 
 
 def test_formulario_oculto_si_el_usuario_no_puede_revisar(entorno):
@@ -316,13 +320,14 @@ def test_bandeja_muestra_el_estado_humano_y_se_refresca(entorno):
     assert "Pendiente de revisión humana" in cliente.get("/bandeja/contenido").text
     assert revision(cliente, simple, decision="DERIVA_MEDIACION").status_code == 200
     assert revision(cliente, descarte).status_code == 200
-    html = cliente.get("/bandeja/contenido").text
+    html = cliente.get("/bandeja/contenido?bandeja=revisados").text
     assert 'id="bandeja-viva"' in html and "every 5s" in html
     assert "Revisado · segunda revisión disponible: Deriva a mediación (analista_demo)" in html
+    html = cliente.get("/bandeja/contenido?bandeja=esperando").text
     assert "Pendiente de validación por un supervisor · nivel 1: No corresponde a Ley Karin" in html
     login(cliente, "supervisor")
     assert revision(cliente, descarte, version=1).status_code == 200
-    assert "Validación humana completada: No corresponde a Ley Karin · reconducir (supervisor_demo)" in cliente.get("/").text
+    assert "Validación humana completada: No corresponde a Ley Karin · reconducir (supervisor_demo)" in cliente.get("/?bandeja=cerrados").text
     estado = cliente.get(f"/casos/{descarte}/estado").text
     assert 'id="estado-caso"' in estado and "Nivel 2 · supervisor_demo" in estado
 
@@ -345,7 +350,7 @@ def test_nivel_dos_siempre_supervisor_distinto(entorno):
     assert 'name="decision_final"' not in html
     login(cliente, "supervisor")
     assert revision(cliente, identificador, version=1, decision="DESCARTADO").status_code == 200
-    assert "Validación humana completada: No corresponde a Ley Karin · reconducir (supervisor_demo)" in cliente.get("/").text
+    assert "Validación humana completada: No corresponde a Ley Karin · reconducir (supervisor_demo)" in cliente.get("/?bandeja=cerrados").text
 
 
 @pytest.mark.parametrize("datos", [
@@ -383,7 +388,7 @@ def test_excepcion_rd10_exige_comentario_y_supervisor(entorno):
     assert "Advertencia RD-10" in cliente.get(f"/casos/{identificador}").text
     assert revision(cliente, identificador, decision="DERIVA_MEDIACION", comentario="").status_code == 422
     assert revision(cliente, identificador, decision="DERIVA_MEDIACION").status_code == 200
-    assert "Pendiente de validación" in cliente.get("/").text
+    assert "Pendiente de validación" in cliente.get("/?bandeja=esperando").text
     assert revision(cliente, identificador, version=1, decision="DERIVA_MEDIACION").status_code == 403
     login(cliente, "supervisor")
     assert revision(cliente, identificador, version=1, decision="DERIVA_MEDIACION").status_code == 200
@@ -449,23 +454,23 @@ def test_bandeja_muestra_la_tanda_vigente_y_guarda_las_anteriores(entorno):
             select(Denuncia).order_by(Denuncia.id_externo_dt))]
     tandas = sorted({e.split("-")[1] for e in externos if e.count("-") >= 2})
     assert len(tandas) == 2
-    html = cliente.get("/bandeja/contenido").text
-    principal, _, historial = html.partition('class="historial-tandas"')
-    assert "Historial de tandas anteriores (11 casos)" in html
-    assert "DEMO-0123456789ab" in principal
+    principal = cliente.get("/bandeja/contenido").text
+    historial = cliente.get("/bandeja/contenido?bandeja=anteriores").text
+    assert 'Tandas anteriores <span class="contador">11</span>' in principal
+    assert "DEMO-0123456789ab" in principal and "DEMO-0123456789ab" not in historial
     # Cada tanda queda completa de un solo lado: nada se borra ni se mezcla.
     vigente = [t for t in tandas if f"DEMO-{t}-" in principal]
     anterior = [t for t in tandas if f"DEMO-{t}-" in historial]
     assert len(vigente) == 1 and len(anterior) == 1 and vigente != anterior
     assert f"DEMO-{vigente[0]}-" not in historial
-    assert "Total de casos guardados: 23" in html
+    assert "Total de casos guardados: 23" in principal
 
 
 def test_bandeja_sin_tandas_muestra_todo(entorno):
     caso(entorno, externo="SINT-0001")
     login(entorno[0])
     html = entorno[0].get("/").text
-    assert "SINT-0001" in html and "Historial de tandas anteriores" not in html
+    assert "SINT-0001" in html and "Tandas anteriores" not in html
 
 
 def test_motivo_de_descarte_solo_en_descartes(entorno):
@@ -473,18 +478,20 @@ def test_motivo_de_descarte_solo_en_descartes(entorno):
     investigar = caso(entorno, externo="CASO-INVESTIGA")
     descartar = caso(entorno, externo="CASO-DESCARTE", decision="DESCARTADO")
     login(cliente)
-    assert "Motivo de descarte" not in cliente.get(f"/casos/{investigar}").text
-    assert "Motivo de descarte" in cliente.get(f"/casos/{descartar}").text
+    assert 'chip-reconducir">Motivo:' not in cliente.get(f"/casos/{investigar}").text
+    assert 'chip-reconducir">Motivo:' in cliente.get(f"/casos/{descartar}").text
 
 
 def test_revision_registrada_confirma_en_la_ficha(entorno):
     identificador = caso(entorno)
     cliente, _ = entorno
     login(cliente)
-    assert revision(cliente, identificador, decision="PROCEDE_INVESTIGACION").status_code == 200
-    html = cliente.get(f"/casos/{identificador}").text
-    assert 'class="confirmacion"' in html and "Revisión registrada." in html
-    assert "Revisión registrada." not in cliente.get(f"/casos/{identificador}").text
+    # Sin JavaScript: redirección al caso con el aviso de a qué bandeja pasó.
+    r = cliente.post(f"/casos/{identificador}/revision", data={
+        "version": 0, "decision_final": "PROCEDE_INVESTIGACION", "comentario": ""})
+    assert r.status_code == 200
+    assert 'class="confirmacion">Propuesta confirmada · pasó a Revisados' in r.text
+    assert "Propuesta confirmada" not in cliente.get(f"/casos/{identificador}").text
 
 
 def test_css_versionado_por_contenido(entorno):
@@ -493,3 +500,82 @@ def test_css_versionado_por_contenido(entorno):
     assert len(huella) == 12
     assert f'/estaticos/estilo.css?v={huella}"' in cliente.get("/entrar").text
     assert cliente.get(f"/estaticos/estilo.css?v={huella}").status_code == 200
+
+
+# --- Puesto de trabajo (docs/plan-interaccion.md) -------------------------------
+
+
+def test_bandejas_por_rol_llevan_el_descarte_al_supervisor(entorno):
+    cliente, _ = entorno
+    descarte = caso(entorno, externo="DESCARTE-ROL", decision="DESCARTADO")
+    login(cliente)
+    assert "DESCARTE-ROL" in cliente.get("/").text
+    assert revision(cliente, descarte).status_code == 200
+    assert "DESCARTE-ROL" not in cliente.get("/").text
+    login(cliente, "supervisor")
+    html = cliente.get("/").text  # el supervisor entra directo a lo que debe validar
+    assert 'aria-current="page">Por validar <span class="contador">1</span>' in html
+    assert "DESCARTE-ROL" in html
+
+
+def test_panel_parcial_muestra_veredicto_y_citas_marcadas(entorno):
+    identificador = caso(entorno, texto="Inicio. Relato sintético para revisión. Fin.")
+    with Session(entorno[1]) as sesion:
+        p = sesion.scalar(select(Preclasificacion))
+        p.justificacion_y_citas = [{"justificacion": "Sintética", "citas": [
+            {"texto_literal": "Relato sintético para revisión.", "fuente": "denuncia"},
+            {"texto_literal": "Cita inventada que no está", "fuente": "denuncia"}]}]
+        sesion.commit()
+    login(entorno[0])
+    html = entorno[0].get(f"/casos/{identificador}/panel").text
+    assert "<html" not in html and 'id="panel-caso"' in html
+    assert "El agente propone" in html and "Procede investigación" in html
+    assert '<mark id="cita-1" class="cita-marca" data-cita="1">Relato sintético para revisión.</mark>' in html
+    assert 'id="cita-2"' not in html and "Citas del relato verificadas: 1 de 2" in html
+    assert "no aparece tal cual en el texto" in html
+
+
+def test_revision_abre_el_siguiente_caso_de_la_misma_bandeja(entorno):
+    primero = caso(entorno, externo="PRIMERO", prioridad=0)
+    segundo = caso(entorno, externo="SEGUNDO", prioridad=1)
+    login(entorno[0])
+    r = revision(entorno[0], primero, decision="PROCEDE_INVESTIGACION")
+    evento = json.loads(r.headers["HX-Trigger"])["revisionRegistrada"]
+    assert evento["siguiente"] == segundo
+    assert evento["mensaje"] == "Propuesta confirmada · pasó a Revisados"
+
+
+def test_seguimiento_del_relato_nuevo_lleva_a_la_propuesta(entorno):
+    cliente, motor = entorno
+    login(cliente)
+    relato = "Relato completamente inventado sobre hostigamiento en una empresa ficticia."
+    r = cliente.post("/demo/nuevo", data={"relato": relato, "confirmar_sintetico": True},
+                     follow_redirects=False)
+    destino = r.headers["location"]
+    assert r.status_code == 303 and destino.startswith("/demo/seguimiento/DEMO-")
+    externo = destino.rsplit("/", 1)[1]
+    with Session(motor) as sesion:
+        listo = sesion.scalar(select(Denuncia.id).where(Denuncia.id_externo_dt == externo))
+    assert cliente.get(destino, follow_redirects=False).headers["location"] == f"/casos/{listo}"
+    assert cliente.get(destino + "/estado").headers["HX-Redirect"] == f"/casos/{listo}"
+    assert cliente.get("/demo/seguimiento/SINT-0001/estado").status_code == 404
+
+
+def test_resaltar_escapa_el_relato_y_respeta_espacios():
+    from karin_triage.api.presentacion import resaltar
+    html, encontradas = resaltar("<b>x</b> la jefatura   grita", [
+        {"texto_literal": "la jefatura grita"}])
+    assert "<b>" not in html and "&lt;b&gt;" in html
+    assert encontradas == {1} and 'data-cita="1">la jefatura   grita</mark>' in html
+
+
+def test_recorrido_de_un_caso_sin_ia(entorno):
+    identificador = caso(entorno, decision=None)
+    with Session(entorno[1]) as sesion:
+        p = sesion.scalar(select(Preclasificacion))
+        p.justificacion_y_citas, p.reglas_aplicadas = [], "RD-02"
+        p.estado_auxiliar, p.marcas_pipeline = "DERIVAR_OTRA_INSTITUCION", ""
+        sesion.commit()
+    login(entorno[0])
+    html = entorno[0].get(f"/casos/{identificador}").text
+    assert "Sin IA · RD-02" in html and "costó cero" in html

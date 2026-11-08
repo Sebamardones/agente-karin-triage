@@ -1,67 +1,126 @@
-{% extends "base.html" %}
-{% block titulo %}{{ denuncia.id_externo_dt }}{% endblock %}
-{% block contenido %}<div class="lienzo">
+{% set p = panel.p %}{% set d = panel.denuncia %}
+<article class="panel-caso" id="panel-caso" data-caso="{{ d.id }}" data-bandeja="{{ bandeja or panel.categoria }}">
+<a class="volver-cola" href="/?bandeja={{ bandeja or panel.categoria }}">Volver a la cola</a>
 {% if p.urgencia_resguardo %}<img class="cinta" src="/estaticos/cinta-contingencia-dark.svg" alt="" aria-hidden="true">{% endif %}
-<p><a href="/">Volver a la bandeja</a></p>
-<p class="antetitulo">Caso sintético</p>
-<h1>{{ denuncia.id_externo_dt }}</h1>
-{% if p.urgencia_resguardo %}<p class="aviso aviso-urgencia"><span class="etiqueta etiqueta-urgencia">Urgencia de resguardo</span>
-La propuesta marca riesgo para la persona denunciante. Revisa este caso primero: el plazo para pedir medidas de resguardo es corto.</p>{% endif %}
-{% if not p.decision %}<p role="status" class="aviso">Sin propuesta: {{ p.estado_auxiliar or p.marcas_pipeline or 'Evaluación no disponible' }}. Requiere revisión humana.</p>{% endif %}
+<p class="antetitulo">{{ d.id_externo_dt }} · ingresó {{ panel.tiempo }}</p>
+<h2 class="veredicto" id="titulo-caso">{% if p.decision %}<span class="veredicto-rotulo">El agente propone</span>
+{{ p.decision|etiqueta }}{% if p.tipo_conducta %} <span class="veredicto-por">por {{ p.tipo_conducta|etiqueta|lower }}</span>{% endif %}
+{% else %}<span class="veredicto-rotulo">Sin propuesta del agente</span>
+{{ p.estado_auxiliar|etiqueta if p.estado_auxiliar else 'Requiere revisión manual' }}{% endif %}</h2>
+<p class="chips-veredicto">
+{% if p.urgencia_resguardo %}<span class="chip chip-urgente">Urgencia de resguardo</span>{% endif %}
+{% if p.confianza is not none %}<span class="chip chip-neutro">Confianza {{ '%.2f'|format(p.confianza)|replace('.', ',') }}</span>{% endif %}
+{% if panel.citas_relato %}<span class="chip {{ 'chip-verificada' if panel.encontradas|length == panel.citas_relato|length else 'chip-reconducir' }}">Citas del relato verificadas: {{ panel.encontradas|length }} de {{ panel.citas_relato|length }}</span>{% endif %}
+{% if p.vulneracion_ddff %}<span class="chip chip-neutro">Vulneración de derechos fundamentales</span>{% endif %}
+{% if p.decision == 'DESCARTADO' %}<span class="chip chip-reconducir">Motivo: {{ p.motivo_descarte|etiqueta if p.motivo_descarte else 'sin motivo registrado' }}</span>{% endif %}
+</p>
+{% if p.urgencia_resguardo %}<p class="aviso aviso-urgencia">La propuesta marca riesgo para la persona denunciante. El plazo para pedir medidas de resguardo es corto: revisa este caso primero.</p>{% endif %}
+{% if not p.decision %}<p role="status" class="aviso">Sin propuesta: {{ (p.estado_auxiliar or p.marcas_pipeline)|etiqueta if (p.estado_auxiliar or p.marcas_pipeline) else 'Evaluación no disponible' }}. Requiere revisión humana.</p>{% endif %}
+{% if panel.decision_corregida %}<p class="correccion" role="alert"><strong>Una regla dura corrigió al modelo.</strong>
+El modelo propuso <strong>{{ panel.decision_corregida|etiqueta }}</strong> y la propuesta quedó en <strong>{{ p.decision|etiqueta }}</strong>.
+La justificación de abajo es la original del modelo y se conserva sin editar.</p>{% endif %}
 
-<h2>Propuesta del agente</h2>
-<div class="tarjeta"><dl class="propuesta">
-<div><dt>Decisión</dt><dd>{{ p.decision|etiqueta if p.decision else 'Sin propuesta' }}</dd></div>
-<div><dt>Conductas</dt><dd>{{ p.tipo_conducta|etiqueta if p.tipo_conducta else 'Sin conducta tipificada' }}</dd></div>
-<div><dt>Vulneración de derechos fundamentales</dt><dd>{{ 'Sí' if p.vulneracion_ddff else 'No marcada' }}</dd></div>
-<div><dt>Urgencia</dt><dd>{{ 'Urgencia de resguardo' if p.urgencia_resguardo else 'Sin urgencia marcada' }}</dd></div>
-{% if p.decision == 'DESCARTADO' %}<div><dt>Motivo de descarte</dt><dd>{{ p.motivo_descarte|etiqueta if p.motivo_descarte else 'Sin motivo registrado' }}</dd></div>{% endif %}
-<div><dt>Confianza</dt><dd>{{ p.confianza if p.confianza is not none else 'No disponible' }}</dd></div>
-<div><dt>Alertas</dt><dd>{{ p.marcas_pipeline|etiqueta }}</dd></div>
-</dl></div>
-
+<div class="panel-columnas">
+<section class="panel-relato" aria-labelledby="titulo-relato">
+<h3 id="titulo-relato">Relato seudonimizado</h3>
+<div class="relato" id="relato">{{ panel.relato_marcado }}</div>
+<p class="nota">Lo marcado son las citas literales en que se apoya el agente.{% if panel.puede_descartar and not panel.bloqueo %} Para un descarte, selecciona aquí la frase que lo respalda.{% endif %}</p>
+{% if panel.citas_relato or panel.citas_normativas %}<h3>Citas</h3><ol class="citas">
+{% for cita in panel.citas_relato %}<li data-cita="{{ loop.index }}"{% if loop.index not in panel.encontradas %} class="no-verificada"{% endif %}><q>{{ cita.texto_literal }}</q>
+<span class="fuente nota">Cita del relato{% if cita.referencia %} · {{ cita.referencia }}{% endif %}{% if loop.index not in panel.encontradas %} · no aparece tal cual en el texto{% endif %}</span></li>{% endfor %}
+{% for cita in panel.citas_normativas %}<li class="cita-normativa"><q>{{ cita.texto_literal }}</q>
+<span class="fuente nota">Cita normativa{% if cita.referencia %} · {{ cita.referencia }}{% endif %}</span></li>{% endfor %}
+</ol>{% endif %}
+</section>
+<section class="panel-analisis" aria-labelledby="titulo-recorrido">
+<h3 id="titulo-recorrido">Recorrido del caso</h3>
+<ol class="recorrido">{% for paso in panel.recorrido %}
+<li class="paso paso-{{ paso.estado }}"><span class="paso-nombre">{{ paso.nombre }}</span><span class="paso-detalle">{{ paso.detalle }}</span></li>{% endfor %}
+</ol>
+<p class="reglas-codigos"><span class="nota">Reglas duras aplicadas:</span> {% for regla in panel.reglas %}<span class="etiqueta">{{ regla }}</span> {% else %}<span class="nota">ninguna</span>{% endfor %}</p>
 {% for bloque in p.justificacion_y_citas %}
-{% if bloque.decision_modelo and bloque.decision_modelo != p.decision %}
-<p class="correccion" role="alert"><strong>Una regla dura corrigió la propuesta del modelo.</strong>
-El modelo propuso <strong>{{ bloque.decision_modelo|etiqueta }}</strong> y la decisión quedó en
-<strong>{{ p.decision|etiqueta }}</strong> por {{ p.reglas_aplicadas }}.
-La justificación de abajo es la que escribió el modelo <em>antes</em> de la corrección, así que
-puede argumentar a favor de la decisión descartada. Se conserva sin editar para que quede
-constancia de lo que propuso.</p>
-{% endif %}
-<h3>Justificación</h3>
+<details class="justificacion" open><summary>Por qué lo propone</summary>
 <p>{{ bloque.justificacion }}</p>
-<h3>Citas literales</h3><ul class="citas">{% for cita in bloque.citas %}<li><q>{{ cita.texto_literal }}</q>
-<span class="fuente nota">{{ 'Cita normativa' if cita.fuente == 'normativa' else 'Cita del relato' }}{% if cita.referencia %} · {{ cita.referencia }}{% endif %}</span></li>{% endfor %}</ul>
-{% if bloque.supuestos %}<p class="nota">Supuestos: {{ bloque.supuestos|join('; ') }}</p>{% endif %}{% endfor %}
+{% if bloque.supuestos %}<p class="nota">Supuestos: {{ bloque.supuestos|join('; ') }}</p>{% endif %}
+</details>{% endfor %}
+</section>
+</div>
 
-<h3>Reglas duras aplicadas</h3>
-{% set reglas = (p.reglas_aplicadas.split(',') if p.reglas_aplicadas is string else p.reglas_aplicadas) or [] %}
-<p>{% for regla in reglas if regla.strip() %}<span class="etiqueta">{{ regla.strip() }}</span> {% else %}Sin reglas registradas{% endfor %}</p>
-
-<h2>Texto seudonimizado</h2>
-<div class="tarjeta tarjeta-secundaria"><p class="relato">{{ denuncia.texto_seudonimizado }}</p></div>
-
-<h2 id="revision">Revisión humana</h2>
-{% if mensaje %}<p role="status" class="confirmacion">{{ mensaje }}</p>{% endif %}
+<section class="decision" id="decision" aria-labelledby="titulo-decision">
+<h3 id="titulo-decision">{% if panel.primera and not panel.bloqueo %}Tu validación{% else %}Tu decisión{% endif %}</h3>
+{% if panel.mensaje %}<p role="status" class="confirmacion">{{ panel.mensaje }}</p>{% endif %}
 {% if 'ACOSO_SEXUAL' in p.tipo_conducta %}<p role="alert" class="alerta-rd10"><strong>Advertencia RD-10:</strong>
 La mediación en una conducta tipificada como acoso sexual contradice el art. 211-D inciso final.
 Una excepción requiere comentario fundado del analista y validación de un supervisor distinto.
 <a href="https://www.bcn.cl/leychile/navegar?idNorma=1200096">Consultar la norma</a>.</p>{% endif %}
-{% if p.urgencia_resguardo %}<p class="nota">El caso tiene urgencia marcada. Un descarte requiere motivo, fundamento y cita literal; no elimina la alerta de resguardo.</p>{% endif %}
-{% include '_estado_caso.html' %}
-{% if bloqueo %}<p role="status" class="aviso tarjeta"><strong>No puedes registrar una revisión en este caso:</strong> {{ bloqueo }}.</p>
-{% else %}<p id="aviso-revision" role="alert" hidden></p>
-<form method="post" action="/casos/{{ denuncia.id }}/revision" class="tarjeta"
- hx-post="/casos/{{ denuncia.id }}/revision" hx-target="#fila-{{ denuncia.id }}" hx-swap="outerHTML"
- hx-on::after-request="if(event.detail.successful) this.elements.version.value = Number(this.elements.version.value) + 1">
-<h3>Registrar tu revisión</h3>
-<input type="hidden" name="version" value="{{ version }}">
-<label>Decisión final de la revisión <select name="decision_final" required>
-{% for decision in decisiones %}<option value="{{ decision.value }}" {% if decision.value == p.decision %}selected{% endif %}>{{ decision.value|etiqueta }}</option>{% endfor %}</select></label>
-<label>Motivo si descartas <select name="motivo_descarte"><option value="">Selecciona un motivo</option>
-{% for motivo in motivos %}<option value="{{ motivo.value }}">{{ motivo.value|etiqueta }}</option>{% endfor %}</select></label>
-<label>Cita literal del relato seudonimizado que respalda el descarte <textarea name="cita_respaldo" rows="2"></textarea></label>
-<label>Comentario <textarea name="comentario" rows="4"></textarea></label>
-<button>Registrar revisión</button></form>{% endif %}
-</div>{% endblock %}
+{% if p.urgencia_resguardo %}<p class="nota">Un descarte requiere motivo, fundamento y cita literal; no elimina la alerta de resguardo.</p>{% endif %}
+{% with denuncia=d, historial=panel.historial, estado_revision=panel.estado_revision %}{% include '_estado_caso.html' %}{% endwith %}
+
+{% if panel.bloqueo %}<p role="status" class="aviso tarjeta"><strong>No puedes registrar una revisión en este caso:</strong> {{ panel.bloqueo }}.</p>
+{% else %}
+<p id="aviso-revision" role="alert" hidden></p>
+{% set comun = 'hx-post="/casos/' ~ d.id ~ '/revision" hx-swap="none"' %}
+{% if panel.primera %}
+{% set primera = panel.primera %}
+<div class="comparacion">
+<div><span class="comparacion-rotulo">El agente propuso</span><strong>{{ (p.decision or p.estado_auxiliar)|etiqueta if (p.decision or p.estado_auxiliar) else 'Sin propuesta' }}</strong></div>
+<div><span class="comparacion-rotulo">{{ primera.funcionario }} decidió</span><strong>{{ primera.decision_final|etiqueta }}</strong>
+{% if primera.comentario %}<span class="nota">«{{ primera.comentario }}»</span>{% endif %}
+{% if primera.motivo_descarte %}<span class="nota">Motivo: {{ primera.motivo_descarte|etiqueta }} · Cita: <q>{{ primera.cita_respaldo }}</q></span>{% endif %}</div>
+</div>
+<form method="post" action="/casos/{{ d.id }}/revision" class="accion-form" id="form-validar" {{ comun|safe }}>
+<input type="hidden" name="version" value="{{ panel.version }}">
+<input type="hidden" name="decision_final" value="{{ primera.decision_final }}">
+{% if primera.motivo_descarte %}<input type="hidden" name="motivo_descarte" value="{{ primera.motivo_descarte }}">
+<input type="hidden" name="cita_respaldo" value="{{ primera.cita_respaldo }}">{% endif %}
+<label>Comentario de validación{% if primera.decision_final == 'DESCARTADO' or primera.excepcion_rd10 %} (obligatorio){% endif %}
+<textarea name="comentario" rows="2"{% if primera.decision_final == 'DESCARTADO' or primera.excepcion_rd10 %} required{% endif %}></textarea></label>
+<div class="acciones"><button id="accion-confirmar">Validar decisión</button>
+<button type="button" class="boton-secundario" data-abre="form-corregir" id="accion-corregir">Decidir distinto</button>
+{% if panel.puede_descartar and primera.decision_final != 'DESCARTADO' %}<button type="button" class="boton-secundario" data-abre="form-descartar" id="accion-descartar">Descartar</button>{% endif %}</div>
+</form>
+{% else %}
+<div class="acciones acciones-decision">
+{% if p.decision and p.decision != 'DESCARTADO' %}
+<form method="post" action="/casos/{{ d.id }}/revision" class="accion-rapida" {{ comun|safe }}>
+<input type="hidden" name="version" value="{{ panel.version }}">
+<input type="hidden" name="decision_final" value="{{ p.decision }}">
+<button id="accion-confirmar">Confirmar propuesta</button></form>
+{% elif p.decision == 'DESCARTADO' and panel.puede_descartar %}
+<button type="button" id="accion-confirmar" data-abre="form-descartar">Revisar descarte propuesto</button>
+{% endif %}
+<button type="button" class="boton-secundario" data-abre="form-corregir" id="accion-corregir"{% if not p.decision %} aria-expanded="true"{% endif %}>Corregir</button>
+{% if panel.puede_descartar and p.decision != 'DESCARTADO' %}<button type="button" class="boton-secundario" data-abre="form-descartar" id="accion-descartar">Descartar</button>{% endif %}
+</div>
+{% endif %}
+
+<form method="post" action="/casos/{{ d.id }}/revision" class="accion-form" id="form-corregir" {{ comun|safe }}{% if p.decision or panel.primera %} hidden{% endif %}>
+<input type="hidden" name="version" value="{{ panel.version }}">
+<fieldset><legend>Decisión correcta</legend>
+<div class="opciones">{% for decision in panel.decisiones if decision.value != 'DESCARTADO' %}
+<label class="opcion"><input type="radio" name="decision_final" value="{{ decision.value }}" required{% if not p.decision and loop.first %} checked{% endif %}><span>{{ decision.value|etiqueta }}</span></label>{% endfor %}
+</div></fieldset>
+<label>Comentario <textarea name="comentario" rows="3" placeholder="Qué corriges y por qué"></textarea></label>
+{% if 'ACOSO_SEXUAL' in p.tipo_conducta %}<p class="nota">Si eliges mediación en un caso de acoso sexual, el comentario es obligatorio y el caso pasa a un supervisor (RD-10).</p>{% endif %}
+<button>Registrar corrección</button>
+</form>
+
+{% if panel.puede_descartar %}
+<form method="post" action="/casos/{{ d.id }}/revision" class="accion-form" id="form-descartar" {{ comun|safe }} hidden>
+<input type="hidden" name="version" value="{{ panel.version }}">
+<input type="hidden" name="decision_final" value="DESCARTADO">
+<p class="nota">Un descarte nunca se cierra solo: lo valida un supervisor distinto. No se puede descartar por falta de prueba.</p>
+<fieldset><legend>Motivo del catálogo</legend>
+<div class="opciones">{% for motivo in panel.motivos %}
+<label class="opcion"><input type="radio" name="motivo_descarte" value="{{ motivo.value }}" required{% if motivo.value == p.motivo_descarte %} checked{% endif %}><span>{{ motivo.value|etiqueta }}</span></label>{% endfor %}
+</div></fieldset>
+<label>Cita literal del relato que respalda el descarte
+<textarea name="cita_respaldo" rows="2" required id="cita-respaldo" placeholder="Selecciona la frase en el relato o escríbela tal cual"></textarea></label>
+<button type="button" class="boton-secundario boton-chico" data-usar-seleccion>Usar el texto seleccionado</button>
+<label>Comentario <textarea name="comentario" rows="3" required placeholder="Por qué no corresponde a Ley Karin"></textarea></label>
+<button>Enviar a supervisor</button>
+</form>
+{% endif %}
+{% endif %}
+</section>
+</article>

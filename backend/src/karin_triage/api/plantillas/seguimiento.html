@@ -1,0 +1,9 @@
+{% extends "base.html" %}
+{% block titulo %}Analizando relato{% endblock %}
+{% block contenido %}<div class="lienzo seguimiento">
+<p class="antetitulo">Demostración en vivo · {{ externo }}</p>
+<h1>Seguimiento de tu relato</h1>
+<p class="bajada">Cuando la propuesta esté lista, se abre sola. El resultado siempre queda pendiente de una revisión humana.</p>
+{% include '_seguimiento_estado.html' %}
+<p class="nota"><a href="/">Volver a la bandeja</a> · el caso también aparecerá allí.</p>
+</div>{% endblock %}

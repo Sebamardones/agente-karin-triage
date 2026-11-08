@@ -6,7 +6,7 @@ import os
 import re
 import secrets
 from contextlib import asynccontextmanager
-from datetime import date
+from datetime import UTC, date, datetime
 from pathlib import Path
 from threading import Lock
 from typing import Annotated
@@ -16,7 +16,7 @@ from fastapi import BackgroundTasks, Depends, FastAPI, Form, HTTPException, Requ
 from fastapi.responses import RedirectResponse, Response
 from fastapi.staticfiles import StaticFiles
 from fastapi.templating import Jinja2Templates
-from sqlalchemy import create_engine, select, update
+from sqlalchemy import create_engine, func, select, update
 from sqlalchemy.exc import IntegrityError
 from sqlalchemy.orm import Session
 from sqlalchemy.orm.exc import StaleDataError
@@ -24,6 +24,7 @@ from starlette.middleware.sessions import SessionMiddleware
 
 from karin_triage.agent.grafo import procesar_caso
 from karin_triage.agent.nodos import Contexto
+from karin_triage.api import presentacion
 from karin_triage.api.dependencias import obtener_sesion, usuario_actual
 from karin_triage.api.etiquetas import etiqueta
 from karin_triage.config import Ajustes
@@ -46,6 +47,8 @@ plantillas.env.filters["etiqueta"] = etiqueta
 # usando la hoja anterior tras un despliegue (StaticFiles no envía Cache-Control).
 plantillas.env.globals["version_css"] = hashlib.sha256(
     (DIRECTORIO / "estaticos" / "estilo.css").read_bytes()).hexdigest()[:12]
+plantillas.env.globals["version_js"] = hashlib.sha256(
+    (DIRECTORIO / "estaticos" / "interaccion.js").read_bytes()).hexdigest()[:12]
 
 
 def contradice_rd10(propuesta, decision):
@@ -90,9 +93,27 @@ def estado_revision(historial, propuesta):
 
 def datos_fila(sesion, denuncia, propuesta):
     historial = revisiones(sesion, propuesta)
+    estado = estado_revision(historial, propuesta)
+    clave = propuesta.decision or propuesta.estado_auxiliar
     return {"denuncia": denuncia, "p": propuesta, "historial": historial,
             "version": historial[0].version if historial else 0,
-            "estado_revision": estado_revision(historial, propuesta)}
+            "estado_revision": estado,
+            "categoria": presentacion.categoria(historial, estado),
+            "chip": presentacion.CHIP_DECISION.get(clave, ("Sin propuesta", "chip-neutro")),
+            "uso_ia": presentacion.uso_ia(propuesta),
+            "reglas": presentacion.lista_reglas(propuesta.reglas_aplicadas),
+            "extracto": presentacion.extracto(propuesta),
+            "tiempo": presentacion.tiempo_relativo(denuncia.fecha_ingesta)}
+
+
+def bandeja_por_defecto(usuario):
+    return "esperando" if usuario["rol"] == "supervisor" else "por-revisar"
+
+
+def ordenar_cola(filas):
+    """Urgentes primero; dentro de cada grupo se respeta el orden de prioridad."""
+    return ([f for f in filas if f["p"].urgencia_resguardo]
+            + [f for f in filas if not f["p"].urgencia_resguardo])
 
 
 TANDA = re.compile(r"^DEMO-([0-9a-f]{8})-")
@@ -244,27 +265,83 @@ def crear_app(ajustes=None, motor=None):
         request.session.clear()
         return RedirectResponse("/entrar", 303)
 
-    def datos_bandeja(sesion):
-        with carga_lock:
-            estado_carga = dict(carga_estado)
+    def clasificar(sesion):
         filas = sesion.execute(select(Denuncia, Preclasificacion).join(
             Preclasificacion, Preclasificacion.denuncia_id == Denuncia.id
         ).order_by(Preclasificacion.prioridad, Preclasificacion.creado_en)).all()
         vigentes, anteriores = separar_tanda_vigente(
             [datos_fila(sesion, d, p) for d, p in filas])
-        pendientes = sum(1 for f in vigentes if not f["historial"])
-        return {"filas": vigentes, "anteriores": anteriores, "carga": estado_carga,
-                "total_casos": len(filas), "pendientes": pendientes}
+        grupos = {b: [] for b in presentacion.BANDEJAS}
+        for f in vigentes:
+            grupos[f["categoria"]].append(f)
+        grupos["anteriores"] = anteriores
+        return grupos, vigentes, len(filas)
+
+    def metricas(sesion, vigentes):
+        hoy = datetime.now(UTC).replace(tzinfo=None, hour=0, minute=0, second=0, microsecond=0)
+        primeras = list(sesion.scalars(select(RevisionHumana).where(RevisionHumana.nivel == 1)))
+        coinciden = sum(1 for r in primeras if r.coincide_con_agente)
+        return {
+            "revisadas_hoy": sesion.scalar(select(func.count(RevisionHumana.id)).where(
+                RevisionHumana.creado_en >= hoy)) or 0,
+            "coincidencia": round(100 * coinciden / len(primeras)) if primeras else None,
+            "primeras": len(primeras),
+            "sin_ia": sum(1 for f in vigentes if not f["uso_ia"]),
+        }
+
+    def datos_bandeja(sesion, usuario, bandeja=None):
+        if bandeja not in presentacion.BANDEJAS:
+            bandeja = bandeja_por_defecto(usuario)
+        with carga_lock:
+            estado_carga = dict(carga_estado)
+        grupos, vigentes, total = clasificar(sesion)
+        cola = ordenar_cola(grupos[bandeja])
+        return {"bandeja": bandeja, "cola": cola,
+                "urgentes": [f for f in cola if f["p"].urgencia_resguardo],
+                "resto": [f for f in cola if not f["p"].urgencia_resguardo],
+                "conteos": {b: len(v) for b, v in grupos.items()},
+                "nombres": presentacion.NOMBRES_BANDEJA[usuario["rol"]],
+                "carga": estado_carga, "total_casos": total,
+                "pendientes": len(grupos["por-revisar"]),
+                "metricas": metricas(sesion, vigentes)}
+
+    def siguiente_en(sesion, usuario, bandeja, excluir):
+        if bandeja not in presentacion.BANDEJAS:
+            return None
+        grupos, _, _ = clasificar(sesion)
+        for f in ordenar_cola(grupos[bandeja]):
+            if f["denuncia"].id != excluir:
+                return f["denuncia"].id
+        return None
+
+    def datos_panel(request, sesion, usuario, denuncia, propuesta):
+        fila = datos_fila(sesion, denuncia, propuesta)
+        bloqueo = motivo_bloqueo(fila["historial"], propuesta, usuario)
+        decisiones = list(Decision)
+        if not fila["historial"] and usuario["rol"] != "analista":
+            decisiones.remove(Decision.DESCARTADO)
+        citas_relato, citas_normativas = presentacion.citas_de(propuesta)
+        relato, encontradas = presentacion.resaltar(denuncia.texto_seudonimizado, citas_relato)
+        return {**fila, "decisiones": decisiones, "motivos": list(MotivoDescarte),
+                "bloqueo": bloqueo[1] if bloqueo else None,
+                "relato_marcado": relato, "encontradas": encontradas,
+                "citas_relato": citas_relato, "citas_normativas": citas_normativas,
+                "recorrido": presentacion.recorrido(propuesta),
+                "decision_corregida": presentacion.decision_modelo_corregida(propuesta),
+                "primera": fila["historial"][0] if fila["historial"] else None,
+                "puede_descartar": Decision.DESCARTADO in decisiones,
+                "mensaje": request.session.pop("mensaje", None)}
 
     @app.get("/")
-    def bandeja(request: Request, usuario: Usuario, sesion: Sesion):
-        return vista(request, "bandeja.html", usuario, **datos_bandeja(sesion),
-                     mensaje=request.session.pop("mensaje", None))
+    def bandeja(request: Request, usuario: Usuario, sesion: Sesion, bandeja: str | None = None):
+        return vista(request, "bandeja.html", usuario, **datos_bandeja(sesion, usuario, bandeja),
+                     mensaje_bandeja=request.session.pop("mensaje", None))
 
     @app.get("/bandeja/contenido")
-    def bandeja_contenido(request: Request, usuario: Usuario, sesion: Sesion):
+    def bandeja_contenido(request: Request, usuario: Usuario, sesion: Sesion,
+                          bandeja: str | None = None):
         # Refresco periódico: lo firmado por otro funcionario aparece sin recargar.
-        return vista(request, "_bandeja.html", usuario, **datos_bandeja(sesion))
+        return vista(request, "_bandeja.html", usuario, **datos_bandeja(sesion, usuario, bandeja))
 
     @app.post("/cargar-golden-set")
     def cargar(request: Request, usuario: Usuario, background_tasks: BackgroundTasks):
@@ -310,8 +387,31 @@ def crear_app(ajustes=None, motor=None):
                     "tipo_ingreso": "DIRECTA", "fecha_denuncia": date.today().isoformat(),
                     "empleador": "EMPRESA_SINTETICA", "sector_empleador": "PRIVADO"}
         programar_demo([registro], background_tasks)
-        request.session["mensaje"] = "Caso sintético enviado a la IA. Verás el resultado en la bandeja."
-        return RedirectResponse("/", 303)
+        return RedirectResponse(f"/demo/seguimiento/{registro['id_externo_dt']}", 303)
+
+    def estado_seguimiento(sesion, externo):
+        if not RELATO_NUEVO.match(externo):
+            raise HTTPException(404, "Seguimiento no encontrado")
+        listo = sesion.scalar(select(Denuncia.id).where(Denuncia.id_externo_dt == externo))
+        with carga_lock:
+            en_curso = carga_estado["en_curso"]
+        return listo, en_curso
+
+    @app.get("/demo/seguimiento/{externo}")
+    def seguimiento(externo: str, request: Request, usuario: Usuario, sesion: Sesion):
+        listo, en_curso = estado_seguimiento(sesion, externo)
+        if listo:
+            return RedirectResponse(f"/casos/{listo}", 303)
+        return vista(request, "seguimiento.html", usuario, externo=externo, en_curso=en_curso)
+
+    @app.get("/demo/seguimiento/{externo}/estado")
+    def seguimiento_estado(externo: str, request: Request, usuario: Usuario, sesion: Sesion):
+        listo, en_curso = estado_seguimiento(sesion, externo)
+        if listo:
+            # htmx sigue el encabezado: la persona llega sola a la propuesta.
+            return Response(headers={"HX-Redirect": f"/casos/{listo}"})
+        return vista(request, "_seguimiento_estado.html", usuario, externo=externo,
+                     en_curso=en_curso)
 
     @app.post("/demo/nueva-tanda")
     def nueva_tanda(request: Request, usuario: Usuario, background_tasks: BackgroundTasks):
@@ -330,17 +430,20 @@ def crear_app(ajustes=None, motor=None):
 
     @app.get("/casos/{identificador}")
     def caso(identificador: str, request: Request, usuario: Usuario,
-             sesion: Sesion):
+             sesion: Sesion, bandeja: str | None = None):
         d, p = buscar(sesion, identificador)
-        fila = datos_fila(sesion, d, p)
-        bloqueo = motivo_bloqueo(fila["historial"], p, usuario)
-        decisiones = list(Decision)
-        if not fila["historial"] and usuario["rol"] != "analista":
-            decisiones.remove(Decision.DESCARTADO)
-        return vista(request, "caso.html", usuario, **fila, decisiones=decisiones,
-                     motivos=list(MotivoDescarte),
-                     bloqueo=bloqueo[1] if bloqueo else None,
-                     mensaje=request.session.pop("mensaje", None))
+        panel = datos_panel(request, sesion, usuario, d, p)
+        cola = datos_bandeja(sesion, usuario, bandeja or panel["categoria"])
+        return vista(request, "bandeja.html", usuario, **cola, panel=panel,
+                     seleccionado=d.id)
+
+    @app.get("/casos/{identificador}/panel")
+    def caso_panel(identificador: str, request: Request, usuario: Usuario, sesion: Sesion,
+                   bandeja: str | None = None):
+        d, p = buscar(sesion, identificador)
+        return vista(request, "caso.html", usuario,
+                     panel=datos_panel(request, sesion, usuario, d, p),
+                     bandeja=bandeja if bandeja in presentacion.BANDEJAS else None)
 
     @app.get("/casos/{identificador}/estado")
     def caso_estado(identificador: str, request: Request, usuario: Usuario, sesion: Sesion):
@@ -355,6 +458,7 @@ def crear_app(ajustes=None, motor=None):
                 cita_respaldo: Annotated[str, Form()] = ""):
         d, p = buscar(sesion, identificador)
         historial = revisiones(sesion, p)
+        bandeja_origen = presentacion.categoria(historial, estado_revision(historial, p))
         actual = historial[0].version if historial else 0
         if version != actual:
             raise HTTPException(409, "Otro funcionario revisó el caso mientras tanto; recarga.")
@@ -410,12 +514,23 @@ def crear_app(ajustes=None, motor=None):
         except (StaleDataError, IntegrityError):
             sesion.rollback()
             raise HTTPException(409, "Otro funcionario revisó el caso mientras tanto") from None
-        request.session["mensaje"] = "Revisión registrada."
+        destino = datos_fila(sesion, d, p)["categoria"]
+        nombres = presentacion.NOMBRES_BANDEJA[usuario["rol"]]
+        if destino == "esperando":
+            aviso = "Enviado a un supervisor para su validación"
+        elif nivel == 2:
+            aviso = "Validación registrada · caso cerrado"
+        elif decision_final.value == p.decision:
+            aviso = f"Propuesta confirmada · pasó a {nombres[destino]}"
+        else:
+            aviso = f"Corrección registrada · pasó a {nombres[destino]}"
         if request.headers.get("HX-Request") == "true":
-            # Recarga completa: el historial y el formulario también deben reflejar la firma.
-            respuesta = vista(request, "_fila.html", usuario, **datos_fila(sesion, d, p))
-            respuesta.headers["HX-Refresh"] = "true"
-            return respuesta
+            # La interfaz saca la tarjeta de la cola, muestra el aviso y abre el siguiente caso.
+            siguiente = siguiente_en(sesion, usuario, bandeja_origen, d.id)
+            return Response(headers={"HX-Trigger": json.dumps({"revisionRegistrada": {
+                "caso": d.id, "mensaje": aviso, "siguiente": siguiente,
+                "bandeja": bandeja_origen}}, ensure_ascii=True)})
+        request.session["mensaje"] = aviso
         return RedirectResponse(f"/casos/{d.id}", 303)
 
     app.add_middleware(

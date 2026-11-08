@@ -162,21 +162,10 @@ button[disabled] { cursor: progress; background: var(--cobalt); border-color: va
 .confirmacion { background: var(--pale-sky); color: var(--navy); padding: var(--space-4); margin: var(--space-4) 0; font-weight: 700; }
 .estado-carga { margin: var(--space-4) 0; }
 
-/* Tabla de la bandeja */
-.tabla { overflow-x: auto; }
-table { border-collapse: collapse; width: 100%; background: var(--white); }
-th {
-  text-align: left; vertical-align: bottom; background: var(--mist); color: var(--navy);
-  font-size: 12px; line-height: 16px; font-weight: 900; letter-spacing: 0.04em; text-transform: uppercase;
-  padding: var(--space-3);
-}
-td { padding: var(--space-3); border-bottom: 1px solid var(--separador); vertical-align: top; }
-td a { font-weight: 700; }
-td:first-child { white-space: nowrap; }
-.historial-tandas { margin-top: var(--space-8); }
-.historial-tandas summary { cursor: pointer; font-weight: 700; color: var(--acento); padding: var(--space-2) 0; }
-.historial { padding-left: var(--space-6); }
+/* Historial de revisiones */
+.historial { padding-left: var(--space-6); margin: var(--space-2) 0; }
 .historial li { margin-bottom: var(--space-3); }
+.historial p { margin: var(--space-1) 0; }
 
 /* Progreso de carga (A1, A2) */
 .progreso { height: 6px; background: var(--ice); overflow: hidden; margin-top: var(--space-2); }
@@ -186,44 +175,204 @@ td:first-child { white-space: nowrap; }
 .enviando .progreso { display: block; }
 form .progreso { display: none; }
 
-/* A3: caso nuevo en la bandeja */
-.fila-nueva { animation: fila-nueva 1.2s var(--salida) 1; }
-@keyframes fila-nueva { from { background: var(--ice); } to { background: transparent; } }
+/* ===== Puesto de trabajo: cola a la izquierda, caso a la derecha ===== */
+main:has(.puesto) { max-width: 96rem; padding-top: var(--space-6); }
+.puesto { display: grid; grid-template-columns: minmax(20rem, 26rem) minmax(0, 1fr); gap: var(--space-6); align-items: start; }
+.cola-columna {
+  position: sticky; top: var(--space-4); max-height: calc(100vh - 2 * var(--space-4));
+  overflow-y: auto; background: var(--fondo); padding: var(--space-6); scrollbar-gutter: stable;
+}
+.cola-encabezado h1 { font-size: 28px; line-height: 34px; margin-bottom: var(--space-1); }
+.cola-encabezado .nota { margin: 0; }
+.cola-encabezado .acciones { margin: var(--space-3) 0; }
+.mas-acciones summary { cursor: pointer; font-weight: 700; color: var(--acento); padding: var(--space-3) 0; }
+.mas-acciones form { margin: var(--space-2) 0; }
+.panel { background: var(--fondo); padding: var(--space-8); min-height: 60vh; outline: none; }
+.panel:focus-visible { outline: 3px solid var(--signal-blue); }
+.panel-vacio { max-width: 34rem; padding: var(--space-12) 0; }
+.volver-cola { display: none; font-weight: 700; margin-bottom: var(--space-4); }
+.volver-cola::before { content: "← "; }
+
+/* Métricas: una cifra protagonista y tres de apoyo */
+.metricas { display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: var(--space-3); margin: var(--space-4) 0 var(--space-2); }
+.metrica { margin: 0; padding: var(--space-2) var(--space-3); background: var(--mist); }
+.metrica-principal { background: var(--ice); }
+.metrica .cifra { font-size: 28px; line-height: 32px; }
+.metrica-valor { display: block; font-size: 20px; line-height: 32px; font-weight: 900; }
+.metrica-rotulo, .cifra-rotulo { display: block; font-size: 12px; line-height: 16px; font-weight: 700; color: var(--texto-secundario); }
+.total { margin: 0 0 var(--space-3); }
+
+/* Pestañas de bandejas */
+.pestanas { display: flex; flex-wrap: wrap; gap: var(--space-1); border-bottom: 2px solid var(--navy); margin: var(--space-3) 0 var(--space-4); }
+.pestana {
+  display: inline-flex; align-items: center; gap: var(--space-2); padding: var(--space-2) var(--space-3);
+  color: var(--navy); text-decoration: none; font-weight: 700; font-size: 14px; border: 2px solid transparent; border-bottom: 0;
+}
+.pestana:hover { background: var(--mist); color: var(--navy); }
+.pestana.activa { background: var(--navy); color: var(--white); }
+.contador { font-size: 12px; line-height: 16px; font-weight: 900; padding: 0 var(--space-2); background: var(--mist); color: var(--navy); }
+.pestana.activa .contador { background: var(--white); }
+
+/* Carriles y tarjetas de casos */
+.carril { font-size: 13px; line-height: 20px; font-weight: 900; letter-spacing: 0.02em; text-transform: uppercase; color: var(--texto-secundario); margin: var(--space-4) 0 var(--space-2); }
+.carril-urgente { color: var(--navy); }
+.carril-urgente::before { content: ""; display: inline-block; width: 10px; height: 10px; margin-right: var(--space-2); background: var(--emblem-red); }
+.tarjetas { list-style: none; margin: 0; padding: 0; }
+.tarjeta-caso { margin: 0 0 var(--space-2); }
+.tarjeta-enlace {
+  display: block; padding: var(--space-3) var(--space-4); background: var(--white); color: var(--navy);
+  text-decoration: none; border: 2px solid var(--ice); transition: border-color 150ms var(--entrada), background-color 150ms var(--entrada);
+}
+.tarjeta-enlace:hover { border-color: var(--periwinkle); color: var(--navy); }
+.es-urgente .tarjeta-enlace { border-top: 4px solid var(--emblem-red); }
+.seleccionada .tarjeta-enlace { border-color: var(--signal-blue); background: var(--mist); }
+.tarjeta-fila { display: flex; justify-content: space-between; gap: var(--space-2); align-items: baseline; }
+.tarjeta-id { font-weight: 900; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+.tarjeta-tiempo { font-size: 13px; color: var(--texto-secundario); white-space: nowrap; }
+.tarjeta-chips { display: flex; flex-wrap: wrap; gap: var(--space-1); margin: var(--space-2) 0; }
+.tarjeta-conducta { display: block; font-weight: 700; font-size: 14px; }
+.tarjeta-extracto { display: block; font-size: 14px; line-height: 20px; color: var(--texto-secundario); margin-top: var(--space-1); }
+.tarjeta-estado { display: block; font-size: 12px; line-height: 16px; color: var(--texto-secundario); margin-top: var(--space-2); }
+.cola-vacia { padding: var(--space-6) 0; }
+
+/* Chips de estado: siempre texto navy sobre un tono claro de la paleta */
+.chip {
+  display: inline-block; font-size: 12px; line-height: 16px; font-weight: 900; letter-spacing: 0.04em;
+  text-transform: uppercase; padding: var(--space-1) var(--space-2); color: var(--navy); background: var(--mist); white-space: nowrap;
+}
+.chip-urgente { background: var(--blush); }
+.chip-investigar { background: var(--ice); }
+.chip-mediacion { background: var(--pale-sky); }
+.chip-reconducir { background: var(--powder); }
+.chip-verificada { background: var(--pale-sky); }
+.chip-neutro { background: var(--mist); }
+
+/* Panel del caso */
+.veredicto { font-size: 30px; line-height: 36px; font-weight: 900; margin: var(--space-1) 0 var(--space-3); }
+.veredicto-rotulo { display: block; font-size: 14px; line-height: 20px; font-weight: 700; color: var(--texto-secundario); }
+.veredicto-por { color: var(--cobalt); }
+.chips-veredicto { display: flex; flex-wrap: wrap; gap: var(--space-2); margin: 0 0 var(--space-4); }
+.panel-columnas { display: grid; grid-template-columns: minmax(0, 3fr) minmax(0, 2fr); gap: var(--space-8); margin-top: var(--space-6); }
+.panel-columnas h3:first-child { margin-top: 0; }
+.relato { white-space: pre-wrap; overflow-wrap: anywhere; background: var(--mist); padding: var(--space-6); line-height: 28px; font-size: 17px; }
+mark.cita-marca { background: var(--ice); color: var(--navy); padding: 2px 0; box-shadow: inset 0 -2px 0 var(--signal-blue); transition: background-color 150ms var(--entrada); }
+mark.cita-marca::after { content: attr(data-cita); font-size: 11px; font-weight: 900; vertical-align: super; line-height: 0; margin-left: 2px; color: var(--signal-blue); }
+mark.cita-marca.activa { background: var(--periwinkle); }
+.citas { list-style: none; counter-reset: cita; padding: 0; margin: 0; }
+.citas li { counter-increment: cita; position: relative; background: var(--white); border: 1px solid var(--separador); padding: var(--space-3) var(--space-4) var(--space-3) var(--space-12); margin: var(--space-2) 0; }
+.citas li::before { content: counter(cita); position: absolute; left: var(--space-4); top: var(--space-3); font-weight: 900; color: var(--signal-blue); }
+.citas li.cita-normativa::before { content: "§"; color: var(--cobalt); }
+.citas li.no-verificada { border-color: var(--emblem-red); }
+.citas q { font-weight: 700; }
+.fuente { display: block; margin-top: var(--space-1); }
+.recorrido { list-style: none; margin: 0; padding: 0; }
+.paso { position: relative; padding: 0 0 var(--space-4) var(--space-8); }
+.paso::before { content: ""; position: absolute; left: 4px; top: 6px; width: 12px; height: 12px; background: var(--signal-blue); }
+.paso::after { content: ""; position: absolute; left: 9px; top: 22px; bottom: 2px; width: 2px; background: var(--ice); }
+.paso:last-child::after { display: none; }
+.paso-aviso::before { background: var(--emblem-red); }
+.paso-detenido::before { background: var(--navy); }
+.paso-omitido::before, .paso-pendiente::before { background: var(--white); border: 2px solid var(--periwinkle); width: 8px; height: 8px; }
+.paso-activo::before { animation: latido 1.2s var(--entrada) infinite alternate; }
+@keyframes latido { from { opacity: 1; } to { opacity: 0.35; } }
+.paso-nombre { display: block; font-weight: 900; }
+.paso-detalle { display: block; font-size: 14px; line-height: 20px; color: var(--texto-secundario); }
+.reglas-codigos { margin: var(--space-2) 0 var(--space-4); }
+.justificacion { background: var(--mist); padding: var(--space-3) var(--space-4); }
+.justificacion summary { cursor: pointer; font-weight: 700; }
+.justificacion p { margin: var(--space-2) 0 0; }
+
+/* Decisión humana */
+.decision { margin-top: var(--space-8); background: var(--mist); padding: var(--space-6); border-top: 4px solid var(--navy); }
+.decision > h3:first-child { margin-top: 0; font-size: 22px; line-height: 28px; font-weight: 900; }
+.estado-caso { margin-bottom: var(--space-3); }
+.estado-actual { margin: 0 0 var(--space-2); }
+.acciones-decision button, .acciones-decision .accion-rapida button { min-width: 11rem; }
+.accion-form { background: var(--white); padding: var(--space-6); margin-top: var(--space-4); animation: aparecer 200ms var(--entrada) 1; }
+.accion-form fieldset { border: 0; padding: 0; margin: 0 0 var(--space-4); }
+.accion-form legend { font-weight: 700; margin-bottom: var(--space-2); }
+.opciones { display: grid; grid-template-columns: repeat(auto-fit, minmax(13rem, 1fr)); gap: var(--space-2); }
+.opcion { display: flex; gap: var(--space-3); align-items: flex-start; margin: 0; padding: var(--space-3); border: 2px solid var(--ice); background: var(--white); font-weight: 700; cursor: pointer; }
+.opcion:hover { border-color: var(--periwinkle); }
+.opcion:has(input:checked) { border-color: var(--signal-blue); background: var(--ice); }
+.opcion input { width: 18px; height: 18px; margin-top: 3px; flex: none; accent-color: var(--signal-blue); }
+.boton-chico { padding: var(--space-1) var(--space-3); font-size: 14px; }
+.recien-llenado { animation: llenado 600ms var(--salida) 1; }
+@keyframes llenado { from { background: var(--pale-sky); } to { background: var(--white); } }
+.comparacion { display: grid; grid-template-columns: repeat(auto-fit, minmax(14rem, 1fr)); gap: var(--space-3); margin: var(--space-3) 0; }
+.comparacion > div { background: var(--white); padding: var(--space-4); }
+.comparacion-rotulo { display: block; font-size: 13px; font-weight: 700; color: var(--texto-secundario); }
+.comparacion strong { display: block; font-size: 18px; line-height: 24px; font-weight: 900; margin: var(--space-1) 0; }
+.comparacion .nota { display: block; }
+button.enlace { background: none; border: 0; padding: 0; color: var(--acento); text-decoration: underline; font-weight: 500; font-size: inherit; }
+button.enlace:hover { background: none; color: var(--cobalt); }
+
+/* Seguimiento del relato nuevo */
+.seguimiento .recorrido { max-width: 34rem; margin: var(--space-6) 0; }
+.seguimiento .progreso { max-width: 20rem; }
+
+/* Avisos flotantes de paso entre bandejas (A8) */
+.avisos { position: fixed; right: var(--space-6); bottom: var(--space-6); z-index: 20; display: flex; flex-direction: column; gap: var(--space-2); max-width: min(26rem, calc(100vw - 2 * var(--space-4))); }
+.aviso-flotante { margin: 0; padding: var(--space-4) var(--space-6); background: var(--navy); color: var(--white); font-weight: 700; animation: aparecer 200ms var(--entrada) 1; }
+.aviso-flotante.saliendo { opacity: 0; transition: opacity 250ms var(--salida); }
+
+/* Ayuda de atajos */
+dialog { border: 0; padding: var(--space-8); max-width: 30rem; color: var(--navy); }
+dialog::backdrop { background: rgba(37, 48, 107, 0.6); }
+dialog h2 { margin-top: 0; }
+.atajos div { display: flex; gap: var(--space-4); margin-bottom: var(--space-2); }
+.atajos dt { min-width: 5rem; }
+.atajos dd { margin: 0; }
+kbd { font: inherit; font-size: 13px; font-weight: 900; padding: 0 var(--space-2); background: var(--mist); border: 1px solid var(--periwinkle); }
+
+/* A3: caso nuevo en la cola */
+.fila-nueva .tarjeta-enlace { animation: fila-nueva 1.2s var(--salida) 1; }
+@keyframes fila-nueva { from { background: var(--ice); } to { background: var(--white); } }
 .etiqueta-nueva { display: none; }
 .fila-nueva .etiqueta-nueva { display: inline-block; }
+
+/* A7: la tarjeta sale de la cola al decidir */
+.tarjeta-caso.saliendo { animation: salir 250ms var(--salida) forwards; overflow: hidden; }
+@keyframes salir { to { opacity: 0; transform: translateX(-12px); max-height: 0; margin: 0; } }
 
 /* A4 y A5: confirmación y error */
 .confirmacion, #aviso-revision:not([hidden]) { animation: aparecer 200ms var(--entrada) 1; }
 #aviso-revision:not([hidden]) { animation-duration: 150ms; }
 @keyframes aparecer { from { opacity: 0; transform: translateY(4px); } to { opacity: 1; transform: none; } }
+/* A6: el caso entra al panel */
+.panel-caso { animation: entrar 150ms var(--entrada) 1; }
+@keyframes entrar { from { opacity: 0; } to { opacity: 1; } }
 
 /* Pie */
-.pie { max-width: 76rem; margin: auto; padding: 0 var(--space-4) var(--space-8); }
+.pie { max-width: 96rem; margin: auto; padding: 0 var(--space-4) var(--space-8); }
 
 /* Movimiento reducido: sin animaciones; el texto de estado sigue visible */
 @media (prefers-reduced-motion: reduce) {
   *, *::before, *::after { animation: none !important; transition: none !important; }
   .progreso-indeterminado .progreso-barra { width: 100%; }
+  .tarjeta-caso.saliendo { display: none; }
 }
 
-/* Móvil: la tabla pasa a tarjetas */
+/* Pantallas medianas y móviles: cola y caso en páginas separadas */
+@media (max-width: 64rem) {
+  .puesto { grid-template-columns: minmax(0, 1fr); }
+  .cola-columna { position: static; max-height: none; overflow: visible; }
+  .puesto.con-caso .cola-columna { display: none; }
+  .puesto:not(.con-caso) .panel { display: none; }
+  .volver-cola { display: inline-block; }
+  .panel-columnas { grid-template-columns: minmax(0, 1fr); }
+}
 @media (max-width: 40rem) {
   main { padding: var(--space-4) var(--space-4) var(--space-8); }
-  .lienzo { padding: var(--space-4); }
+  .lienzo, .cola-columna, .panel { padding: var(--space-4); }
+  .decision { padding: var(--space-4); }
   h1 { font-size: 28px; line-height: 34px; }
+  .veredicto { font-size: 24px; line-height: 30px; }
   .marca img { height: 44px; }
   .sesion { margin-left: 0; }
-  .tabla { overflow: visible; }
-  table, tbody, tr, td { display: block; width: 100%; }
-  thead { position: absolute; width: 1px; height: 1px; overflow: hidden; clip: rect(0 0 0 0); }
-  tr { background: var(--white); border: 1px solid var(--separador); margin-bottom: var(--space-3); }
-  td { border: 0; padding: var(--space-1) var(--space-3); }
-  td:first-child { padding-top: var(--space-3); }
-  td:last-child { padding-bottom: var(--space-3); }
-  td[data-rotulo]::before {
-    content: attr(data-rotulo); display: block; font-size: 12px; line-height: 16px;
-    font-weight: 900; letter-spacing: 0.04em; text-transform: uppercase; color: var(--texto-secundario);
-  }
+  .relato { padding: var(--space-4); font-size: 16px; }
   button, .boton { width: 100%; text-align: center; }
+  button.enlace { width: auto; }
   .acciones form { width: 100%; }
+  .avisos { right: var(--space-4); left: var(--space-4); bottom: var(--space-4); }
 }

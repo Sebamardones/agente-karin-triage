@@ -1,14 +1,41 @@
 {% extends "base.html" %}
-{% block titulo %}Bandeja{% endblock %}
-{% block contenido %}<div class="lienzo">
+{% block titulo %}{% if panel %}{{ panel.denuncia.id_externo_dt }}{% else %}{{ nombres[bandeja] }}{% endif %}{% endblock %}
+{% block contenido %}
+<div class="puesto{% if panel %} con-caso{% endif %}" data-bandeja="{{ bandeja }}">
+<section class="cola-columna" aria-label="Cola de casos">
+<div class="cola-encabezado">
 <p class="antetitulo">Bandeja de revisión humana</p>
-<h1>Casos por revisar</h1>
-<p class="bajada">Ningún caso se resuelve solo: cada propuesta de la IA espera la decisión de una persona.</p>
-{% if mensaje %}<p role="status" class="confirmacion">{{ mensaje }}</p>{% endif %}
+<h1>{% if usuario.rol == 'supervisor' %}Validación de supervisor{% else %}Casos por revisar{% endif %}</h1>
+<p class="nota">Ningún caso se resuelve solo: la IA propone y una persona decide.</p>
+{% if mensaje_bandeja %}<p role="status" class="confirmacion">{{ mensaje_bandeja }}</p>{% endif %}
 {% if usuario.rol == 'analista' %}<div class="acciones">
-<a class="boton" href="/demo/nuevo">Probar IA con un relato sintético nuevo</a>
+<a class="boton boton-secundario" href="/demo/nuevo">Probar IA con un relato sintético nuevo</a>
+<details class="mas-acciones"><summary>Más acciones</summary>
 <form method="post" action="/demo/nueva-tanda" data-carga="Creando tanda…"><button class="boton-secundario">Crear tanda nueva para revisar</button></form>
 <form method="post" action="/cargar-golden-set" data-carga="Cargando…"><button class="boton-secundario">Cargar el golden set completo</button></form>
+<p class="nota">La tanda nueva crea copias sintéticas sin revisiones; conserva el historial y consume IA.</p>
+</details></div>{% endif %}
 </div>
-<p class="nota">La tanda nueva crea copias sintéticas sin revisiones; conserva el historial anterior y consume IA.</p>{% endif %}
-{% include '_bandeja.html' %}</div>{% endblock %}
+{% include '_bandeja.html' %}
+</section>
+<section id="panel" class="panel" aria-label="Caso seleccionado" tabindex="-1">
+{% if panel %}{% include 'caso.html' %}{% else %}
+<div class="panel-vacio">
+<p class="antetitulo">{{ nombres[bandeja] }}</p>
+<h2>{% if cola %}Elige un caso de la cola{% else %}Bandeja al día{% endif %}</h2>
+<p>{% if cola %}La propuesta del agente, sus citas y tu decisión aparecen aquí. Con el teclado: <kbd>j</kbd> y <kbd>k</kbd> para moverte, <kbd>?</kbd> para ver los atajos.{% else %}No quedan casos en esta bandeja.{% endif %}</p>
+</div>{% endif %}
+</section>
+</div>
+<dialog id="ayuda-atajos" aria-labelledby="titulo-atajos">
+<h2 id="titulo-atajos">Atajos de teclado</h2>
+<dl class="atajos">
+<div><dt><kbd>j</kbd> / <kbd>k</kbd></dt><dd>Siguiente o anterior caso de la cola</dd></div>
+<div><dt><kbd>c</kbd></dt><dd>Confirmar la propuesta del caso abierto</dd></div>
+<div><dt><kbd>e</kbd></dt><dd>Corregir la propuesta</dd></div>
+<div><dt><kbd>d</kbd></dt><dd>Descartar (pasa a un supervisor)</dd></div>
+<div><dt><kbd>?</kbd></dt><dd>Mostrar u ocultar esta ayuda</dd></div>
+</dl>
+<form method="dialog"><button>Cerrar</button></form>
+</dialog>
+{% endblock %}
