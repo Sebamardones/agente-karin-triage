@@ -4,9 +4,9 @@
 <div class="resumen-cola" aria-label="Resumen de la bandeja">
 <p class="resumen-principal"><span class="cifra">{{ pendientes }}</span><span class="cifra-rotulo">pendientes de revisión</span></p>
 <ul class="resumen-datos">
-<li>{{ icono('revisado') }}<strong>{{ metricas.revisadas_hoy }}</strong> revisiones hoy</li>
-<li title="Primeras revisiones en que la persona confirmó la propuesta del agente">{{ icono('balanza') }}<strong>{% if metricas.coincidencia is not none %}{{ metricas.coincidencia }} %{% else %}—{% endif %}</strong> coincidencia con el agente</li>
-<li>{{ icono('escudo') }}<strong>{{ metricas.sin_ia }}</strong> resueltos por reglas, sin IA</li>
+<li>{{ icono('revisado') }}<span><strong>{{ metricas.revisadas_hoy }}</strong> {{ 'revisión' if metricas.revisadas_hoy == 1 else 'revisiones' }} hoy</span></li>
+<li title="Primeras revisiones en que la persona confirmó la propuesta del agente">{{ icono('balanza') }}<span><strong>{% if metricas.coincidencia is not none %}{{ metricas.coincidencia }}&nbsp;%{% else %}—{% endif %}</strong> de coincidencia con el agente</span></li>
+<li>{{ icono('escudo') }}<span><strong>{{ metricas.sin_ia }}</strong> {{ 'resuelto' if metricas.sin_ia == 1 else 'resueltos' }} por reglas, sin IA</span></li>
 <li>{{ icono('archivo') }}<span>Total de casos guardados: {{ total_casos }}</span></li>
 </ul>
 </div>
