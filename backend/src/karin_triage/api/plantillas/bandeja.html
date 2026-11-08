@@ -7,7 +7,6 @@
 <div class="cola-encabezado">
 <p class="antetitulo">Bandeja de revisión humana</p>
 <h1>{% if usuario.rol == 'supervisor' %}Validación de supervisor{% else %}Casos por revisar{% endif %}</h1>
-<p class="nota">Ningún caso se resuelve solo: la IA propone y una persona decide.</p>
 {% if mensaje_bandeja %}<p role="status" class="confirmacion">{{ mensaje_bandeja }}</p>{% endif %}
 {% if usuario.rol == 'inspector' %}<div class="acciones">
 <a class="boton boton-secundario" href="/ingresos/nuevo">{{ icono('mas') }}Ingreso de caso</a>

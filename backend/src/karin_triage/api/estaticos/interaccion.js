@@ -327,11 +327,11 @@
   // --- Al cargar: aviso pendiente (móvil) y selección inicial ----------------
   // --- Entrada inicial: orden del escalonado y cifras que cuentan hasta su valor
   function prepararEntrada() {
-    [".metrica", ".pestana", ".tarjeta-caso", ".bloque-ingreso", ".pie-interior > *"].forEach(function (selector) {
+    [".resumen-datos li", ".pestana", ".tarjeta-caso", ".bloque-ingreso", ".pie-interior > *"].forEach(function (selector) {
       document.querySelectorAll(selector).forEach(function (el, i) { el.style.setProperty("--i", i); });
     });
     if (!reducido.matches) {
-      document.querySelectorAll(".metrica .cifra, .metrica .metrica-valor").forEach(function (el) {
+      document.querySelectorAll(".resumen-principal .cifra, .resumen-datos strong").forEach(function (el) {
         var texto = el.textContent.trim();
         var final = parseInt(texto, 10);
         if (isNaN(final) || final <= 0) return;

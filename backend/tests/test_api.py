@@ -464,7 +464,7 @@ def test_bandeja_muestra_la_tanda_vigente_y_guarda_las_anteriores(entorno):
     assert len(tandas) == 2
     principal = cliente.get("/bandeja/contenido").text
     historial = cliente.get("/bandeja/contenido?bandeja=anteriores").text
-    assert 'Tandas anteriores <span class="contador">11</span>' in principal
+    assert re.search(r'Tandas anteriores</span>\s*<span class="contador">11</span>', principal)
     assert "DEMO-0123456789ab" in principal and "DEMO-0123456789ab" not in historial
     # Cada tanda queda completa de un solo lado: nada se borra ni se mezcla.
     vigente = [t for t in tandas if f"DEMO-{t}-" in principal]

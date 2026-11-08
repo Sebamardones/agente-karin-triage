@@ -16,7 +16,7 @@
 {% if p.vulneracion_ddff %}<span class="chip chip-neutro">Vulneración de derechos fundamentales</span>{% endif %}
 {% if p.decision == 'DESCARTADO' %}<span class="chip chip-reconducir">Motivo: {{ p.motivo_descarte|etiqueta if p.motivo_descarte else 'sin motivo registrado' }}</span>{% endif %}
 </p>
-{% if p.urgencia_resguardo %}<p class="aviso aviso-urgencia con-icono-bloque">{{ icono('alerta', 'icono-bloque') }}<span>La propuesta marca riesgo para la persona denunciante. El plazo para pedir medidas de resguardo es corto: revisa este caso primero.</span></p>{% endif %}
+{% if p.urgencia_resguardo %}<p class="nota nota-urgencia">{{ icono('alerta') }}Riesgo para la persona denunciante: el plazo para pedir medidas de resguardo es corto.</p>{% endif %}
 {% if not p.decision %}<p role="status" class="aviso">Sin propuesta: {{ (p.estado_auxiliar or p.marcas_pipeline)|etiqueta if (p.estado_auxiliar or p.marcas_pipeline) else 'Evaluación no disponible' }}. Requiere revisión humana.</p>{% endif %}
 {% if panel.decision_corregida %}<p class="correccion con-icono-bloque" role="alert">{{ icono('escudo', 'icono-bloque') }}<span><strong>Una regla dura corrigió al modelo.</strong>
 El modelo propuso <strong>{{ panel.decision_corregida|etiqueta }}</strong> y la propuesta quedó en <strong>{{ p.decision|etiqueta }}</strong>.
@@ -52,11 +52,11 @@ La justificación de abajo es la original del modelo y se conserva sin editar.</
 <section class="decision" id="decision" aria-labelledby="titulo-decision">
 <h3 id="titulo-decision">{{ icono('validar') }}{% if panel.primera and not panel.bloqueo %}Tu validación{% else %}Tu decisión{% endif %}</h3>
 {% if panel.mensaje %}<p role="status" class="confirmacion">{{ panel.mensaje }}</p>{% endif %}
-{% if 'ACOSO_SEXUAL' in p.tipo_conducta %}<p role="alert" class="alerta-rd10 con-icono-bloque">{{ icono('alerta', 'icono-bloque') }}<span><strong>Advertencia RD-10:</strong>
-La mediación en una conducta tipificada como acoso sexual contradice el art. 211-D inciso final.
+{% set aviso_rd10 %}<p role="alert" class="alerta-rd10 con-icono-bloque">{{ icono('alerta', 'icono-bloque') }}<span><strong>Advertencia RD-10:</strong>
+la mediación en una conducta tipificada como acoso sexual contradice el art. 211-D inciso final.
 Una excepción requiere comentario fundado del inspector y validación de un supervisor distinto.
-<a href="https://www.bcn.cl/leychile/navegar?idNorma=1200096" class="con-icono">Consultar la norma{{ icono('externo') }}</a>.</span></p>{% endif %}
-{% if p.urgencia_resguardo %}<p class="nota">Un descarte requiere motivo, fundamento y cita literal; no elimina la alerta de resguardo.</p>{% endif %}
+<a href="https://www.bcn.cl/leychile/navegar?idNorma=1200096" class="con-icono">Consultar la norma{{ icono('externo') }}</a>.</span></p>{% endset %}
+{% if panel.primera and panel.primera.excepcion_rd10 %}{{ aviso_rd10 }}{% endif %}
 {% with denuncia=d, historial=panel.historial, estado_revision=panel.estado_revision %}{% include '_estado_caso.html' %}{% endwith %}
 
 {% if panel.bloqueo %}<p role="status" class="aviso tarjeta"><strong>No puedes registrar una revisión en este caso:</strong> {{ panel.bloqueo }}.</p>
@@ -104,7 +104,7 @@ Una excepción requiere comentario fundado del inspector y validación de un sup
 <label class="opcion"><input type="radio" name="decision_final" value="{{ decision.value }}" required{% if not p.decision and loop.first %} checked{% endif %}><span>{{ decision.value|etiqueta }}</span></label>{% endfor %}
 </div></fieldset>
 <label>Comentario <textarea name="comentario" rows="3" placeholder="Qué corriges y por qué"></textarea></label>
-{% if 'ACOSO_SEXUAL' in p.tipo_conducta %}<p class="nota">Si eliges mediación en un caso de acoso sexual, el comentario es obligatorio y el caso pasa a un supervisor (RD-10).</p>{% endif %}
+{% if 'ACOSO_SEXUAL' in p.tipo_conducta and not (panel.primera and panel.primera.excepcion_rd10) %}{{ aviso_rd10 }}{% endif %}
 <button>{{ icono('lapiz') }}Registrar corrección</button>
 </form>
 
@@ -112,7 +112,7 @@ Una excepción requiere comentario fundado del inspector y validación de un sup
 <form method="post" action="/casos/{{ d.id }}/revision" class="accion-form" id="form-descartar" {{ comun|safe }} hidden>
 <input type="hidden" name="version" value="{{ panel.version }}">
 <input type="hidden" name="decision_final" value="DESCARTADO">
-<p class="nota">Un descarte nunca se cierra solo: lo valida un supervisor distinto. No se puede descartar por falta de prueba.</p>
+<p class="nota">Un descarte nunca se cierra solo: lo valida un supervisor distinto. No se puede descartar por falta de prueba.{% if p.urgencia_resguardo %} Descartar no elimina la alerta de resguardo.{% endif %}</p>
 <fieldset><legend>Motivo del catálogo</legend>
 <div class="opciones">{% for motivo in panel.motivos %}
 <label class="opcion"><input type="radio" name="motivo_descarte" value="{{ motivo.value }}" required{% if motivo.value == p.motivo_descarte %} checked{% endif %}><span>{{ motivo.value|etiqueta }}</span></label>{% endfor %}

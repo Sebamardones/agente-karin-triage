@@ -251,3 +251,12 @@ redes sociales de la DT, aplicadas a la interfaz web:
 - **Bandeja sin caso preseleccionado** y **guía de bienvenida** por rol: tres
   pasos, menos de 60 palabras (se lee en menos de 15 segundos). Se muestra una
   vez por sesión y se reabre desde «Cómo usar».
+- **Grilla común y segunda pasada HIG** (*Layout* y *Feedback*): encabezado,
+  franja, contenido y pie comparten ancho máximo (96rem) y márgenes (24 px);
+  medido a 1440 px, todos los bordes quedan en x=24 y x=1416, y los elementos
+  del encabezado comparten el centro vertical. La cola pasa a una barra
+  lateral: resumen con una cifra y una lista breve, y bandejas como lista con
+  el contador a la derecha. En el panel queda una sola caja de color (la
+  corrección por regla dura, en tono informativo). La urgencia es un chip con
+  una línea, la advertencia RD-10 aparece al corregir o al validar una
+  excepción, y la nota del descarte vive en su formulario.

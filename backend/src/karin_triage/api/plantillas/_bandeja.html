@@ -1,21 +1,23 @@
 {% from '_iconos.html' import icono %}
 <div id="bandeja-viva" hx-get="/bandeja/contenido?bandeja={{ bandeja }}" hx-swap="outerHTML"
  hx-trigger="every 5s [document.visibilityState === 'visible'], refrescar" data-bandeja="{{ bandeja }}">
-<div class="metricas" aria-label="Resumen de la bandeja">
-<p class="metrica metrica-principal">{{ icono('bandeja', 'icono-metrica') }}<span class="cifra">{{ pendientes }}</span><span class="cifra-rotulo">pendientes de revisión</span></p>
-<p class="metrica">{{ icono('revisado', 'icono-metrica') }}<span class="metrica-valor">{{ metricas.revisadas_hoy }}</span><span class="metrica-rotulo">revisiones hoy</span></p>
-<p class="metrica">{{ icono('balanza', 'icono-metrica') }}<span class="metrica-valor">{% if metricas.coincidencia is not none %}{{ metricas.coincidencia }} %{% else %}—{% endif %}</span><span class="metrica-rotulo" title="Primeras revisiones en que la persona confirmó la propuesta del agente">coincidencia con el agente</span></p>
-<p class="metrica">{{ icono('escudo', 'icono-metrica') }}<span class="metrica-valor">{{ metricas.sin_ia }}</span><span class="metrica-rotulo">resueltos por reglas, sin IA</span></p>
+<div class="resumen-cola" aria-label="Resumen de la bandeja">
+<p class="resumen-principal"><span class="cifra">{{ pendientes }}</span><span class="cifra-rotulo">pendientes de revisión</span></p>
+<ul class="resumen-datos">
+<li>{{ icono('revisado') }}<strong>{{ metricas.revisadas_hoy }}</strong> revisiones hoy</li>
+<li title="Primeras revisiones en que la persona confirmó la propuesta del agente">{{ icono('balanza') }}<strong>{% if metricas.coincidencia is not none %}{{ metricas.coincidencia }} %{% else %}—{% endif %}</strong> coincidencia con el agente</li>
+<li>{{ icono('escudo') }}<strong>{{ metricas.sin_ia }}</strong> resueltos por reglas, sin IA</li>
+<li>{{ icono('archivo') }}<span>Total de casos guardados: {{ total_casos }}</span></li>
+</ul>
 </div>
-<p class="nota total">Total de casos guardados: {{ total_casos }}</p>
 <nav class="pestanas" aria-label="Bandejas">
 {% for b in ('por-revisar', 'esperando', 'revisados', 'cerrados', 'anteriores') if b != 'anteriores' or conteos[b] %}
-<a href="/?bandeja={{ b }}" class="pestana{% if b == bandeja %} activa{% endif %}"{% if b == bandeja %} aria-current="page"{% endif %}>{{ icono({'por-revisar': 'bandeja', 'esperando': ('validar' if usuario.rol == 'supervisor' else 'reloj'), 'revisados': 'revisado', 'cerrados': 'archivo', 'anteriores': 'historial'}[b]) }}{{ nombres[b] }} <span class="contador">{{ conteos[b] }}</span></a>
+<a href="/?bandeja={{ b }}" class="pestana{% if b == bandeja %} activa{% endif %}"{% if b == bandeja %} aria-current="page"{% endif %}>{{ icono({'por-revisar': 'bandeja', 'esperando': ('validar' if usuario.rol == 'supervisor' else 'reloj'), 'revisados': 'revisado', 'cerrados': 'archivo', 'anteriores': 'historial'}[b]) }}<span class="pestana-nombre">{{ nombres[b] }}</span> <span class="contador">{{ conteos[b] }}</span></a>
 {% endfor %}
 </nav>
 {% if carga and (carga.en_curso or carga.procesados or carga.saltados or carga.fallidos) %}
 {% set hechos = carga.procesados + carga.saltados + carga.fallidos %}
-<div class="estado-carga" role="status">
+<div class="estado-carga nota" role="status">
 {% if carga.en_curso %}
 {% if carga.total == 1 %}<p>Carga en curso: la IA está analizando el relato. El caso aparecerá aquí al terminar.</p>
 <div class="progreso progreso-indeterminado" aria-hidden="true"><div class="progreso-barra"></div></div>
