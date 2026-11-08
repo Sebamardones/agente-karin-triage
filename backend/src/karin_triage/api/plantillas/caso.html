@@ -1,15 +1,25 @@
 {% extends "base.html" %}
-{% block contenido %}<p><a href="/">Volver a la bandeja</a></p><h2>{{ denuncia.id_externo_dt }}</h2>
-<h3>Texto seudonimizado</h3><pre>{{ denuncia.texto_seudonimizado }}</pre>
-{% if not p.decision %}<p role="status">Sin propuesta: {{ p.estado_auxiliar or p.marcas_pipeline or 'Evaluación no disponible' }}. Requiere revisión humana.</p>{% endif %}
-<h3>Propuesta completa</h3><dl>
-<dt>Decisión</dt><dd>{{ p.decision|etiqueta if p.decision else 'Sin propuesta' }}</dd>
-<dt>Conductas</dt><dd>{{ p.tipo_conducta|etiqueta if p.tipo_conducta else 'Sin conducta tipificada' }}</dd>
-<dt>Vulneración de derechos fundamentales</dt><dd>{{ 'Sí' if p.vulneracion_ddff else 'No marcada' }}</dd>
-<dt>Urgencia</dt><dd>{{ '⚠ Urgencia de resguardo' if p.urgencia_resguardo else 'Sin urgencia marcada' }}</dd>
-<dt>Motivo de descarte</dt><dd>{{ p.motivo_descarte|etiqueta if p.motivo_descarte else 'No corresponde' }}</dd>
-<dt>Confianza</dt><dd>{{ p.confianza if p.confianza is not none else 'No disponible' }}</dd>
-<dt>Alertas</dt><dd>{{ p.marcas_pipeline|etiqueta }}</dd></dl>
+{% block titulo %}{{ denuncia.id_externo_dt }}{% endblock %}
+{% block contenido %}<div class="lienzo">
+{% if p.urgencia_resguardo %}<img class="cinta" src="/estaticos/cinta-contingencia-dark.svg" alt="" aria-hidden="true">{% endif %}
+<p><a href="/">Volver a la bandeja</a></p>
+<p class="antetitulo">Caso sintético</p>
+<h1>{{ denuncia.id_externo_dt }}</h1>
+{% if p.urgencia_resguardo %}<p class="aviso aviso-urgencia"><span class="etiqueta etiqueta-urgencia">Urgencia de resguardo</span>
+La propuesta marca riesgo para la persona denunciante. Revisa este caso primero: el plazo para pedir medidas de resguardo es corto.</p>{% endif %}
+{% if not p.decision %}<p role="status" class="aviso">Sin propuesta: {{ p.estado_auxiliar or p.marcas_pipeline or 'Evaluación no disponible' }}. Requiere revisión humana.</p>{% endif %}
+
+<h2>Propuesta del agente</h2>
+<div class="tarjeta"><dl class="propuesta">
+<div><dt>Decisión</dt><dd>{{ p.decision|etiqueta if p.decision else 'Sin propuesta' }}</dd></div>
+<div><dt>Conductas</dt><dd>{{ p.tipo_conducta|etiqueta if p.tipo_conducta else 'Sin conducta tipificada' }}</dd></div>
+<div><dt>Vulneración de derechos fundamentales</dt><dd>{{ 'Sí' if p.vulneracion_ddff else 'No marcada' }}</dd></div>
+<div><dt>Urgencia</dt><dd>{{ 'Urgencia de resguardo' if p.urgencia_resguardo else 'Sin urgencia marcada' }}</dd></div>
+{% if p.decision == 'DESCARTADO' %}<div><dt>Motivo de descarte</dt><dd>{{ p.motivo_descarte|etiqueta if p.motivo_descarte else 'Sin motivo registrado' }}</dd></div>{% endif %}
+<div><dt>Confianza</dt><dd>{{ p.confianza if p.confianza is not none else 'No disponible' }}</dd></div>
+<div><dt>Alertas</dt><dd>{{ p.marcas_pipeline|etiqueta }}</dd></div>
+</dl></div>
+
 {% for bloque in p.justificacion_y_citas %}
 {% if bloque.decision_modelo and bloque.decision_modelo != p.decision %}
 <p class="correccion" role="alert"><strong>Una regla dura corrigió la propuesta del modelo.</strong>
@@ -19,22 +29,33 @@ La justificación de abajo es la que escribió el modelo <em>antes</em> de la co
 puede argumentar a favor de la decisión descartada. Se conserva sin editar para que quede
 constancia de lo que propuso.</p>
 {% endif %}
+<h3>Justificación</h3>
 <p>{{ bloque.justificacion }}</p>
-<h3>Citas</h3><ul>{% for cita in bloque.citas %}<li><q>{{ cita.texto_literal }}</q> · Fuente: {{ cita.fuente }} · Referencia: {{ cita.referencia or 'Sin referencia' }}</li>{% endfor %}</ul>
-{% if bloque.supuestos %}<p>Supuestos: {{ bloque.supuestos|join('; ') }}</p>{% endif %}{% endfor %}
-<h3>Reglas aplicadas</h3><p>{{ p.reglas_aplicadas or 'Sin reglas registradas' }}</p>
-<h3>Revisión humana</h3>
-{% if 'ACOSO_SEXUAL' in p.tipo_conducta %}<p role="alert"><strong>Advertencia RD-10:</strong>
+<h3>Citas literales</h3><ul class="citas">{% for cita in bloque.citas %}<li><q>{{ cita.texto_literal }}</q>
+<span class="fuente nota">{{ 'Cita normativa' if cita.fuente == 'normativa' else 'Cita del relato' }}{% if cita.referencia %} · {{ cita.referencia }}{% endif %}</span></li>{% endfor %}</ul>
+{% if bloque.supuestos %}<p class="nota">Supuestos: {{ bloque.supuestos|join('; ') }}</p>{% endif %}{% endfor %}
+
+<h3>Reglas duras aplicadas</h3>
+{% set reglas = (p.reglas_aplicadas.split(',') if p.reglas_aplicadas is string else p.reglas_aplicadas) or [] %}
+<p>{% for regla in reglas if regla.strip() %}<span class="etiqueta">{{ regla.strip() }}</span> {% else %}Sin reglas registradas{% endfor %}</p>
+
+<h2>Texto seudonimizado</h2>
+<div class="tarjeta tarjeta-secundaria"><p class="relato">{{ denuncia.texto_seudonimizado }}</p></div>
+
+<h2 id="revision">Revisión humana</h2>
+{% if mensaje %}<p role="status" class="confirmacion">{{ mensaje }}</p>{% endif %}
+{% if 'ACOSO_SEXUAL' in p.tipo_conducta %}<p role="alert" class="alerta-rd10"><strong>Advertencia RD-10:</strong>
 La mediación en una conducta tipificada como acoso sexual contradice el art. 211-D inciso final.
 Una excepción requiere comentario fundado del analista y validación de un supervisor distinto.
 <a href="https://www.bcn.cl/leychile/navegar?idNorma=1200096">Consultar la norma</a>.</p>{% endif %}
-{% if p.urgencia_resguardo %}<p>El caso tiene urgencia marcada. Un descarte requiere motivo, fundamento y cita literal; no elimina la alerta de resguardo.</p>{% endif %}
+{% if p.urgencia_resguardo %}<p class="nota">El caso tiene urgencia marcada. Un descarte requiere motivo, fundamento y cita literal; no elimina la alerta de resguardo.</p>{% endif %}
 {% include '_estado_caso.html' %}
-{% if bloqueo %}<p role="status"><strong>No puedes registrar una revisión en este caso:</strong> {{ bloqueo }}.</p>
+{% if bloqueo %}<p role="status" class="aviso tarjeta"><strong>No puedes registrar una revisión en este caso:</strong> {{ bloqueo }}.</p>
 {% else %}<p id="aviso-revision" role="alert" hidden></p>
-<form method="post" action="/casos/{{ denuncia.id }}/revision"
+<form method="post" action="/casos/{{ denuncia.id }}/revision" class="tarjeta"
  hx-post="/casos/{{ denuncia.id }}/revision" hx-target="#fila-{{ denuncia.id }}" hx-swap="outerHTML"
  hx-on::after-request="if(event.detail.successful) this.elements.version.value = Number(this.elements.version.value) + 1">
+<h3>Registrar tu revisión</h3>
 <input type="hidden" name="version" value="{{ version }}">
 <label>Decisión final de la revisión <select name="decision_final" required>
 {% for decision in decisiones %}<option value="{{ decision.value }}" {% if decision.value == p.decision %}selected{% endif %}>{{ decision.value|etiqueta }}</option>{% endfor %}</select></label>
@@ -43,4 +64,4 @@ Una excepción requiere comentario fundado del analista y validación de un supe
 <label>Cita literal del relato seudonimizado que respalda el descarte <textarea name="cita_respaldo" rows="2"></textarea></label>
 <label>Comentario <textarea name="comentario" rows="4"></textarea></label>
 <button>Registrar revisión</button></form>{% endif %}
-{% endblock %}
+</div>{% endblock %}

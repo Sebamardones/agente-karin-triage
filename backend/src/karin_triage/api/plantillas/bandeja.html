@@ -1,9 +1,14 @@
 {% extends "base.html" %}
-{% block contenido %}<h2>Bandeja de revisión humana</h2>
-{% if mensaje %}<p role="status">{{ mensaje }}</p>{% endif %}
-{% if usuario.rol == 'analista' %}<p><a href="/demo/nuevo">Probar IA con un relato sintético nuevo</a></p>
-<form method="post" action="/cargar-golden-set">
-<button>Cargar el golden set completo</button></form>
-<form method="post" action="/demo/nueva-tanda"><button>Crear tanda nueva para revisar</button>
-<p>Genera copias sintéticas sin revisiones previas; conserva el historial anterior y consume IA.</p></form>{% endif %}
-{% include '_bandeja.html' %}{% endblock %}
+{% block titulo %}Bandeja{% endblock %}
+{% block contenido %}<div class="lienzo">
+<p class="antetitulo">Bandeja de revisión humana</p>
+<h1>Casos por revisar</h1>
+<p class="bajada">Ningún caso se resuelve solo: cada propuesta de la IA espera la decisión de una persona.</p>
+{% if mensaje %}<p role="status" class="confirmacion">{{ mensaje }}</p>{% endif %}
+{% if usuario.rol == 'analista' %}<div class="acciones">
+<a class="boton" href="/demo/nuevo">Probar IA con un relato sintético nuevo</a>
+<form method="post" action="/demo/nueva-tanda" data-carga="Creando tanda…"><button class="boton-secundario">Crear tanda nueva para revisar</button></form>
+<form method="post" action="/cargar-golden-set" data-carga="Cargando…"><button class="boton-secundario">Cargar el golden set completo</button></form>
+</div>
+<p class="nota">La tanda nueva crea copias sintéticas sin revisiones; conserva el historial anterior y consume IA.</p>{% endif %}
+{% include '_bandeja.html' %}</div>{% endblock %}

@@ -1,7 +1,11 @@
 <!doctype html>
 <html lang="es">
 <head><meta charset="utf-8"><meta name="viewport" content="width=device-width, initial-scale=1">
-<title>Karin Triage</title><link rel="stylesheet" href="/estaticos/estilo.css">
+<title>{% block titulo %}Karin Triage{% endblock %} · Karin Triage</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Inter:wght@500;700;900&display=swap">
+<link rel="stylesheet" href="/estaticos/estilo.css">
 <script src="/estaticos/htmx.min.js" defer></script>
 <script>
 // htmx no intercambia respuestas 4xx/5xx: sin esto, un rechazo del servidor no se ve.
@@ -11,10 +15,59 @@ document.addEventListener("htmx:responseError", function (e) {
   var texto = "No se pudo registrar la revisión.";
   try { texto = JSON.parse(e.detail.xhr.responseText).detail || texto; } catch (_) {}
   aviso.textContent = texto;
+  aviso.hidden = true;
+  void aviso.offsetWidth; // reinicia la animación A5 si el error se repite
   aviso.hidden = false;
 });
+// A3: marca las filas que no estaban antes del refresco de la bandeja.
+// También conserva abierto el historial de tandas si la persona lo abrió.
+var filasPrevias = null, historialAbierto = false;
+document.addEventListener("htmx:beforeSwap", function (e) {
+  if (e.detail.target && e.detail.target.id === "bandeja-viva") {
+    filasPrevias = new Set(Array.from(e.detail.target.querySelectorAll("tr[id^='fila-']"), function (f) { return f.id; }));
+    var historial = e.detail.target.querySelector("details.historial-tandas");
+    historialAbierto = !!(historial && historial.open);
+    // El refresco reemplaza la tabla: recuerda dónde estaba el foco del teclado.
+    var activo = document.activeElement;
+    focoPrevio = activo && e.detail.target.contains(activo)
+      ? (activo.getAttribute("href") ? "a[href='" + activo.getAttribute("href") + "']" : (activo.tagName === "SUMMARY" ? "details.historial-tandas > summary" : null))
+      : null;
+  }
+});
+var focoPrevio = null;
+document.addEventListener("htmx:afterSettle", function () {
+  if (!filasPrevias) return;
+  document.querySelectorAll("#bandeja-viva tr[id^='fila-']").forEach(function (f) {
+    if (!filasPrevias.has(f.id)) f.classList.add("fila-nueva");
+  });
+  var historial = document.querySelector("#bandeja-viva details.historial-tandas");
+  if (historial && historialAbierto) historial.open = true;
+  if (focoPrevio) {
+    var destino = document.querySelector("#bandeja-viva " + focoPrevio);
+    if (destino) destino.focus({ preventScroll: true });
+    focoPrevio = null;
+  }
+  filasPrevias = null;
+});
+// A1: estado de envío en los formularios que ejecutan la IA.
+document.addEventListener("submit", function (e) {
+  var form = e.target;
+  if (!form.matches("[data-carga]") || !form.checkValidity()) return;
+  var boton = form.querySelector("button");
+  form.classList.add("enviando");
+  form.setAttribute("aria-busy", "true");
+  if (boton) { boton.textContent = form.getAttribute("data-carga"); setTimeout(function () { boton.disabled = true; }, 0); }
+});
 </script></head>
-<body><header><h1><a href="/">Karin Triage</a></h1>
-<strong>Datos sintéticos · el agente propone, una persona decide</strong>
-{% if usuario %}<p>{{ usuario.nombre }} · {{ usuario.rol }} · <a href="/salir">Salir</a></p>{% endif %}
-</header><main>{% block contenido %}{% endblock %}</main></body></html>
+<body>
+<a class="saltar" href="#contenido">Saltar al contenido</a>
+<div class="franja-prototipo">Prototipo académico UAI · no es un servicio de la Dirección del Trabajo · Datos sintéticos</div>
+<header class="encabezado"><div class="encabezado-interior">
+<a class="marca" href="/"><img src="/estaticos/logo-dt.svg" alt="Logo de la Dirección del Trabajo" width="62" height="56">
+<span><span class="marca-nombre">Karin Triage</span>
+<span class="marca-bajada">El agente propone, una persona decide</span></span></a>
+{% if usuario %}<nav class="sesion" aria-label="Sesión"><p>{{ usuario.nombre }} · {{ usuario.rol|capitalize }} · <a href="/salir">Salir</a></p></nav>{% endif %}
+</div></header>
+<main id="contenido" tabindex="-1">{% block contenido %}{% endblock %}</main>
+<footer class="pie"><p class="nota">Karin Triage · Proyecto final del Certificado en Prompt Engineering, Universidad Adolfo Ibáñez, Grupo 7. Solo usa casos sintéticos: no ingreses denuncias reales.</p></footer>
+</body></html>

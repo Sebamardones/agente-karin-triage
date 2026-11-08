@@ -1,22 +1,229 @@
-:root { font-family: system-ui, sans-serif; color: #182b39; background: #f5f7f8; }
-body { margin: 0; } header, main { padding: 1rem; max-width: 76rem; margin: auto; }
-header { border-bottom: 3px solid #245877; } a { color: #174a70; }
-main { background: white; } label { display: block; margin: 1rem 0; }
-input, select, textarea, button { font: inherit; padding: .6rem; max-width: 100%; box-sizing: border-box; }
-textarea { width: 100%; } button { cursor: pointer; background: #174a70; color: white; border: 0; }
-.tabla { overflow-x: auto; } table { border-collapse: collapse; width: 100%; }
-td, th { padding: .7rem; border-bottom: 1px solid #bcc8cf; text-align: left; }
-pre { white-space: pre-wrap; overflow-wrap: anywhere; font: inherit; padding: 1rem; background: #eef2f4; }
-dd, p, li { overflow-wrap: anywhere; } dt { font-weight: bold; } dd { margin-bottom: .6rem; }
-:focus-visible { outline: 3px solid #a15b00; outline-offset: 3px; }
-@media (max-width: 40rem) { header, main { padding: .7rem; } input, select { width: 100%; } }
+/* Karin Triage · identidad de la Dirección del Trabajo traducida a web.
+   Fuente de las normas: sistema «DT Redes Sociales» (tokens.json). Los nombres
+   de la paleta son los oficiales; los tokens de uso dicen para qué sirve cada
+   color. Tipografía: Inter (Google Fonts) con los pesos de la norma: 500
+   regular, 700 énfasis, 900 títulos. Esquinas rectas y sin sombras. Detalle y
+   contrastes en docs/plan-diseno.md. */
 
-/* Aviso de correccion por regla dura. Se distingue por borde y peso, no solo
-   por color: un funcionario que no distingue rojo de verde tiene que verlo. */
-.correccion {
-  border-left: 6px solid #8a3a00;
-  background: #fff4e5;
-  padding: .75rem 1rem;
-  margin: 1rem 0;
+:root {
+  /* Paleta oficial */
+  --navy: #25306b;
+  --cobalt: #193a97;
+  --signal-blue: #005dff;
+  --emblem-blue: #006bb9;
+  --emblem-red: #ff1d3d;
+  --mist: #edf0f5;
+  --ice: #cfe2ff;
+  --pale-sky: #c2f6ff;
+  --powder: #aad0eb;
+  --periwinkle: #a7b5e5;
+  --blush: #fdd1d5;
+  --white: #ffffff;
+
+  /* Tokens de uso: tema Gris para el contenido (mucho texto, tablas, datos) */
+  --fondo: var(--white);
+  --fondo-pagina: var(--mist);
+  --texto: var(--navy);              /* 12,25:1 sobre white */
+  --texto-secundario: var(--cobalt); /* 10,03:1 sobre white */
+  --acento: var(--signal-blue);      /* 5,24:1 sobre white */
+  --tarjeta: var(--ice);             /* navy encima: 9,32:1 */
+  --separador: var(--periwinkle);
+  --urgencia-fondo: var(--blush);    /* navy encima: 8,90:1 */
+
+  /* Escala web derivada de la escala de 1080 px de la norma */
+  --space-1: 4px; --space-2: 8px; --space-3: 12px; --space-4: 16px;
+  --space-6: 24px; --space-8: 32px; --space-12: 48px;
+
+  /* Movimiento (catálogo A1–A5 de docs/plan-diseno.md) */
+  --entrada: cubic-bezier(0.2, 0, 0, 1);
+  --salida: cubic-bezier(0.4, 0, 1, 1);
+
+  font-family: Inter, system-ui, -apple-system, "Segoe UI", sans-serif;
+  font-weight: 500;
+  font-size: 16px;
+  line-height: 24px;
+  color: var(--texto);
+  background: var(--fondo-pagina);
+  -webkit-font-smoothing: antialiased;
 }
-.nota { color: #4a5c68; font-size: .9rem; }
+
+* { box-sizing: border-box; }
+body { margin: 0; background: var(--fondo-pagina); }
+strong, b, dt { font-weight: 700; }
+a { color: var(--acento); text-underline-offset: 2px; }
+a:hover { color: var(--cobalt); }
+:focus-visible { outline: 3px solid var(--signal-blue); outline-offset: 2px; }
+
+/* Enlace para saltar al contenido */
+.saltar {
+  position: absolute; left: var(--space-4); top: -100px; z-index: 10;
+  background: var(--white); color: var(--navy); padding: var(--space-2) var(--space-4);
+  font-weight: 700;
+}
+.saltar:focus { top: var(--space-2); }
+
+/* Franja de prototipo académico: visible en todas las páginas */
+.franja-prototipo {
+  background: var(--mist); color: var(--navy); text-align: center;
+  font-size: 14px; line-height: 20px; font-weight: 700;
+  padding: var(--space-2) var(--space-4); border-bottom: 1px solid var(--separador);
+}
+
+/* Encabezado: tema Navy (degradado navy → cobalt) con el logo DT tal cual */
+.encabezado {
+  background: linear-gradient(to top right, var(--navy), var(--cobalt));
+  color: var(--white);
+}
+.encabezado a { color: var(--white); }
+.encabezado :focus-visible { outline-color: var(--white); }
+.encabezado-interior {
+  max-width: 76rem; margin: auto; padding: var(--space-4);
+  display: flex; align-items: center; gap: var(--space-6); flex-wrap: wrap;
+}
+.marca { display: flex; align-items: center; gap: var(--space-4); text-decoration: none; }
+.marca img { height: 56px; width: auto; display: block; }
+.marca-nombre { display: block; font-size: 24px; line-height: 28px; font-weight: 900; }
+.marca-bajada { display: block; font-size: 14px; line-height: 20px; color: rgba(255, 255, 255, 0.9); }
+.sesion { margin-left: auto; font-size: 14px; line-height: 20px; }
+.sesion p { margin: 0; }
+
+/* Contenido */
+main { display: block; max-width: 76rem; margin: auto; padding: var(--space-8) var(--space-4) var(--space-12); }
+.lienzo { background: var(--fondo); padding: var(--space-8); }
+h1 { font-size: 36px; line-height: 42px; font-weight: 900; margin: 0 0 var(--space-3); }
+h2 { font-size: 24px; line-height: 30px; font-weight: 900; margin: var(--space-8) 0 var(--space-3); }
+h3 { font-size: 18px; line-height: 24px; font-weight: 700; margin: var(--space-6) 0 var(--space-2); }
+.antetitulo {
+  font-size: 13px; line-height: 20px; font-weight: 900; letter-spacing: 0.02em;
+  text-transform: uppercase; color: var(--texto-secundario); margin: 0 0 var(--space-1);
+}
+.bajada { font-size: 20px; line-height: 28px; color: var(--texto-secundario); margin: 0 0 var(--space-6); }
+.nota { font-size: 14px; line-height: 20px; color: var(--texto-secundario); }
+p, dd, li { overflow-wrap: anywhere; }
+
+/* Cifra protagonista: una por página */
+.resumen { display: flex; flex-wrap: wrap; align-items: flex-end; gap: var(--space-8); margin: var(--space-6) 0; }
+.cifra { font-size: 56px; line-height: 56px; font-weight: 900; display: block; }
+.cifra-rotulo { font-weight: 700; }
+
+/* Controles: esquinas rectas, sin sombras */
+input, select, textarea, button { font: inherit; max-width: 100%; }
+input:not([type="checkbox"]), select, textarea {
+  padding: var(--space-3); border: 2px solid var(--navy); border-radius: 0; background: var(--white); color: var(--navy);
+}
+textarea { width: 100%; }
+label input:not([type="checkbox"]), label select { width: 100%; max-width: 28rem; }
+label { display: block; margin: var(--space-4) 0; font-weight: 700; }
+label input:not([type="checkbox"]), label select, label textarea { display: block; margin-top: var(--space-2); font-weight: 500; }
+.casilla { display: flex; gap: var(--space-3); align-items: flex-start; font-weight: 500; }
+.casilla input { width: 20px; height: 20px; margin-top: 2px; flex: none; }
+button, .boton {
+  display: inline-block; cursor: pointer; border: 2px solid var(--signal-blue); border-radius: 0;
+  background: var(--signal-blue); color: var(--white); font-weight: 700;
+  padding: var(--space-3) var(--space-6); text-decoration: none; line-height: 24px;
+}
+button:hover, .boton:hover { background: var(--cobalt); border-color: var(--cobalt); color: var(--white); }
+.boton-secundario { background: var(--white); color: var(--signal-blue); }
+.boton-secundario:hover { background: var(--ice); color: var(--navy); border-color: var(--signal-blue); }
+button[disabled] { cursor: progress; background: var(--cobalt); border-color: var(--cobalt); }
+.acciones { display: flex; flex-wrap: wrap; gap: var(--space-3); align-items: center; margin: var(--space-4) 0; }
+.acciones form { margin: 0; }
+
+/* Tarjetas: ice con texto navy, sin bordes ni sombras */
+.tarjeta { background: var(--tarjeta); color: var(--navy); padding: var(--space-6); margin: var(--space-4) 0; }
+.tarjeta > :first-child { margin-top: 0; }
+.tarjeta > :last-child { margin-bottom: 0; }
+.tarjeta-secundaria { background: var(--pale-sky); }
+.relato { white-space: pre-wrap; overflow-wrap: anywhere; font: inherit; margin: 0; }
+.propuesta { display: grid; grid-template-columns: repeat(auto-fit, minmax(12rem, 1fr)); gap: var(--space-4) var(--space-6); margin: 0; }
+.propuesta dt { font-size: 13px; line-height: 20px; font-weight: 900; letter-spacing: 0.02em; text-transform: uppercase; color: var(--texto-secundario); }
+.propuesta dd { margin: 0; font-weight: 700; }
+.citas { list-style: none; padding: 0; margin: 0; }
+.citas li { background: var(--white); padding: var(--space-4); margin: var(--space-3) 0; }
+.citas q { font-weight: 700; }
+.fuente { display: block; margin-top: var(--space-2); }
+
+/* Etiquetas tipográficas (sin emoji) */
+.etiqueta {
+  display: inline-block; font-size: 12px; line-height: 16px; font-weight: 900;
+  letter-spacing: 0.04em; text-transform: uppercase; padding: var(--space-1) var(--space-2);
+  background: var(--mist); color: var(--navy); white-space: nowrap;
+}
+.etiqueta-urgencia { background: var(--urgencia-fondo); }
+.etiqueta-nueva { background: var(--ice); }
+.aviso-urgencia .etiqueta-urgencia { background: var(--white); }
+
+/* Cinta de contingencia (asset oficial, tema Gris): marca los casos urgentes. Sin texto encima. */
+.cinta { display: block; width: 100%; height: auto; margin: 0 0 var(--space-4); }
+
+/* Avisos */
+.aviso, [role="alert"] { padding: var(--space-4); margin: var(--space-4) 0; }
+.aviso-urgencia, .correccion, #aviso-revision, .alerta-rd10 { background: var(--urgencia-fondo); color: var(--navy); }
+.confirmacion { background: var(--pale-sky); color: var(--navy); padding: var(--space-4); margin: var(--space-4) 0; font-weight: 700; }
+.estado-carga { margin: var(--space-4) 0; }
+
+/* Tabla de la bandeja */
+.tabla { overflow-x: auto; }
+table { border-collapse: collapse; width: 100%; background: var(--white); }
+th {
+  text-align: left; vertical-align: bottom; background: var(--mist); color: var(--navy);
+  font-size: 12px; line-height: 16px; font-weight: 900; letter-spacing: 0.04em; text-transform: uppercase;
+  padding: var(--space-3);
+}
+td { padding: var(--space-3); border-bottom: 1px solid var(--separador); vertical-align: top; }
+td a { font-weight: 700; }
+td:first-child { white-space: nowrap; }
+.historial-tandas { margin-top: var(--space-8); }
+.historial-tandas summary { cursor: pointer; font-weight: 700; color: var(--acento); padding: var(--space-2) 0; }
+.historial { padding-left: var(--space-6); }
+.historial li { margin-bottom: var(--space-3); }
+
+/* Progreso de carga (A1, A2) */
+.progreso { height: 6px; background: var(--ice); overflow: hidden; margin-top: var(--space-2); }
+.progreso-barra { height: 100%; background: var(--signal-blue); transition: width 300ms var(--entrada); }
+.progreso-indeterminado .progreso-barra { width: 30%; animation: indeterminado 1.2s linear infinite; }
+@keyframes indeterminado { from { transform: translateX(-100%); } to { transform: translateX(340%); } }
+.enviando .progreso { display: block; }
+form .progreso { display: none; }
+
+/* A3: caso nuevo en la bandeja */
+.fila-nueva { animation: fila-nueva 1.2s var(--salida) 1; }
+@keyframes fila-nueva { from { background: var(--ice); } to { background: transparent; } }
+.etiqueta-nueva { display: none; }
+.fila-nueva .etiqueta-nueva { display: inline-block; }
+
+/* A4 y A5: confirmación y error */
+.confirmacion, #aviso-revision:not([hidden]) { animation: aparecer 200ms var(--entrada) 1; }
+#aviso-revision:not([hidden]) { animation-duration: 150ms; }
+@keyframes aparecer { from { opacity: 0; transform: translateY(4px); } to { opacity: 1; transform: none; } }
+
+/* Pie */
+.pie { max-width: 76rem; margin: auto; padding: 0 var(--space-4) var(--space-8); }
+
+/* Movimiento reducido: sin animaciones; el texto de estado sigue visible */
+@media (prefers-reduced-motion: reduce) {
+  *, *::before, *::after { animation: none !important; transition: none !important; }
+  .progreso-indeterminado .progreso-barra { width: 100%; }
+}
+
+/* Móvil: la tabla pasa a tarjetas */
+@media (max-width: 40rem) {
+  main { padding: var(--space-4) var(--space-4) var(--space-8); }
+  .lienzo { padding: var(--space-4); }
+  h1 { font-size: 28px; line-height: 34px; }
+  .marca img { height: 44px; }
+  .sesion { margin-left: 0; }
+  .tabla { overflow: visible; }
+  table, tbody, tr, td { display: block; width: 100%; }
+  thead { position: absolute; width: 1px; height: 1px; overflow: hidden; clip: rect(0 0 0 0); }
+  tr { background: var(--white); border: 1px solid var(--separador); margin-bottom: var(--space-3); }
+  td { border: 0; padding: var(--space-1) var(--space-3); }
+  td:first-child { padding-top: var(--space-3); }
+  td:last-child { padding-bottom: var(--space-3); }
+  td[data-rotulo]::before {
+    content: attr(data-rotulo); display: block; font-size: 12px; line-height: 16px;
+    font-weight: 900; letter-spacing: 0.04em; text-transform: uppercase; color: var(--texto-secundario);
+  }
+  button, .boton { width: 100%; text-align: center; }
+  .acciones form { width: 100%; }
+}

@@ -2,6 +2,7 @@
 
 import json
 import os
+import re
 import secrets
 from contextlib import asynccontextmanager
 from datetime import date
@@ -71,7 +72,7 @@ def estado_revision(historial, propuesta):
     if not historial:
         return "Pendiente de revisión humana"
     if any(r.decision_final == "DESCARTADO" and not r.motivo_descarte for r in historial):
-        return "Revisión histórica · fundamento de descarte no capturado; usar nueva tanda"
+        return "Revisión de una versión anterior (sin fundamento registrado)"
     ultima = historial[-1]
     firma = f"{etiqueta(ultima.decision_final)} ({ultima.funcionario})"
     if len(historial) == 1:
@@ -87,6 +88,30 @@ def datos_fila(sesion, denuncia, propuesta):
     return {"denuncia": denuncia, "p": propuesta, "historial": historial,
             "version": historial[0].version if historial else 0,
             "estado_revision": estado_revision(historial, propuesta)}
+
+
+TANDA = re.compile(r"^DEMO-([0-9a-f]{8})-")
+RELATO_NUEVO = re.compile(r"^DEMO-[0-9a-f]{12}$")
+
+
+def separar_tanda_vigente(filas):
+    """Divide la bandeja en casos vigentes y casos de tandas anteriores.
+
+    Vigentes: la tanda más reciente y los relatos nuevos. Si no hay tandas, todos
+    los casos son vigentes. Solo cambia lo que se muestra: no borra ni modifica
+    ningún caso ni revisión.
+    """
+    tandas = [(f["p"].creado_en, m.group(1)) for f in filas
+              if (m := TANDA.match(f["denuncia"].id_externo_dt))]
+    if not tandas:
+        return filas, []
+    vigente = max(tandas)[1]
+    vigentes, anteriores = [], []
+    for f in filas:
+        externo = f["denuncia"].id_externo_dt
+        es_vigente = externo.startswith(f"DEMO-{vigente}-") or RELATO_NUEVO.match(externo)
+        (vigentes if es_vigente else anteriores).append(f)
+    return vigentes, anteriores
 
 
 def motivo_bloqueo(historial, propuesta, usuario):
@@ -136,7 +161,8 @@ def crear_app(ajustes=None, motor=None):
     app = FastAPI(title="Karin Triage", lifespan=lifespan)
     app.state.motor = motor
     carga_lock = Lock()
-    carga_estado = {"en_curso": False, "procesados": 0, "saltados": 0, "fallidos": 0}
+    carga_estado = {"en_curso": False, "procesados": 0, "saltados": 0, "fallidos": 0,
+                    "total": 0}
 
     def cargar_en_segundo_plano(registros=None):
         try:
@@ -144,6 +170,8 @@ def crear_app(ajustes=None, motor=None):
                 entradas = registros if registros is not None else [
                     json.loads(linea)["entrada"] for linea in
                     resolver_golden_set().read_text(encoding="utf-8").splitlines() if linea.strip()]
+                with carga_lock:
+                    carga_estado["total"] = len(entradas)
                 for registro in entradas:
                     try:
                         if sesion.scalar(select(Denuncia.id).where(
@@ -217,8 +245,11 @@ def crear_app(ajustes=None, motor=None):
         filas = sesion.execute(select(Denuncia, Preclasificacion).join(
             Preclasificacion, Preclasificacion.denuncia_id == Denuncia.id
         ).order_by(Preclasificacion.prioridad, Preclasificacion.creado_en)).all()
-        return {"filas": [datos_fila(sesion, d, p) for d, p in filas], "carga": estado_carga,
-                "total_casos": len(filas)}
+        vigentes, anteriores = separar_tanda_vigente(
+            [datos_fila(sesion, d, p) for d, p in filas])
+        pendientes = sum(1 for f in vigentes if not f["historial"])
+        return {"filas": vigentes, "anteriores": anteriores, "carga": estado_carga,
+                "total_casos": len(filas), "pendientes": pendientes}
 
     @app.get("/")
     def bandeja(request: Request, usuario: Usuario, sesion: Sesion):
@@ -234,9 +265,16 @@ def crear_app(ajustes=None, motor=None):
     def cargar(request: Request, usuario: Usuario, background_tasks: BackgroundTasks):
         if usuario["rol"] != "analista":
             raise HTTPException(403, "Solo el analista puede cargar casos sintéticos")
+        try:
+            # El total se conoce antes de empezar: la barra de progreso es determinada.
+            total = sum(1 for linea in resolver_golden_set().read_text(
+                encoding="utf-8").splitlines() if linea.strip())
+        except FileNotFoundError:
+            total = 0
         with carga_lock:
             if not carga_estado["en_curso"]:
-                carga_estado.update(en_curso=True, procesados=0, saltados=0, fallidos=0)
+                carga_estado.update(en_curso=True, procesados=0, saltados=0, fallidos=0,
+                                    total=total)
                 background_tasks.add_task(cargar_en_segundo_plano)
         request.session["mensaje"] = "Carga solicitada. Los casos aparecerán en la bandeja."
         return RedirectResponse("/", 303)
@@ -245,7 +283,8 @@ def crear_app(ajustes=None, motor=None):
         with carga_lock:
             if carga_estado["en_curso"]:
                 raise HTTPException(409, "Hay una carga en curso; espera antes de crear otra.")
-            carga_estado.update(en_curso=True, procesados=0, saltados=0, fallidos=0)
+            carga_estado.update(en_curso=True, procesados=0, saltados=0, fallidos=0,
+                                total=len(registros))
             background_tasks.add_task(cargar_en_segundo_plano, registros)
 
     @app.get("/demo/nuevo")
@@ -295,7 +334,8 @@ def crear_app(ajustes=None, motor=None):
             decisiones.remove(Decision.DESCARTADO)
         return vista(request, "caso.html", usuario, **fila, decisiones=decisiones,
                      motivos=list(MotivoDescarte),
-                     bloqueo=bloqueo[1] if bloqueo else None)
+                     bloqueo=bloqueo[1] if bloqueo else None,
+                     mensaje=request.session.pop("mensaje", None))
 
     @app.get("/casos/{identificador}/estado")
     def caso_estado(identificador: str, request: Request, usuario: Usuario, sesion: Sesion):
@@ -365,6 +405,7 @@ def crear_app(ajustes=None, motor=None):
         except (StaleDataError, IntegrityError):
             sesion.rollback()
             raise HTTPException(409, "Otro funcionario revisó el caso mientras tanto") from None
+        request.session["mensaje"] = "Revisión registrada."
         if request.headers.get("HX-Request") == "true":
             # Recarga completa: el historial y el formulario también deben reflejar la firma.
             respuesta = vista(request, "_fila.html", usuario, **datos_fila(sesion, d, p))

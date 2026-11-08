@@ -1,11 +1,17 @@
 {% extends "base.html" %}
-{% block contenido %}<h2>Probar la IA con un caso sintético nuevo</h2>
-<p>Escribe únicamente una situación inventada. No incluyas nombres, correos,
+{% block titulo %}Relato nuevo{% endblock %}
+{% block contenido %}<div class="lienzo">
+<p><a href="/">Volver a la bandeja</a></p>
+<p class="antetitulo">Demostración en vivo</p>
+<h1>Probar la IA con un caso sintético nuevo</h1>
+<p class="bajada">Escribe únicamente una situación inventada. No incluyas nombres, correos,
 RUT ni información de personas reales. Cada envío ejecuta la IA y consume el presupuesto de demo.</p>
-<form method="post" action="/demo/nuevo">
+<form method="post" action="/demo/nuevo" data-carga="Procesando con IA…">
 <label>Relato ficticio <textarea name="relato" rows="9" minlength="40" maxlength="6000" required>En una empresa ficticia, mi jefatura me ridiculiza delante del equipo durante las reuniones. No hay amenazas, violencia física ni contacto forzado. Solicito que se revisen estos hechos inventados.</textarea></label>
-<label><input type="checkbox" name="confirmar_sintetico" value="true" required>
-Confirmo que es un relato inventado, sin datos personales reales.</label>
-<button>Ejecutar IA y enviar a revisión humana</button></form>
-<p>El resultado aparecerá en la bandeja al terminar el procesamiento. <a href="/">Volver a la bandeja</a></p>
-{% endblock %}
+<label class="casilla"><input type="checkbox" name="confirmar_sintetico" value="true" required>
+<span>Confirmo que es un relato inventado, sin datos personales reales.</span></label>
+<button>Ejecutar IA y enviar a revisión humana</button>
+<div class="progreso progreso-indeterminado" aria-hidden="true"><div class="progreso-barra"></div></div>
+</form>
+<p class="nota">La IA tarda unos segundos. El resultado aparecerá en la bandeja al terminar el procesamiento, siempre como propuesta pendiente de revisión humana.</p>
+</div>{% endblock %}

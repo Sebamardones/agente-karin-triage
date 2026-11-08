@@ -117,8 +117,8 @@ def test_05_orden_prioridad(entorno):
 def test_06_carga_idempotente(entorno):
     cliente, motor = entorno
     login(cliente)
-    assert "procesados: 11" in cliente.post("/cargar-golden-set").text
-    assert "saltados: 11" in cliente.post("/cargar-golden-set").text
+    assert "11 casos nuevos" in cliente.post("/cargar-golden-set").text
+    assert "11 ya estaban en la bandeja" in cliente.post("/cargar-golden-set").text
     with Session(motor) as s:
         assert len(list(s.scalars(select(Denuncia)))) == 11
 
@@ -127,7 +127,7 @@ def test_07_detalle_propuesta(entorno):
     identificador = caso(entorno)
     login(entorno[0])
     html = entorno[0].get(f"/casos/{identificador}").text
-    for texto in ("PROCEDE_INVESTIGACION", "Relato sintético", "RD-12", "Fuente: denuncia"):
+    for texto in ("PROCEDE_INVESTIGACION", "Relato sintético", "RD-12", "Cita del relato · Relato sintético"):
         assert texto in html
 
 
@@ -244,7 +244,7 @@ def test_carga_continua_tras_fallo(entorno, monkeypatch):
     monkeypatch.setattr(main, "procesar_caso", fallar_primero)
     login(entorno[0])
     html = entorno[0].post("/cargar-golden-set").text
-    assert "procesados: 10" in html and "fallidos: 1" in html
+    assert "10 casos nuevos" in html and "1 con error" in html
 
 
 def test_logout_roles_y_rutas_protegidas(entorno):
@@ -277,13 +277,13 @@ def test_carga_programada_responde_sin_esperar_y_no_duplica(entorno, monkeypatch
     login(cliente)
     respuesta = cliente.post("/cargar-golden-set")
     assert respuesta.status_code == 200 and "Carga en curso" in respuesta.text
-    assert "procesados: 0" in respuesta.text
+    assert "0 de 11 casos procesados" in respuesta.text
     cliente.post("/cargar-golden-set")
     assert len(pendientes) == 1
     funcion, args, kwargs = pendientes.pop()
     funcion(*args, **kwargs)
     html = cliente.get("/").text
-    assert "procesados: 11" in html and "Carga en curso" not in html
+    assert "11 casos nuevos" in html and "Carga en curso" not in html
 
 
 def test_exito_htmx_recarga_la_pagina(entorno):
@@ -419,4 +419,69 @@ def test_bandeja_sin_contadores_de_carga_vacios(entorno):
     login(entorno[0])
     html = entorno[0].get("/").text
     assert "Total de casos guardados: 0" in html
-    assert "procesados: 0" not in html and "Datos sintéticos" in html
+    assert "Carga terminada" not in html and "Datos sintéticos" in html
+
+
+# --- Rediseño con identidad DT (docs/plan-diseno.md) ---------------------------
+
+
+def test_franja_de_prototipo_y_accesibilidad_en_todas_las_paginas(entorno):
+    cliente, _ = entorno
+    publica = cliente.get("/entrar").text
+    login(cliente)
+    for html in (publica, cliente.get("/").text, cliente.get("/demo/nuevo").text):
+        assert "no es un servicio de la Dirección del Trabajo" in html
+        assert 'href="#contenido"' in html and 'id="contenido"' in html
+        assert "/estaticos/logo-dt.svg" in html
+    assert "plataforma del curso" in publica
+    for archivo in ("logo-dt.svg", "cinta-contingencia-dark.svg"):
+        assert cliente.get(f"/estaticos/{archivo}").status_code == 200
+
+
+def test_bandeja_muestra_la_tanda_vigente_y_guarda_las_anteriores(entorno):
+    cliente, motor = entorno
+    login(cliente)
+    cliente.post("/demo/nueva-tanda")
+    cliente.post("/demo/nueva-tanda")
+    caso(entorno, externo="DEMO-0123456789ab")  # relato nuevo: siempre vigente
+    with Session(motor) as sesion:
+        externos = [d.id_externo_dt for d in sesion.scalars(
+            select(Denuncia).order_by(Denuncia.id_externo_dt))]
+    tandas = sorted({e.split("-")[1] for e in externos if e.count("-") >= 2})
+    assert len(tandas) == 2
+    html = cliente.get("/bandeja/contenido").text
+    principal, _, historial = html.partition('class="historial-tandas"')
+    assert "Historial de tandas anteriores (11 casos)" in html
+    assert "DEMO-0123456789ab" in principal
+    # Cada tanda queda completa de un solo lado: nada se borra ni se mezcla.
+    vigente = [t for t in tandas if f"DEMO-{t}-" in principal]
+    anterior = [t for t in tandas if f"DEMO-{t}-" in historial]
+    assert len(vigente) == 1 and len(anterior) == 1 and vigente != anterior
+    assert f"DEMO-{vigente[0]}-" not in historial
+    assert "Total de casos guardados: 23" in html
+
+
+def test_bandeja_sin_tandas_muestra_todo(entorno):
+    caso(entorno, externo="SINT-0001")
+    login(entorno[0])
+    html = entorno[0].get("/").text
+    assert "SINT-0001" in html and "Historial de tandas anteriores" not in html
+
+
+def test_motivo_de_descarte_solo_en_descartes(entorno):
+    cliente, _ = entorno
+    investigar = caso(entorno, externo="CASO-INVESTIGA")
+    descartar = caso(entorno, externo="CASO-DESCARTE", decision="DESCARTADO")
+    login(cliente)
+    assert "Motivo de descarte" not in cliente.get(f"/casos/{investigar}").text
+    assert "Motivo de descarte" in cliente.get(f"/casos/{descartar}").text
+
+
+def test_revision_registrada_confirma_en_la_ficha(entorno):
+    identificador = caso(entorno)
+    cliente, _ = entorno
+    login(cliente)
+    assert revision(cliente, identificador, decision="PROCEDE_INVESTIGACION").status_code == 200
+    html = cliente.get(f"/casos/{identificador}").text
+    assert 'class="confirmacion"' in html and "Revisión registrada." in html
+    assert "Revisión registrada." not in cliente.get(f"/casos/{identificador}").text

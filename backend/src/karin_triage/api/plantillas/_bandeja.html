@@ -1,11 +1,27 @@
 <div id="bandeja-viva" hx-get="/bandeja/contenido" hx-swap="outerHTML"
  hx-trigger="every 5s [document.visibilityState === 'visible']">
-<p>Total de casos guardados: {{ total_casos }}</p>
-{% if carga and (carga.en_curso or carga.procesados or carga.saltados or carga.fallidos) %}<p role="status">{% if carga.en_curso %}Carga en curso. {% else %}Última carga de esta sesión del servidor. {% endif %}procesados: {{ carga.procesados }}, saltados: {{ carga.saltados }}, fallidos: {{ carga.fallidos }}.</p>{% endif %}
-{% if filas %}<div class="tabla"><table><thead><tr>
-<th>Caso</th><th>Propuesta del agente</th><th>Conductas</th><th>Resguardo</th>
-<th>Confianza</th><th>Alertas</th><th>Prioridad</th><th>Estado de revisión</th>
-</tr></thead><tbody>{% for fila in filas %}{% with denuncia=fila.denuncia, p=fila.p, historial=fila.historial, estado_revision=fila.estado_revision %}
-{% include '_fila.html' %}{% endwith %}{% endfor %}</tbody></table></div>
+<div class="resumen">
+<p><span class="cifra">{{ pendientes }}</span><span class="cifra-rotulo">casos pendientes de revisión</span></p>
+<p class="nota">Total de casos guardados: {{ total_casos }}</p>
+</div>
+{% if carga and (carga.en_curso or carga.procesados or carga.saltados or carga.fallidos) %}
+{% set hechos = carga.procesados + carga.saltados + carga.fallidos %}
+<div class="estado-carga tarjeta" role="status" aria-live="polite">
+{% if carga.en_curso %}
+{% if carga.total == 1 %}<p>Carga en curso: la IA está analizando el relato. El caso aparecerá aquí al terminar.</p>
+<div class="progreso progreso-indeterminado" aria-hidden="true"><div class="progreso-barra"></div></div>
+{% else %}<p>Carga en curso: {{ hechos }} de {{ carga.total or '…' }} casos procesados.</p>
+<div class="progreso" aria-hidden="true"><div id="progreso-carga" class="progreso-barra" style="width: {{ (100 * hechos / carga.total)|round|int if carga.total else 0 }}%"></div></div>{% endif %}
+{% else %}<p>Carga terminada: {{ carga.procesados }} casos nuevos, {{ carga.saltados }} ya estaban en la bandeja, {{ carga.fallidos }} con error.</p>{% endif %}
+</div>{% endif %}
+{% macro tabla(filas_tabla) %}<div class="tabla"><table><thead><tr>
+<th scope="col">Caso</th><th scope="col">Propuesta del agente</th><th scope="col">Conductas</th><th scope="col">Resguardo</th>
+<th scope="col">Confianza</th><th scope="col">Alertas</th><th scope="col">Prioridad</th><th scope="col">Estado de revisión</th>
+</tr></thead><tbody>{% for fila in filas_tabla %}{% with denuncia=fila.denuncia, p=fila.p, historial=fila.historial, estado_revision=fila.estado_revision %}
+{% include '_fila.html' %}{% endwith %}{% endfor %}</tbody></table></div>{% endmacro %}
+{% if filas %}{{ tabla(filas) }}
 {% else %}<p>No hay casos en la bandeja.</p>{% endif %}
+{% if anteriores %}<details class="historial-tandas"><summary>Historial de tandas anteriores ({{ anteriores|length }} {{ 'caso' if anteriores|length == 1 else 'casos' }})</summary>
+<p class="nota">Casos y revisiones de tandas previas. Se conservan como registro; no se borran.</p>
+{{ tabla(anteriores) }}</details>{% endif %}
 <p class="nota">Se actualiza sola cada 5 segundos.</p></div>
