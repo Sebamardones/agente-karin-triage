@@ -203,6 +203,52 @@
     marcarSeleccion();
   });
 
+  // --- Ventana de bienvenida: una vez por sesión y por rol, y a pedido -------
+  function abrirGuia() {
+    var guia = porId("guia");
+    if (!guia || guia.open) return false;
+    guia.showModal();
+    return true;
+  }
+  function mostrarGuiaSiCorresponde() {
+    var guia = porId("guia");
+    if (!guia) return;
+    var pedida = new URLSearchParams(window.location.search).get("guia") === "1";
+    var clave = "karin-guia-" + guia.getAttribute("data-rol");
+    var vista = false;
+    try { vista = sessionStorage.getItem(clave) === "1"; } catch (_) {}
+    if (pedida || !vista) {
+      abrirGuia();
+      try { sessionStorage.setItem(clave, "1"); } catch (_) {}
+      if (pedida) history.replaceState(history.state, "", window.location.pathname);
+    }
+  }
+  document.addEventListener("click", function (e) {
+    var enlace = e.target.closest("[data-abrir-guia]");
+    if (enlace && abrirGuia()) e.preventDefault();
+  });
+
+  // --- Menú principal: plegable en pantallas angostas; submenús se cierran solos
+  document.addEventListener("click", function (e) {
+    var boton = e.target.closest("[data-menu]");
+    if (boton) {
+      var abierto = boton.getAttribute("aria-expanded") === "true";
+      boton.setAttribute("aria-expanded", abierto ? "false" : "true");
+      porId("menu-principal").classList.toggle("abierto", !abierto);
+      return;
+    }
+    document.querySelectorAll(".menu-grupo[open]").forEach(function (grupo) {
+      if (!grupo.contains(e.target)) grupo.open = false;
+    });
+  });
+  document.addEventListener("keydown", function (e) {
+    if (e.key !== "Escape") return;
+    document.querySelectorAll(".menu-grupo[open]").forEach(function (grupo) {
+      grupo.open = false;
+      grupo.querySelector("summary").focus();
+    });
+  });
+
   // --- Atajos de teclado ------------------------------------------------------
   function enfocarAccion(id) {
     var boton = porId(id);
@@ -279,16 +325,38 @@
   });
 
   // --- Al cargar: aviso pendiente (móvil) y selección inicial ----------------
+  // --- Entrada inicial: orden del escalonado y cifras que cuentan hasta su valor
+  function prepararEntrada() {
+    [".metrica", ".pestana", ".tarjeta-caso", ".bloque-ingreso", ".pie-interior > *"].forEach(function (selector) {
+      document.querySelectorAll(selector).forEach(function (el, i) { el.style.setProperty("--i", i); });
+    });
+    if (!reducido.matches) {
+      document.querySelectorAll(".metrica .cifra, .metrica .metrica-valor").forEach(function (el) {
+        var texto = el.textContent.trim();
+        var final = parseInt(texto, 10);
+        if (isNaN(final) || final <= 0) return;
+        var sufijo = texto.replace(/^\d+/, "");
+        var inicio = null;
+        function paso(t) {
+          if (inicio === null) inicio = t;
+          var avance = Math.min(1, (t - inicio) / 700);
+          el.textContent = Math.round(final * (1 - Math.pow(1 - avance, 3))) + sufijo;
+          if (avance < 1) requestAnimationFrame(paso);
+        }
+        requestAnimationFrame(paso);
+      });
+    }
+    // Las entradas solo corren al cargar: los refrescos de la cola no se animan de nuevo.
+    setTimeout(function () { document.body.classList.remove("entrada-inicial"); }, 1600);
+  }
+
   document.addEventListener("DOMContentLoaded", function () {
+    prepararEntrada();
     try {
       var pendiente = sessionStorage.getItem("karin-aviso");
       if (pendiente) { sessionStorage.removeItem("karin-aviso"); avisar(pendiente); }
     } catch (_) {}
     marcarSeleccion();
-    // En escritorio, la bandeja abre su primer caso: la persona empieza a decidir sin buscar.
-    var primero = document.querySelector(".tarjeta-enlace");
-    if (escritorio.matches && primero && !porId("panel-caso") && porId("panel")) {
-      abrirCaso(primero.getAttribute("data-caso"), primero.getAttribute("data-bandeja"), false, true);
-    }
+    mostrarGuiaSiCorresponde();
   });
 })();

@@ -230,3 +230,24 @@ redes sociales de la DT, aplicadas a la interfaz web:
   página son los lugares donde la interfaz declara que los datos son sintéticos.
 - **Pie de página** con marca, accesos de la plataforma, enlaces del proyecto y
   normativa, y la declaración legal del prototipo, en todas las páginas.
+- **Animaciones en toda la interfaz** (pedido del responsable; amplía el
+  catálogo A1–A9, que se limitaba a estados del flujo):
+  entrada escalonada al cargar (encabezado, cola, métricas que cuentan hasta
+  su valor, pestañas, tarjetas, bloques del ingreso y pie), cascada de las
+  secciones del panel en cada caso, chips que aparecen, citas que se
+  «subrayan» al abrir, recorrido que dibuja su línea, tarjetas que se levantan
+  al pasar, botones que responden al presionar, iconos que se desplazan,
+  chevrones que giran, submenús y diálogos que aparecen con escala y avisos
+  que entran desde la derecha. Las entradas solo corren al cargar la página;
+  el refresco de la cola cada 5 s no las repite. Todo se anula con
+  `prefers-reduced-motion`.
+- **Botones ajustados al texto**: altura mínima de 44 px (36 px en los chicos),
+  sin ancho mínimo fijo, texto en una línea y centrado en ambos ejes. Los
+  enlaces «Volver» son botones secundarios. Verificado con una medición del
+  centro del texto contra el centro de cada botón en escritorio y móvil.
+- **Menú principal** en el encabezado (Bandeja, Ingreso de caso, Cómo usar,
+  Proyecto y Normativa, con la sesión al final). En pantallas angostas se
+  pliega tras el botón «Menú».
+- **Bandeja sin caso preseleccionado** y **guía de bienvenida** por rol: tres
+  pasos, menos de 60 palabras (se lee en menos de 15 segundos). Se muestra una
+  vez por sesión y se reabre desde «Cómo usar».

@@ -9,7 +9,7 @@
 <link rel="stylesheet" href="/estaticos/estilo.css?v={{ version_css }}">
 <script src="/estaticos/htmx.min.js" defer></script>
 <script src="/estaticos/interaccion.js?v={{ version_js }}" defer></script></head>
-<body>
+<body class="entrada-inicial">
 {% include "_sprite.html" %}
 <a class="saltar" href="#contenido">Saltar al contenido</a>
 <div class="franja-prototipo">Prototipo académico UAI · no es un servicio de la Dirección del Trabajo · Datos sintéticos</div>
@@ -17,7 +17,26 @@
 <a class="marca" href="/"><img src="/estaticos/logo-dt.svg" alt="Logo de la Dirección del Trabajo" width="62" height="56">
 <span><span class="marca-nombre">Karin Triage</span>
 <span class="marca-bajada">El agente propone, una persona decide</span></span></a>
-{% if usuario %}<nav class="sesion" aria-label="Sesión"><p><span class="con-icono">{{ icono('persona') }}{{ usuario.nombre }} · {{ usuario.rol|capitalize }}</span> <a class="con-icono" href="/salir">{{ icono('salir') }}Salir</a></p></nav>{% endif %}
+{% if usuario %}{% set ruta = request.url.path %}
+<button type="button" class="boton-menu" aria-expanded="false" aria-controls="menu-principal" data-menu>{{ icono('menu') }}Menú</button>
+<nav class="menu-principal" id="menu-principal" aria-label="Menú principal">
+<ul class="menu-lista">
+<li><a class="menu-enlace" href="/"{% if ruta == '/' or ruta.startswith('/casos') %} aria-current="page"{% endif %}>{{ icono('bandeja') }}Bandeja</a></li>
+{% if usuario.rol == 'inspector' %}<li><a class="menu-enlace" href="/ingresos/nuevo"{% if ruta.startswith('/ingresos') %} aria-current="page"{% endif %}>{{ icono('mas') }}Ingreso de caso</a></li>{% endif %}
+<li><a class="menu-enlace" href="/?guia=1" data-abrir-guia>{{ icono('info') }}Cómo usar</a></li>
+<li><details class="menu-grupo"><summary class="menu-enlace">{{ icono('documento') }}Proyecto{{ icono('chevron', 'icono-desplegar') }}</summary>
+<ul class="submenu">
+<li><a href="/estaticos/ficha-negocio.html">{{ icono('documento') }}Ficha de negocio</a></li>
+<li><a href="/estaticos/diagramas-karin-triage.html">{{ icono('ruta') }}Arquitectura</a></li>
+<li><a href="https://github.com/Sebamardones/agente-karin-triage">{{ icono('externo') }}Código fuente</a></li></ul></details></li>
+<li><details class="menu-grupo"><summary class="menu-enlace">{{ icono('balanza') }}Normativa{{ icono('chevron', 'icono-desplegar') }}</summary>
+<ul class="submenu">
+<li><a href="https://www.bcn.cl/leychile/navegar?idNorma=1200096">{{ icono('balanza') }}Ley 21.643 (BCN)</a></li>
+<li><a href="https://www.dt.gob.cl/portal/1626/articles-128897_archivo_01.pdf">{{ icono('externo') }}Informe DT de denuncias</a></li></ul></details></li>
+</ul>
+<p class="sesion"><span class="con-icono">{{ icono('persona') }}{{ usuario.nombre }}<span class="rol-sesion"> · {{ usuario.rol|capitalize }}</span></span>
+<a class="con-icono" href="/salir">{{ icono('salir') }}Salir</a></p>
+</nav>{% endif %}
 </div></header>
 <main id="contenido" tabindex="-1">{% block contenido %}{% endblock %}</main>
 <div id="avisos" class="avisos" role="status" aria-live="polite"></div>

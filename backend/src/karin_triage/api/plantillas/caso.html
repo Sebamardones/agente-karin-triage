@@ -1,7 +1,7 @@
 {% from '_iconos.html' import icono %}
 {% set p = panel.p %}{% set d = panel.denuncia %}
 <article class="panel-caso" id="panel-caso" data-caso="{{ d.id }}" data-bandeja="{{ bandeja or panel.categoria }}">
-<a class="volver-cola" href="/?bandeja={{ bandeja or panel.categoria }}">{{ icono('volver') }}Volver a la cola</a>
+<a class="boton boton-secundario boton-chico boton-volver volver-cola" href="/?bandeja={{ bandeja or panel.categoria }}">{{ icono('volver') }}Volver a la cola</a>
 {% if p.urgencia_resguardo %}<img class="cinta" src="/estaticos/cinta-contingencia-dark.svg" alt="" aria-hidden="true">{% endif %}
 <p class="antetitulo">{{ d.id_externo_dt }} · ingresó {{ panel.tiempo }}</p>
 <p class="datos-ingreso">{{ icono('documento') }}{{ d.tipo_ingreso|etiqueta }} · {{ d.fecha_denuncia.strftime('%d-%m-%Y') if d.fecha_denuncia else 'sin fecha' }} <span aria-hidden="true">·</span> {{ icono('capas') }}<span title="El nombre del empleador se guarda seudonimizado">Empleador (seudonimizado): {{ d.empleador or 'sin dato' }}</span> · {{ d.sector_empleador|etiqueta }}</p>
@@ -42,7 +42,7 @@ La justificación de abajo es la original del modelo y se conserva sin editar.</
 </ol>
 <p class="reglas-codigos"><span class="nota">Reglas duras aplicadas:</span> {% for regla in panel.reglas %}<span class="etiqueta">{{ regla }}</span> {% else %}<span class="nota">ninguna</span>{% endfor %}</p>
 {% for bloque in p.justificacion_y_citas %}
-<details class="justificacion" open><summary>{{ icono('ia') }}Por qué lo propone</summary>
+<details class="justificacion" open><summary>{{ icono('ia') }}Por qué lo propone{{ icono('chevron', 'icono-desplegar') }}</summary>
 <p>{{ bloque.justificacion }}</p>
 {% if bloque.supuestos %}<p class="nota">Supuestos: {{ bloque.supuestos|join('; ') }}</p>{% endif %}
 </details>{% endfor %}

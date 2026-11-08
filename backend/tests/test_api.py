@@ -522,7 +522,7 @@ def test_bandejas_por_rol_llevan_el_descarte_al_supervisor(entorno):
     assert "DESCARTE-ROL" not in cliente.get("/").text
     login(cliente, "supervisor")
     html = cliente.get("/").text  # el supervisor entra directo a lo que debe validar
-    activa = re.search(r'aria-current="page">(.*?)</a>', html, re.DOTALL).group(1)
+    activa = re.search(r'class="pestana activa" aria-current="page">(.*?)</a>', html, re.DOTALL).group(1)
     assert "Por validar" in activa and '<span class="contador">1</span>' in activa
     assert "DESCARTE-ROL" in html
 
@@ -653,3 +653,41 @@ def test_pie_de_pagina_en_todas_las_paginas(entorno):
         assert '<footer class="pie"' in html
         assert "Opera solo con casos sintéticos y no es un servicio de la Dirección del Trabajo" in html
         assert "/estaticos/ficha-negocio.html" in html
+
+
+# --- Menú, guía de bienvenida y bandeja sin selección ------------------------------
+
+
+def test_menu_principal_segun_el_rol(entorno):
+    cliente, _ = entorno
+    login(cliente)
+    html = cliente.get("/ingresos/nuevo").text
+    menu = html[html.index('id="menu-principal"'):html.index("</nav>", html.index('id="menu-principal"'))]
+    for texto in ("Bandeja", "Ingreso de caso", "Cómo usar", "Ficha de negocio", "Ley 21.643", "Salir"):
+        assert texto in menu
+    assert 'href="/ingresos/nuevo" aria-current="page"' in menu
+    login(cliente, "supervisor")
+    menu = cliente.get("/").text
+    menu = menu[menu.index('id="menu-principal"'):]
+    assert 'href="/ingresos/nuevo"' not in menu[:menu.index("</nav>")]
+
+
+def test_guia_de_bienvenida_breve_y_por_rol(entorno):
+    cliente, _ = entorno
+    login(cliente)
+    html = cliente.get("/").text
+    guia = html[html.index('<dialog id="guia"'):html.index("</dialog>", html.index('<dialog id="guia"'))]
+    assert 'data-rol="inspector"' in guia and "Confirma, corrige o descarta" in guia
+    # Se lee en menos de 15 segundos: menos de 60 palabras visibles.
+    palabras = re.sub(r"<[^>]+>", " ", guia).split()
+    assert len(palabras) < 60
+    login(cliente, "supervisor")
+    assert "Valida o decide distinto" in cliente.get("/").text
+
+
+def test_bandeja_abre_sin_caso_preseleccionado(entorno):
+    caso(entorno, externo="SIN-SELECCION")
+    login(entorno[0])
+    html = entorno[0].get("/").text
+    assert 'id="panel-caso"' not in html and "Elige un caso de la cola" in html
+    assert "seleccionada" not in html

@@ -11,7 +11,7 @@
 {% if mensaje_bandeja %}<p role="status" class="confirmacion">{{ mensaje_bandeja }}</p>{% endif %}
 {% if usuario.rol == 'inspector' %}<div class="acciones">
 <a class="boton boton-secundario" href="/ingresos/nuevo">{{ icono('mas') }}Ingreso de caso</a>
-<details class="mas-acciones"><summary>{{ icono('capas') }}Más acciones</summary>
+<details class="mas-acciones"><summary>{{ icono('capas') }}Más acciones{{ icono('chevron', 'icono-desplegar') }}</summary>
 <form method="post" action="/demo/nueva-tanda" data-carga="Creando tanda…"><button class="boton-secundario">{{ icono('mas') }}Crear tanda nueva para revisar</button></form>
 <form method="post" action="/cargar-golden-set" data-carga="Cargando…"><button class="boton-secundario">{{ icono('documento') }}Cargar casos de referencia</button></form>
 <p class="nota">La tanda nueva vuelve a procesar los casos de referencia sin revisiones previas y conserva el historial.</p>
@@ -28,6 +28,23 @@
 </div>{% endif %}
 </section>
 </div>
+<dialog id="guia" class="guia" aria-labelledby="titulo-guia" data-rol="{{ usuario.rol }}">
+<p class="antetitulo">Cómo usar Karin Triage</p>
+<h2 id="titulo-guia">{% if usuario.rol == 'supervisor' %}Tu trabajo: validar{% else %}Tu trabajo: revisar y decidir{% endif %}</h2>
+<ol class="guia-pasos">
+{% if usuario.rol == 'supervisor' %}
+<li>{{ icono('validar', 'icono-guia') }}<span><strong>Abre «Por validar».</strong> Ahí llegan los descartes y las excepciones.</span></li>
+<li>{{ icono('balanza', 'icono-guia') }}<span><strong>Compara</strong> la propuesta del agente con la decisión del inspector.</span></li>
+<li>{{ icono('check', 'icono-guia') }}<span><strong>Valida o decide distinto.</strong> Tu firma cierra el caso.</span></li>
+{% else %}
+<li>{{ icono('bandeja', 'icono-guia') }}<span><strong>Elige un caso</strong> de la cola. Los urgentes van arriba.</span></li>
+<li>{{ icono('ia', 'icono-guia') }}<span><strong>Lee la propuesta:</strong> veredicto, citas resaltadas y reglas aplicadas.</span></li>
+<li>{{ icono('check', 'icono-guia') }}<span><strong>Confirma, corrige o descarta.</strong> Los descartes pasan a un supervisor.</span></li>
+{% endif %}
+</ol>
+<p class="nota">La IA solo propone: cada decisión la toma una persona.</p>
+<form method="dialog" class="acciones"><button>{{ icono('check') }}Comenzar</button></form>
+</dialog>
 <dialog id="ayuda-atajos" aria-labelledby="titulo-atajos">
 <h2 id="titulo-atajos">{{ icono('teclado') }} Atajos de teclado</h2>
 <dl class="atajos">
