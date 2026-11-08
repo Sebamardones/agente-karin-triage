@@ -1,5 +1,11 @@
 # agente-karin-triage
 
+**Diagramas actualizados:** [atlas HTML público](https://karin-triage-grupo7-c7c6a3fb2988.herokuapp.com/estaticos/diagramas-karin-triage.html)
+· [SVG y fuentes Mermaid](docs/diagramas/README.md).
+Para presentar el negocio: [contexto](docs/diagramas/karin-1.svg) y
+[revisión humana](docs/diagramas/karin-8.svg). El atlas distingue implementación,
+evidencia y funcionalidades futuras.
+
 Pre-clasificación asistida de denuncias de Ley Karin (Ley 21.643) para
 funcionarios de la Dirección del Trabajo.
 

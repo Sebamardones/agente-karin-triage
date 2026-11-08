@@ -1,0 +1,23 @@
+sequenceDiagram
+  actor U as Usuario demo
+  participant W as FastAPI
+  participant B as BackgroundTasks
+  participant G as LangGraph
+  participant C as Anthropic
+  participant D as Postgres
+  U->>W: POST ficción
+  W->>B: Programar
+  W-->>U: Redirección inmediata
+  B->>G: Procesar caso
+  G->>C: Extraer tras controles PII
+  C-->>G: Hechos
+  G->>C: Tipificar v3
+  C-->>G: Propuesta
+  G->>D: Persistir y auditar
+  B->>D: Commit por caso
+  U->>W: Consultar bandeja
+  W->>D: Leer casos
+  D-->>W: Propuestas y estados
+  W-->>U: HTML
+  U->>W: Revisión humana
+  W->>D: Revisión y evento; commit

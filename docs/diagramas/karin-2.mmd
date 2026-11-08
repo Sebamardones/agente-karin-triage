@@ -1,0 +1,15 @@
+flowchart TD
+  A[ingestar_y_validar] --> B[reglas_previas]
+  B -->|sin corte| C[seudonimizar]
+  B -->|estado o marca| I[calcular_ruta]
+  C --> D[control_pii_residual]
+  D -->|PII| I
+  D -->|sin hallazgos| E[extraer_hechos]
+  E -->|correcto| F[tipificar_y_proponer]
+  E -->|refusal o presupuesto o error| I
+  F -->|correcto| G[validar_salida]
+  F -->|refusal o presupuesto o error| I
+  G -->|primer fallo| F
+  G -->|continuar| H[reglas_duras_post]
+  H --> I --> J[persistir] --> K[END]
+  K -. consulta posterior por API .-> L[Revisión humana fuera del grafo]

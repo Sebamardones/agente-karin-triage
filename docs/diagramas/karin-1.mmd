@@ -1,0 +1,9 @@
+flowchart LR
+  A[Analista demo] --> UI[FastAPI + Jinja2 + HTMX]
+  S[Supervisor demo] --> UI
+  I[Formulario ficticio y golden set] --> G[BackgroundTasks + LangGraph]
+  UI --> G
+  G --> P[Reglas + seudonimización + PII]
+  P --> C[API Anthropic: hechos y tipificación]
+  G --> DB[(Postgres Heroku)]
+  UI --> DB

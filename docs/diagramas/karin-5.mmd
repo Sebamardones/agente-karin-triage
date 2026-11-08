@@ -1,0 +1,8 @@
+flowchart TD
+  GH[GitHub público] --> B[Build Docker]
+  B --> R[Release Alembic]
+  R --> W[Un dyno Basic: Uvicorn + FastAPI]
+  U[Navegador] --> H[Router HTTPS] --> W
+  CV[Config Vars] --> W
+  W --> DB[(Postgres Essential-0)]
+  W --> C[API Anthropic]

@@ -1,0 +1,36 @@
+erDiagram
+  DENUNCIA ||--o{ PRECLASIFICACION : tiene
+  DENUNCIA ||--o{ EVENTO_AUDITORIA : registra
+  PRECLASIFICACION ||--o{ REVISION_HUMANA : recibe
+  DENUNCIA {
+    string id PK
+    string id_externo_dt UK
+    string texto_seudonimizado
+    string estado
+  }
+  PRECLASIFICACION {
+    string id PK
+    string denuncia_id FK
+    string version_pipeline
+    json justificacion_y_citas
+  }
+  REVISION_HUMANA {
+    string id PK
+    string preclasificacion_id FK
+    int nivel
+    string motivo_descarte
+    string cita_respaldo
+    boolean excepcion_rd10
+    int version
+  }
+  EVENTO_AUDITORIA {
+    int id PK
+    string denuncia_id FK
+    json detalle
+    string hash_actual
+  }
+  USO_DIARIO {
+    date fecha PK
+    int llamadas
+    float usd
+  }

@@ -1,0 +1,8 @@
+flowchart LR
+  A[Rama de trabajo] --> B[pytest y Ruff]
+  B --> C[Revisar diff y secretos]
+  C --> D[Publicar GitHub]
+  D --> E[git push heroku HEAD:main]
+  E --> F[Build Docker]
+  F --> G[Release Alembic]
+  G --> H[Verificar HTTPS, login y persistencia]
