@@ -38,7 +38,7 @@ además rota la clave usada hasta ahora.
    chats ni capturas.
 5. Reemplazar el secreto en Heroku (reinicia el dyno):
    `heroku config:set ANTHROPIC_API_KEY=<clave nueva> -a karin-triage-grupo7`
-6. Probar: crear un relato ficticio en `/demo/nuevo` y confirmar que vuelve con
+6. Probar: registrar un caso sintético en `/ingresos/nuevo` y confirmar que vuelve con
    propuesta y citas.
 7. Recién después, revocar la clave antigua. Actualizar también el entorno
    local del runner de evals.

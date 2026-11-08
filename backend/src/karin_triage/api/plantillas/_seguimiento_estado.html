@@ -1,12 +1,12 @@
-<div id="seguimiento-estado"{% if en_curso %} hx-get="/demo/seguimiento/{{ externo }}/estado" hx-trigger="every 2s" hx-swap="outerHTML"{% endif %} role="status">
+<div id="seguimiento-estado"{% if en_curso %} hx-get="/ingresos/seguimiento/{{ externo }}/estado" hx-trigger="every 2s" hx-swap="outerHTML"{% endif %} role="status">
 <ol class="recorrido recorrido-seguimiento">
-<li class="paso paso-ok"><span class="paso-nombre">Relato recibido</span><span class="paso-detalle">Confirmaste que es ficticio y sin datos reales</span></li>
+<li class="paso paso-ok"><span class="paso-nombre">Ingreso registrado</span><span class="paso-detalle">Folio {{ externo }}</span></li>
 {% if en_curso %}
-<li class="paso paso-activo"><span class="paso-nombre">Analizando</span><span class="paso-detalle">Reglas, seudonimización y modelo. Suele tardar entre 10 y 30 segundos.</span>
+<li class="paso paso-activo"><span class="paso-nombre">Analizando</span><span class="paso-detalle">Reglas de admisibilidad, seudonimización y propuesta del modelo. Suele tardar entre 10 y 30 segundos.</span>
 <div class="progreso progreso-indeterminado" aria-hidden="true"><div class="progreso-barra"></div></div></li>
 <li class="paso paso-pendiente"><span class="paso-nombre">Propuesta lista</span><span class="paso-detalle">Se abrirá automáticamente</span></li>
 {% else %}
-<li class="paso paso-detenido"><span class="paso-nombre">No se pudo procesar</span><span class="paso-detalle">El relato no generó un caso. Vuelve a la bandeja o intenta con otro relato.</span></li>
+<li class="paso paso-detenido"><span class="paso-nombre">No se pudo procesar</span><span class="paso-detalle">El ingreso no generó un caso. Vuelve a la bandeja o regístralo de nuevo.</span></li>
 {% endif %}
 </ol>
 </div>

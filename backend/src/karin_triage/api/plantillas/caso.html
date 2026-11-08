@@ -4,6 +4,7 @@
 <a class="volver-cola" href="/?bandeja={{ bandeja or panel.categoria }}">{{ icono('volver') }}Volver a la cola</a>
 {% if p.urgencia_resguardo %}<img class="cinta" src="/estaticos/cinta-contingencia-dark.svg" alt="" aria-hidden="true">{% endif %}
 <p class="antetitulo">{{ d.id_externo_dt }} · ingresó {{ panel.tiempo }}</p>
+<p class="datos-ingreso">{{ icono('documento') }}{{ d.tipo_ingreso|etiqueta }} · {{ d.fecha_denuncia.strftime('%d-%m-%Y') if d.fecha_denuncia else 'sin fecha' }} <span aria-hidden="true">·</span> {{ icono('capas') }}<span title="El nombre del empleador se guarda seudonimizado">Empleador (seudonimizado): {{ d.empleador or 'sin dato' }}</span> · {{ d.sector_empleador|etiqueta }}</p>
 <h2 class="veredicto" id="titulo-caso">{% if p.decision %}<span class="veredicto-rotulo">{{ icono('ia') }}El agente propone</span>
 {{ p.decision|etiqueta }}{% if p.tipo_conducta %} <span class="veredicto-por">por {{ p.tipo_conducta|etiqueta|lower }}</span>{% endif %}
 {% else %}<span class="veredicto-rotulo">{{ icono('escudo') }}Sin propuesta del agente</span>
@@ -24,7 +25,8 @@ La justificación de abajo es la original del modelo y se conserva sin editar.</
 <div class="panel-columnas">
 <section class="panel-relato" aria-labelledby="titulo-relato">
 <h3 id="titulo-relato">{{ icono('documento') }}Relato seudonimizado</h3>
-<div class="relato" id="relato">{{ panel.relato_marcado }}</div>
+{% if d.texto_seudonimizado %}<div class="relato" id="relato">{{ panel.relato_marcado }}</div>
+{% else %}<p class="relato relato-vacio con-icono-bloque">{{ icono('candado', 'icono-bloque') }}<span>Una regla previa detuvo este caso antes de seudonimizar el relato. Como el texto original nunca se guarda, aquí no hay relato que mostrar: la derivación se revisa con los datos del ingreso.</span></p>{% endif %}
 <p class="nota">Lo marcado son las citas literales en que se apoya el agente.{% if panel.puede_descartar and not panel.bloqueo %} Para un descarte, selecciona aquí la frase que lo respalda.{% endif %}</p>
 {% if panel.citas_relato or panel.citas_normativas %}<h3>{{ icono('cita') }}Citas</h3><ol class="citas">
 {% for cita in panel.citas_relato %}<li data-cita="{{ loop.index }}"{% if loop.index not in panel.encontradas %} class="no-verificada"{% endif %}><q>{{ cita.texto_literal }}</q>

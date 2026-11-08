@@ -21,7 +21,7 @@
 <div class="progreso progreso-indeterminado" aria-hidden="true"><div class="progreso-barra"></div></div>
 {% else %}<p>Carga en curso: {{ hechos }} de {{ carga.total or '…' }} casos procesados.</p>
 <div class="progreso" aria-hidden="true"><div id="progreso-carga" class="progreso-barra" style="width: {{ (100 * hechos / carga.total)|round|int if carga.total else 0 }}%"></div></div>{% endif %}
-{% else %}<p>Carga terminada: {{ carga.procesados }} casos nuevos, {{ carga.saltados }} ya estaban en la bandeja, {{ carga.fallidos }} con error.</p>{% endif %}
+{% else %}<p>Carga terminada: {{ carga.procesados }} {{ 'caso nuevo' if carga.procesados == 1 else 'casos nuevos' }}, {{ carga.saltados }} ya {{ 'estaba' if carga.saltados == 1 else 'estaban' }} en la bandeja, {{ carga.fallidos }} con error.</p>{% endif %}
 </div>{% endif %}
 {% if urgentes %}<h2 class="carril carril-urgente">{{ icono('alerta') }}Urgencia de resguardo · {{ urgentes|length }}</h2>
 <ul class="tarjetas">{% for fila in urgentes %}{% include '_fila.html' %}{% endfor %}</ul>{% endif %}

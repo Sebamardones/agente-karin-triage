@@ -353,8 +353,40 @@ kbd { font: inherit; font-size: 13px; font-weight: 900; padding: 0 var(--space-2
 .panel-caso { animation: entrar 150ms var(--entrada) 1; }
 @keyframes entrar { from { opacity: 0; } to { opacity: 1; } }
 
-/* Pie */
-.pie { max-width: 96rem; margin: auto; padding: 0 var(--space-4) var(--space-8); }
+/* Pie de página: en todas las páginas y pegado al fondo cuando el contenido es corto */
+body { min-height: 100vh; display: flex; flex-direction: column; }
+main { flex: 1 0 auto; width: 100%; }
+.pie { background: var(--navy); color: rgba(255, 255, 255, 0.9); margin-top: var(--space-8); font-size: 14px; line-height: 20px; }
+.pie a { color: var(--white); text-decoration: none; display: inline-flex; align-items: center; gap: var(--space-2); }
+.pie a:hover { text-decoration: underline; color: var(--white); }
+.pie :focus-visible { outline-color: var(--white); }
+.pie-interior { max-width: 96rem; margin: auto; padding: var(--space-8) var(--space-4); display: grid;
+  grid-template-columns: minmax(16rem, 2fr) repeat(3, minmax(10rem, 1fr)); gap: var(--space-8); }
+.pie-marca { display: flex; gap: var(--space-4); align-items: flex-start; }
+.pie-marca img { border-radius: var(--radio-chico); flex: none; }
+.pie p { margin: 0 0 var(--space-1); }
+.pie-nombre { font-size: 18px; line-height: 24px; font-weight: 900; color: var(--white); }
+.pie-lema { display: inline-flex; align-items: center; gap: var(--space-2); margin-top: var(--space-2) !important; color: var(--pale-sky); font-weight: 700; }
+.pie-titulo { font-size: 12px; line-height: 16px; font-weight: 900; letter-spacing: 0.04em; text-transform: uppercase; color: var(--periwinkle); margin-bottom: var(--space-3) !important; }
+.pie ul { list-style: none; margin: 0; padding: 0; }
+.pie li { margin-bottom: var(--space-2); }
+.pie .icono { color: var(--periwinkle); }
+.pie-legal { border-top: 1px solid rgba(255, 255, 255, 0.15); }
+.pie-legal p { max-width: 96rem; margin: auto !important; padding: var(--space-4); font-size: 13px; color: rgba(255, 255, 255, 0.8); }
+
+/* Ingreso de caso */
+.formulario-ingreso { max-width: 52rem; }
+.bloque-ingreso { border: 0; background: var(--mist); border-radius: var(--radio-caja); padding: var(--space-6); margin: 0 0 var(--space-4); }
+.bloque-ingreso > legend { float: left; width: 100%; display: flex; align-items: center; gap: var(--space-2); font-size: 18px; line-height: 24px; font-weight: 900; margin-bottom: var(--space-3); }
+.bloque-ingreso > legend + * { clear: both; }
+.bloque-ingreso > legend .icono { color: var(--signal-blue); }
+.campos-dos { display: grid; grid-template-columns: repeat(auto-fit, minmax(14rem, 1fr)); gap: 0 var(--space-4); }
+.grupo-opciones { border: 0; padding: 0; margin: var(--space-3) 0 0; }
+.grupo-opciones legend { font-weight: 700; margin-bottom: var(--space-2); }
+input:disabled { background: var(--white); color: var(--texto-secundario); border-style: dashed; }
+.acciones-relato { display: flex; justify-content: space-between; align-items: center; gap: var(--space-3); flex-wrap: wrap; margin: var(--space-2) 0 0; }
+.datos-ingreso { display: flex; flex-wrap: wrap; align-items: center; gap: var(--space-1) var(--space-2); font-size: 14px; color: var(--texto-secundario); margin: 0 0 var(--space-2); }
+.datos-ingreso .icono { color: var(--cobalt); }
 
 /* Movimiento reducido: sin animaciones; el texto de estado sigue visible */
 @media (prefers-reduced-motion: reduce) {
@@ -365,6 +397,8 @@ kbd { font: inherit; font-size: 13px; font-weight: 900; padding: 0 var(--space-2
 
 /* Pantallas medianas y móviles: cola y caso en páginas separadas */
 @media (max-width: 64rem) {
+  .pie-interior { grid-template-columns: repeat(2, minmax(0, 1fr)); }
+  .pie-marca { grid-column: 1 / -1; }
   .puesto { grid-template-columns: minmax(0, 1fr); }
   .cola-columna { position: static; max-height: none; overflow: visible; }
   .puesto.con-caso .cola-columna { display: none; }
@@ -373,6 +407,8 @@ kbd { font: inherit; font-size: 13px; font-weight: 900; padding: 0 var(--space-2
   .panel-columnas { grid-template-columns: minmax(0, 1fr); }
 }
 @media (max-width: 40rem) {
+  .pie-interior { grid-template-columns: minmax(0, 1fr); gap: var(--space-6); }
+  .bloque-ingreso { padding: var(--space-4); }
   main { padding: var(--space-4) var(--space-4) var(--space-8); }
   .lienzo, .cola-columna, .panel { padding: var(--space-4); }
   .decision { padding: var(--space-4); }
@@ -406,3 +442,6 @@ h2 .icono, h3 .icono { margin-right: var(--space-2); color: var(--signal-blue); 
 .estado-actual .icono { color: var(--cobalt); }
 .sesion .con-icono { margin-right: var(--space-3); }
 .aviso-flotante .icono { width: 20px; height: 20px; color: var(--pale-sky); }
+
+.relato-vacio { font-size: 15px; line-height: 22px; color: var(--texto-secundario); }
+.relato-vacio .icono-bloque { color: var(--cobalt); }

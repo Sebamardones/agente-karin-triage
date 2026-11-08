@@ -1,18 +1,48 @@
 {% extends "base.html" %}
 {% from '_iconos.html' import icono %}
-{% block titulo %}Relato nuevo{% endblock %}
-{% block contenido %}<div class="lienzo">
+{% block titulo %}Ingreso de caso{% endblock %}
+{% block contenido %}<div class="lienzo ingreso">
 <p><a href="/" class="con-icono">{{ icono('volver') }}Volver a la bandeja</a></p>
-<p class="antetitulo">Demostración en vivo</p>
-<h1>Probar la IA con un caso sintético nuevo</h1>
-<p class="bajada">Escribe únicamente una situación inventada. No incluyas nombres, correos,
-RUT ni información de personas reales. Cada envío ejecuta la IA y consume el presupuesto de demo.</p>
-<form method="post" action="/demo/nuevo" data-carga="Procesando con IA…">
-<label>Relato ficticio <textarea name="relato" rows="9" minlength="40" maxlength="6000" required>En una empresa ficticia, mi jefatura me ridiculiza delante del equipo durante las reuniones. No hay amenazas, violencia física ni contacto forzado. Solicito que se revisen estos hechos inventados.</textarea></label>
+<p class="antetitulo">Recepción de denuncias · Ley 21.643</p>
+<h1>Ingreso de caso</h1>
+<p class="bajada">Registra la denuncia tal como llegó. Al guardar, el sistema aplica las reglas de admisibilidad, seudonimiza el relato y prepara una propuesta de pre-clasificación para revisión humana.</p>
+<form method="post" action="/ingresos/nuevo" data-carga="Registrando ingreso…" class="formulario-ingreso">
+
+<fieldset class="bloque-ingreso">
+<legend>{{ icono('documento') }}Datos del ingreso</legend>
+<div class="campos-dos">
+<label>Folio <input value="Se asigna al registrar" disabled aria-describedby="nota-folio"></label>
+<label>Fecha de la denuncia <input type="date" name="fecha_denuncia" value="{{ hoy }}" max="{{ hoy }}" required></label>
+</div>
+<p class="nota" id="nota-folio">El folio identifica el caso en la bandeja y en la auditoría.</p>
+<fieldset class="grupo-opciones"><legend>Tipo de ingreso</legend>
+<div class="opciones">{% for tipo in tipos %}
+<label class="opcion"><input type="radio" name="tipo_ingreso" value="{{ tipo.value }}" required{% if loop.first %} checked{% endif %}><span>{{ tipo.value|etiqueta }}</span></label>{% endfor %}
+</div></fieldset>
+</fieldset>
+
+<fieldset class="bloque-ingreso">
+<legend>{{ icono('capas') }}Empleador denunciado</legend>
+<label>Razón social o nombre del empleador <input name="empleador" minlength="2" maxlength="200" required autocomplete="off" placeholder="Comercial Los Aromos Limitada"></label>
+<fieldset class="grupo-opciones"><legend>Sector</legend>
+<div class="opciones">{% for sector in sectores %}
+<label class="opcion"><input type="radio" name="sector_empleador" value="{{ sector.value }}" required{% if loop.first %} checked{% endif %}><span>{{ sector.value|etiqueta }}</span></label>{% endfor %}
+</div></fieldset>
+<p class="nota">Si el empleador es del sector público, el caso se deriva sin pasar por la IA (RD-02).</p>
+</fieldset>
+
+<fieldset class="bloque-ingreso">
+<legend>{{ icono('cita') }}Relato de los hechos</legend>
+<label>Relato <span class="nota">Qué ocurrió, quién participó (cargo o rol), cuándo, dónde y si se repitió.</span>
+<textarea name="relato" id="relato-ingreso" rows="10" minlength="40" maxlength="6000" required placeholder="Desde marzo, mi jefatura directa me grita y me descalifica delante del equipo en las reuniones semanales…"></textarea></label>
+<p class="acciones-relato"><span class="nota" id="contador-relato" aria-live="polite">0 de 6000 caracteres</span>
+<button type="button" class="boton-secundario boton-chico" data-ejemplo-relato>{{ icono('documento') }}Usar un relato de ejemplo</button></p>
+</fieldset>
+
 <label class="casilla"><input type="checkbox" name="confirmar_sintetico" value="true" required>
-<span>Confirmo que es un relato inventado, sin datos personales reales.</span></label>
-<button>{{ icono('ia') }}Ejecutar IA y enviar a revisión humana</button>
+<span>Declaro que este ingreso no contiene nombres, RUT, correos ni otros datos de personas reales.</span></label>
+
+<div class="acciones"><button>{{ icono('enviar') }}Registrar ingreso</button></div>
 <div class="progreso progreso-indeterminado" aria-hidden="true"><div class="progreso-barra"></div></div>
 </form>
-<p class="nota">La IA tarda unos segundos. El resultado aparecerá en la bandeja al terminar el procesamiento, siempre como propuesta pendiente de revisión humana.</p>
 </div>{% endblock %}

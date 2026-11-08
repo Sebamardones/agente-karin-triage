@@ -221,3 +221,12 @@ redes sociales de la DT, aplicadas a la interfaz web:
   `KARIN_DEMO_PASSWORD_ANALISTA` para no cambiar la configuración publicada. Las
   revisiones guardadas antes del cambio conservan `analista_demo` como
   funcionario y su rol se muestra como «inspector».
+- **Ingreso de caso.** El antiguo «Probar la IA con un relato sintético»
+  pasa a «Ingreso de caso» (`/ingresos/nuevo`), con los campos que el sistema
+  procesa: tipo de ingreso, fecha, empleador, sector y relato. Folios
+  `ING-<12 hex>`. No se piden nombre, RUT ni contacto de quien denuncia: el
+  sistema no guarda identidades (regla 2). La declaración de que no hay datos
+  personales reales sigue siendo obligatoria. La franja superior y el pie de
+  página son los lugares donde la interfaz declara que los datos son sintéticos.
+- **Pie de página** con marca, accesos de la plataforma, enlaces del proyecto y
+  normativa, y la declaración legal del prototipo, en todas las páginas.

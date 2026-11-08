@@ -285,9 +285,11 @@ Trabajo», ingresadas entre 1° agosto 2024 y 30 de junio 2025*, julio de 2025.
 
 ## Correcciones de la evaluación del equipo
 
-- Demo en vivo: el inspector puede enviar un relato ficticio nuevo desde
-  `/demo/nuevo`. La confirmación de datos sintéticos es obligatoria; no se
-  admite usar esta edición para denuncias reales.
+- Ingreso de caso en vivo: el inspector registra un caso desde
+  `/ingresos/nuevo` con los campos que el sistema procesa (tipo de ingreso,
+  fecha, empleador, sector y relato), por lo que las reglas RD-02, RD-03 y RD-05
+  se pueden activar desde el formulario. La declaración de que no hay datos de
+  personas reales es obligatoria; esta edición no admite denuncias reales.
 - El botón de nueva tanda crea copias sin revisiones y conserva las anteriores.
   No borra la base. Cada tanda y cada relato nuevo consumen presupuesto de IA.
 - El catálogo implementa RD-01 a RD-06 y RD-10 a RD-16; RD-07 a RD-09 están

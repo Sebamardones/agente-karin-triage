@@ -255,6 +255,29 @@
     }
   });
 
+  // --- Ingreso de caso: contador de caracteres y relato de ejemplo ------------
+  var EJEMPLO_RELATO = "Trabajo como vendedora en la sucursal del centro desde enero. Desde hace tres " +
+    "meses, el jefe de local me grita y me descalifica frente a clientes y compañeros, me asigna " +
+    "los peores turnos sin explicación y dice en las reuniones que no sirvo para el puesto. " +
+    "Ocurre casi todas las semanas y dos compañeros lo han presenciado. No ha habido contacto " +
+    "físico ni amenazas, pero estoy con licencia por estrés desde la semana pasada.";
+  function contarRelato() {
+    var campo = porId("relato-ingreso");
+    var contador = porId("contador-relato");
+    if (campo && contador) contador.textContent = campo.value.length + " de 6000 caracteres";
+  }
+  document.addEventListener("input", function (e) {
+    if (e.target.id === "relato-ingreso") contarRelato();
+  });
+  document.addEventListener("click", function (e) {
+    if (!e.target.closest("[data-ejemplo-relato]")) return;
+    var campo = porId("relato-ingreso");
+    if (!campo) return;
+    campo.value = EJEMPLO_RELATO;
+    contarRelato();
+    campo.focus();
+  });
+
   // --- Al cargar: aviso pendiente (móvil) y selección inicial ----------------
   document.addEventListener("DOMContentLoaded", function () {
     try {

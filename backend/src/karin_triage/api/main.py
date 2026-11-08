@@ -29,7 +29,7 @@ from karin_triage.api.dependencias import obtener_sesion, usuario_actual
 from karin_triage.api.etiquetas import etiqueta
 from karin_triage.config import Ajustes
 from karin_triage.core.reglas import EXPRESIONES_FALTA_PRUEBA, _normalizar
-from karin_triage.core.taxonomia import Decision, MotivoDescarte
+from karin_triage.core.taxonomia import Decision, MotivoDescarte, SectorEmpleador, TipoIngreso
 from karin_triage.models.tablas import (
     Denuncia,
     Preclasificacion,
@@ -117,7 +117,8 @@ def ordenar_cola(filas):
 
 
 TANDA = re.compile(r"^DEMO-([0-9a-f]{8})-")
-RELATO_NUEVO = re.compile(r"^DEMO-[0-9a-f]{12}$")
+# Casos ingresados uno a uno: ING-<12 hex>; DEMO-<12 hex> en la versión anterior.
+RELATO_NUEVO = re.compile(r"^(?:ING|DEMO)-[0-9a-f]{12}$")
 
 
 def separar_tanda_vigente(filas):
@@ -369,25 +370,42 @@ def crear_app(ajustes=None, motor=None):
                                 total=len(registros))
             background_tasks.add_task(cargar_en_segundo_plano, registros)
 
-    @app.get("/demo/nuevo")
-    def formulario_demo(request: Request, usuario: Usuario):
-        if usuario["rol"] != "inspector":
-            raise HTTPException(403, "Solo el inspector puede crear casos sintéticos")
-        return vista(request, "nuevo.html", usuario)
+    def opciones_ingreso():
+        return {"tipos": list(TipoIngreso), "sectores": list(SectorEmpleador),
+                "hoy": date.today().isoformat()}
 
-    @app.post("/demo/nuevo")
-    def nuevo_demo(request: Request, usuario: Usuario, background_tasks: BackgroundTasks,
-                   relato: Annotated[str, Form(min_length=40, max_length=6000)],
-                   confirmar_sintetico: Annotated[bool, Form()] = False):
+    @app.get("/ingresos/nuevo")
+    def formulario_ingreso(request: Request, usuario: Usuario):
         if usuario["rol"] != "inspector":
-            raise HTTPException(403, "Solo el inspector puede crear casos sintéticos")
+            raise HTTPException(403, "Solo el inspector puede ingresar casos")
+        return vista(request, "nuevo.html", usuario, **opciones_ingreso())
+
+    @app.get("/demo/nuevo")
+    def formulario_demo_anterior():
+        # Enlaces guardados de la versión anterior.
+        return RedirectResponse("/ingresos/nuevo", 307)
+
+    @app.post("/ingresos/nuevo")
+    def registrar_ingreso(request: Request, usuario: Usuario, background_tasks: BackgroundTasks,
+                          relato: Annotated[str, Form(min_length=40, max_length=6000)],
+                          empleador: Annotated[str, Form(min_length=2, max_length=200)],
+                          tipo_ingreso: Annotated[TipoIngreso, Form()],
+                          sector_empleador: Annotated[SectorEmpleador, Form()],
+                          fecha_denuncia: Annotated[date, Form()],
+                          confirmar_sintetico: Annotated[bool, Form()] = False):
+        if usuario["rol"] != "inspector":
+            raise HTTPException(403, "Solo el inspector puede ingresar casos")
         if not confirmar_sintetico:
-            raise HTTPException(422, "Debes confirmar que el relato es ficticio y sin datos reales")
-        registro = {"id_externo_dt": f"DEMO-{uuid4().hex[:12]}", "relato": relato,
-                    "tipo_ingreso": "DIRECTA", "fecha_denuncia": date.today().isoformat(),
-                    "empleador": "EMPRESA_SINTETICA", "sector_empleador": "PRIVADO"}
+            # Regla 2 del proyecto: esta edición no acepta datos de personas reales.
+            raise HTTPException(422, "Debes declarar que el ingreso no contiene datos personales reales")
+        if fecha_denuncia > date.today():
+            raise HTTPException(422, "La fecha de la denuncia no puede ser futura")
+        registro = {"id_externo_dt": f"ING-{uuid4().hex[:12]}", "relato": relato,
+                    "tipo_ingreso": tipo_ingreso.value,
+                    "fecha_denuncia": fecha_denuncia.isoformat(),
+                    "empleador": empleador.strip(), "sector_empleador": sector_empleador.value}
         programar_demo([registro], background_tasks)
-        return RedirectResponse(f"/demo/seguimiento/{registro['id_externo_dt']}", 303)
+        return RedirectResponse(f"/ingresos/seguimiento/{registro['id_externo_dt']}", 303)
 
     def estado_seguimiento(sesion, externo):
         if not RELATO_NUEVO.match(externo):
@@ -397,14 +415,14 @@ def crear_app(ajustes=None, motor=None):
             en_curso = carga_estado["en_curso"]
         return listo, en_curso
 
-    @app.get("/demo/seguimiento/{externo}")
+    @app.get("/ingresos/seguimiento/{externo}")
     def seguimiento(externo: str, request: Request, usuario: Usuario, sesion: Sesion):
         listo, en_curso = estado_seguimiento(sesion, externo)
         if listo:
             return RedirectResponse(f"/casos/{listo}", 303)
         return vista(request, "seguimiento.html", usuario, externo=externo, en_curso=en_curso)
 
-    @app.get("/demo/seguimiento/{externo}/estado")
+    @app.get("/ingresos/seguimiento/{externo}/estado")
     def seguimiento_estado(externo: str, request: Request, usuario: Usuario, sesion: Sesion):
         listo, en_curso = estado_seguimiento(sesion, externo)
         if listo:

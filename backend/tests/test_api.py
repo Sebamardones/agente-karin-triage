@@ -69,6 +69,13 @@ def login(cliente, rol="inspector"):
     return cliente.post("/entrar", data={"usuario": f"{rol}_demo", "password": f"{rol}-sintetico"})
 
 
+def ingreso(relato, **extra):
+    """Formulario de ingreso de caso con valores sintéticos válidos."""
+    return {"relato": relato, "empleador": "Comercial Sintética Limitada",
+            "tipo_ingreso": "DIRECTA", "sector_empleador": "PRIVADO",
+            "fecha_denuncia": "2026-11-02", **extra}
+
+
 def revision(cliente, identificador, version=0, decision="DESCARTADO", **kw):
     return cliente.post(f"/casos/{identificador}/revision", data={
         "version": version, "decision_final": decision, "comentario": "Comentario sintético",
@@ -403,8 +410,8 @@ def test_demo_nueva_exige_confirmacion_y_no_borra_historial(entorno):
     login(cliente)
     revision(cliente, identificador)
     relato = "Este es un relato completamente inventado de hostigamiento en una empresa ficticia."
-    assert cliente.post("/demo/nuevo", data={"relato": relato}).status_code == 422
-    assert cliente.post("/demo/nuevo", data={"relato": relato, "confirmar_sintetico": True}).status_code == 200
+    assert cliente.post("/ingresos/nuevo", data=ingreso(relato)).status_code == 422
+    assert cliente.post("/ingresos/nuevo", data=ingreso(relato, confirmar_sintetico=True)).status_code == 200
     with Session(motor) as sesion:
         assert len(list(sesion.scalars(select(Denuncia)))) == 2
         assert len(list(sesion.scalars(select(RevisionHumana)))) == 1
@@ -435,7 +442,7 @@ def test_franja_de_prototipo_y_accesibilidad_en_todas_las_paginas(entorno):
     cliente, _ = entorno
     publica = cliente.get("/entrar").text
     login(cliente)
-    for html in (publica, cliente.get("/").text, cliente.get("/demo/nuevo").text):
+    for html in (publica, cliente.get("/").text, cliente.get("/ingresos/nuevo").text):
         assert "no es un servicio de la Dirección del Trabajo" in html
         assert 'href="#contenido"' in html and 'id="contenido"' in html
         assert "/estaticos/logo-dt.svg" in html
@@ -551,16 +558,16 @@ def test_seguimiento_del_relato_nuevo_lleva_a_la_propuesta(entorno):
     cliente, motor = entorno
     login(cliente)
     relato = "Relato completamente inventado sobre hostigamiento en una empresa ficticia."
-    r = cliente.post("/demo/nuevo", data={"relato": relato, "confirmar_sintetico": True},
+    r = cliente.post("/ingresos/nuevo", data=ingreso(relato, confirmar_sintetico=True),
                      follow_redirects=False)
     destino = r.headers["location"]
-    assert r.status_code == 303 and destino.startswith("/demo/seguimiento/DEMO-")
+    assert r.status_code == 303 and destino.startswith("/ingresos/seguimiento/ING-")
     externo = destino.rsplit("/", 1)[1]
     with Session(motor) as sesion:
         listo = sesion.scalar(select(Denuncia.id).where(Denuncia.id_externo_dt == externo))
     assert cliente.get(destino, follow_redirects=False).headers["location"] == f"/casos/{listo}"
     assert cliente.get(destino + "/estado").headers["HX-Redirect"] == f"/casos/{listo}"
-    assert cliente.get("/demo/seguimiento/SINT-0001/estado").status_code == 404
+    assert cliente.get("/ingresos/seguimiento/SINT-0001/estado").status_code == 404
 
 
 def test_resaltar_escapa_el_relato_y_respeta_espacios():
@@ -581,3 +588,68 @@ def test_recorrido_de_un_caso_sin_ia(entorno):
     login(entorno[0])
     html = entorno[0].get(f"/casos/{identificador}").text
     assert "Sin IA · RD-02" in html and "costó cero" in html
+
+
+# --- Ingreso de caso y pie de página -------------------------------------------
+
+
+def test_ingreso_de_caso_lleva_los_campos_al_pipeline(entorno, monkeypatch):
+    recibidos = []
+    original = main.procesar_caso
+
+    def capturar(registro, contexto):
+        recibidos.append(dict(registro))
+        return original(registro, contexto)
+
+    monkeypatch.setattr(main, "procesar_caso", capturar)
+    cliente, _ = entorno
+    login(cliente)
+    formulario = cliente.get("/ingresos/nuevo").text
+    for texto in ("Ingreso de caso", 'name="empleador"', 'name="tipo_ingreso"',
+                  'name="sector_empleador"', 'name="fecha_denuncia"', "Informe de investigación interna"):
+        assert texto in formulario
+    relato = "Relato sintético de malos tratos reiterados de una jefatura en reuniones semanales."
+    r = cliente.post("/ingresos/nuevo", data=ingreso(
+        relato, confirmar_sintetico=True, sector_empleador="PUBLICO", tipo_ingreso="INFORME_INTERNO"))
+    assert r.status_code == 200
+    assert recibidos[0]["sector_empleador"] == "PUBLICO"
+    assert recibidos[0]["tipo_ingreso"] == "INFORME_INTERNO"
+    assert recibidos[0]["fecha_denuncia"] == "2026-11-02"
+    assert recibidos[0]["empleador"] == "Comercial Sintética Limitada"
+    assert recibidos[0]["id_externo_dt"].startswith("ING-")
+
+
+@pytest.mark.parametrize("cambio", [
+    {"fecha_denuncia": "2999-01-01"}, {"tipo_ingreso": "INVENTADO"},
+    {"sector_empleador": "OTRO"}, {"empleador": ""},
+])
+def test_ingreso_de_caso_rechaza_datos_invalidos(entorno, cambio):
+    cliente, motor = entorno
+    login(cliente)
+    relato = "Relato sintético de malos tratos reiterados de una jefatura en reuniones semanales."
+    assert cliente.post("/ingresos/nuevo", data=ingreso(
+        relato, confirmar_sintetico=True, **cambio)).status_code == 422
+    with Session(motor) as sesion:
+        assert not list(sesion.scalars(select(Denuncia)))
+
+
+def test_ingreso_solo_lo_hace_el_inspector_y_la_ruta_antigua_redirige(entorno):
+    cliente, _ = entorno
+    login(cliente, "supervisor")
+    assert cliente.get("/ingresos/nuevo").status_code == 403
+    login(cliente)
+    r = cliente.get("/demo/nuevo", follow_redirects=False)
+    assert r.status_code == 307 and r.headers["location"] == "/ingresos/nuevo"
+
+
+def test_pie_de_pagina_en_todas_las_paginas(entorno):
+    cliente, _ = entorno
+    identificador = caso(entorno)
+    paginas = [cliente.get("/entrar").text]
+    login(cliente)
+    paginas += [cliente.get(ruta).text for ruta in (
+        "/", f"/casos/{identificador}", "/ingresos/nuevo")]
+    for html in paginas:
+        assert '<footer class="pie"' in html
+        assert "Opera solo con casos sintéticos y no es un servicio de la Dirección del Trabajo" in html
+        assert "/estaticos/ficha-negocio.html" in html

@@ -21,5 +21,27 @@
 </div></header>
 <main id="contenido" tabindex="-1">{% block contenido %}{% endblock %}</main>
 <div id="avisos" class="avisos" role="status" aria-live="polite"></div>
-<footer class="pie"><p class="nota">Karin Triage · Proyecto final del Certificado en Prompt Engineering, Universidad Adolfo Ibáñez, Grupo 7. Solo usa casos sintéticos: no ingreses denuncias reales.</p></footer>
+<footer class="pie" aria-label="Pie de página">
+<div class="pie-interior">
+<div class="pie-marca">
+<img src="/estaticos/logo-dt.svg" alt="" width="44" height="40">
+<div><p class="pie-nombre">Karin Triage</p>
+<p>Pre-clasificación asistida de denuncias · Ley 21.643</p>
+<p class="pie-lema">{{ icono('validar') }}El agente propone, una persona decide.</p></div>
+</div>
+<nav class="pie-columna" aria-label="Plataforma"><p class="pie-titulo">Plataforma</p>
+<ul>{% if usuario %}<li><a href="/">{{ icono('bandeja') }}Bandeja de revisión</a></li>
+{% if usuario.rol == 'inspector' %}<li><a href="/ingresos/nuevo">{{ icono('mas') }}Ingreso de caso</a></li>{% endif %}
+<li><a href="/salir">{{ icono('salir') }}Cerrar sesión</a></li>
+{% else %}<li><a href="/entrar">{{ icono('entrar') }}Entrar</a></li>{% endif %}</ul></nav>
+<nav class="pie-columna" aria-label="Proyecto"><p class="pie-titulo">Proyecto</p>
+<ul><li><a href="/estaticos/ficha-negocio.html">{{ icono('documento') }}Ficha de negocio</a></li>
+<li><a href="/estaticos/diagramas-karin-triage.html">{{ icono('ruta') }}Arquitectura</a></li>
+<li><a href="https://github.com/Sebamardones/agente-karin-triage">{{ icono('externo') }}Código fuente</a></li></ul></nav>
+<div class="pie-columna"><p class="pie-titulo">Normativa</p>
+<ul><li><a href="https://www.bcn.cl/leychile/navegar?idNorma=1200096">{{ icono('balanza') }}Ley 21.643 (BCN)</a></li>
+<li><a href="https://www.dt.gob.cl/portal/1626/articles-128897_archivo_01.pdf">{{ icono('externo') }}Informe DT de denuncias</a></li></ul></div>
+</div>
+<div class="pie-legal"><p>Prototipo académico · Universidad Adolfo Ibáñez · Certificado en Prompt Engineering · Grupo 7. Opera solo con casos sintéticos y no es un servicio de la Dirección del Trabajo.</p></div>
+</footer>
 </body></html>

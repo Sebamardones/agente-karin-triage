@@ -10,11 +10,11 @@
 <p class="nota">Ningún caso se resuelve solo: la IA propone y una persona decide.</p>
 {% if mensaje_bandeja %}<p role="status" class="confirmacion">{{ mensaje_bandeja }}</p>{% endif %}
 {% if usuario.rol == 'inspector' %}<div class="acciones">
-<a class="boton boton-secundario" href="/demo/nuevo">{{ icono('ia') }}Probar la IA en vivo</a>
+<a class="boton boton-secundario" href="/ingresos/nuevo">{{ icono('mas') }}Ingreso de caso</a>
 <details class="mas-acciones"><summary>{{ icono('capas') }}Más acciones</summary>
 <form method="post" action="/demo/nueva-tanda" data-carga="Creando tanda…"><button class="boton-secundario">{{ icono('mas') }}Crear tanda nueva para revisar</button></form>
-<form method="post" action="/cargar-golden-set" data-carga="Cargando…"><button class="boton-secundario">{{ icono('documento') }}Cargar el golden set completo</button></form>
-<p class="nota">La tanda nueva crea copias sintéticas sin revisiones; conserva el historial y consume IA.</p>
+<form method="post" action="/cargar-golden-set" data-carga="Cargando…"><button class="boton-secundario">{{ icono('documento') }}Cargar casos de referencia</button></form>
+<p class="nota">La tanda nueva vuelve a procesar los casos de referencia sin revisiones previas y conserva el historial.</p>
 </details></div>{% endif %}
 </div>
 {% include '_bandeja.html' %}

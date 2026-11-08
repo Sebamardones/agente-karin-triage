@@ -16,6 +16,9 @@ ETIQUETAS = {
     "PRESUPUESTO_AGOTADO": "Presupuesto agotado · revisión manual",
     "FUERA_DE_ALCANCE": "Fuera del alcance de la demo",
     "REGIMEN_ANTERIOR": "Revisar régimen anterior",
+    "DIRECTA": "Denuncia directa", "REMISION_EMPLEADOR": "Remisión del empleador",
+    "INFORME_INTERNO": "Informe de investigación interna",
+    "PRIVADO": "Sector privado", "PUBLICO": "Sector público", "NO_DETERMINADO": "Sector no determinado",
     # Revisiones guardadas antes de renombrar el perfil «analista» a «inspector».
     "analista": "inspector",
 }
