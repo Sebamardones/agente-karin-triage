@@ -17,7 +17,15 @@
     if (!zona || !texto) return;
     var item = document.createElement("p");
     item.className = "aviso-flotante";
-    item.textContent = texto;
+    // Icono del sprite de la página: «check» para confirmaciones, «info» para indicaciones.
+    var svg = document.createElementNS("http://www.w3.org/2000/svg", "svg");
+    svg.setAttribute("class", "icono");
+    svg.setAttribute("aria-hidden", "true");
+    var uso = document.createElementNS("http://www.w3.org/2000/svg", "use");
+    uso.setAttribute("href", /^Selecciona/.test(texto) ? "#i-info" : "#i-check");
+    svg.appendChild(uso);
+    item.appendChild(svg);
+    item.appendChild(document.createTextNode(texto));
     zona.appendChild(item);
     setTimeout(function () {
       item.classList.add("saliendo");

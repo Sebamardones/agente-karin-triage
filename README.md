@@ -13,7 +13,7 @@ funcionarios de la Dirección del Trabajo.
 
 **Aplicación pública:** https://karin-triage-grupo7-c7c6a3fb2988.herokuapp.com/
 
-Acceso con `analista_demo` y `supervisor_demo`. Las contraseñas se entregan por
+Acceso con `inspector_demo` y `supervisor_demo`. Las contraseñas se entregan por
 la plataforma del curso; no están en este repositorio. El operador puede
 consultarlas en Config Vars de la aplicación Heroku. Solo casos sintéticos.
 
@@ -73,7 +73,7 @@ El caso de negocio completo está en [`docs/FICHA_NEGOCIO.md`](docs/FICHA_NEGOCI
    de incógnito.
 2. Entra con uno de los dos usuarios de demostración. **Las contraseñas van en
    la plataforma del curso, nunca en este repositorio.**
-   - `analista_demo` — revisa y confirma o corrige pre-clasificaciones.
+   - `inspector_demo` — revisa y confirma o corrige pre-clasificaciones.
    - `supervisor_demo` — además hace la segunda revisión obligatoria de los
      descartes.
 3. En la bandeja, carga los once casos sintéticos del golden set o crea un relato ficticio nuevo.
@@ -285,7 +285,7 @@ Trabajo», ingresadas entre 1° agosto 2024 y 30 de junio 2025*, julio de 2025.
 
 ## Correcciones de la evaluación del equipo
 
-- Demo en vivo: el analista puede enviar un relato ficticio nuevo desde
+- Demo en vivo: el inspector puede enviar un relato ficticio nuevo desde
   `/demo/nuevo`. La confirmación de datos sintéticos es obligatoria; no se
   admite usar esta edición para denuncias reales.
 - El botón de nueva tanda crea copias sin revisiones y conserva las anteriores.

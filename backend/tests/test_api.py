@@ -1,6 +1,7 @@
 """Contrato de la bandeja con SQLite temporal, sin modelo ni red."""
 
 import json
+import re
 from datetime import date
 
 import pytest
@@ -22,7 +23,7 @@ from karin_triage.models.tablas import (
 @pytest.fixture
 def entorno(tmp_path, monkeypatch):
     monkeypatch.setenv("KARIN_SESSION_SECRET", "secreto-sintetico-exclusivo-tests")
-    monkeypatch.setenv("KARIN_DEMO_PASSWORD_ANALISTA", "analista-sintetico")
+    monkeypatch.setenv("KARIN_DEMO_PASSWORD_ANALISTA", "inspector-sintetico")
     monkeypatch.setenv("KARIN_DEMO_PASSWORD_SUPERVISOR", "supervisor-sintetico")
     monkeypatch.setenv("KARIN_HTTPS_ONLY", "0")
     monkeypatch.delenv("ANTHROPIC_API_KEY", raising=False)
@@ -64,7 +65,7 @@ def caso(entorno, **kw):
         return identificador
 
 
-def login(cliente, rol="analista"):
+def login(cliente, rol="inspector"):
     return cliente.post("/entrar", data={"usuario": f"{rol}_demo", "password": f"{rol}-sintetico"})
 
 
@@ -90,7 +91,7 @@ def test_02_sin_sesion(entorno):
 def test_03_password_incorrecta(entorno):
     cliente, _ = entorno
     secreto = "password-sintetica-incorrecta"
-    r = cliente.post("/entrar", data={"usuario": "analista_demo", "password": secreto})
+    r = cliente.post("/entrar", data={"usuario": "inspector_demo", "password": secreto})
     assert "Usuario o contraseña incorrectos" in r.text
     assert secreto not in r.text
     assert cliente.get("/", follow_redirects=False).status_code == 303
@@ -101,7 +102,7 @@ def test_04_login_correcto(entorno):
     assert login(cliente).status_code == 200
     assert cliente.get("/").status_code == 200
     assert "httponly" in cliente.post("/entrar", data={
-        "usuario": "analista_demo", "password": "analista-sintetico"
+        "usuario": "inspector_demo", "password": "inspector-sintetico"
     }, follow_redirects=False).headers["set-cookie"].lower()
 
 
@@ -147,19 +148,19 @@ def test_09_descarte_misma_persona(entorno):
     assert r.status_code == 403 and "distinto" in r.text
 
 
-def test_descarte_lo_inicia_el_analista(entorno):
+def test_descarte_lo_inicia_el_inspector(entorno):
     cliente, _ = entorno
     propuesto = caso(entorno, externo="PROPUESTO", decision="DESCARTADO")
     otro = caso(entorno, externo="OTRO")
     login(cliente, "supervisor")
     # El supervisor no abre un descarte: ni el propuesto por el agente ni uno propio.
     r = revision(cliente, propuesto, decision="DERIVA_MEDIACION")
-    assert r.status_code == 403 and "analista" in r.text
+    assert r.status_code == 403 and "inspector" in r.text
     r = revision(cliente, otro, decision="DESCARTADO")
-    assert r.status_code == 403 and "analista" in r.text
+    assert r.status_code == 403 and "inspector" in r.text
     assert 'value="DESCARTADO"' not in cliente.get(f"/casos/{otro}").text
     assert revision(cliente, otro, decision="PROCEDE_INVESTIGACION").status_code == 200
-    # Flujo completo: analista primero, supervisor valida.
+    # Flujo completo: inspector primero, supervisor valida.
     login(cliente)
     assert revision(cliente, propuesto).status_code == 200
     login(cliente, "supervisor")
@@ -302,7 +303,7 @@ def test_formulario_oculto_si_el_usuario_no_puede_revisar(entorno):
     cliente, _ = entorno
     login(cliente, "supervisor")
     html = cliente.get(f"/casos/{identificador}").text
-    assert 'name="decision_final"' not in html and "la hace el analista" in html
+    assert 'name="decision_final"' not in html and "la hace el inspector" in html
     login(cliente)
     assert 'name="decision_final"' in cliente.get(f"/casos/{identificador}").text
     assert revision(cliente, identificador).status_code == 200
@@ -322,7 +323,7 @@ def test_bandeja_muestra_el_estado_humano_y_se_refresca(entorno):
     assert revision(cliente, descarte).status_code == 200
     html = cliente.get("/bandeja/contenido?bandeja=revisados").text
     assert 'id="bandeja-viva"' in html and "every 5s" in html
-    assert "Revisado · segunda revisión disponible: Deriva a mediación (analista_demo)" in html
+    assert "Revisado · segunda revisión disponible: Deriva a mediación (inspector_demo)" in html
     html = cliente.get("/bandeja/contenido?bandeja=esperando").text
     assert "Pendiente de validación por un supervisor · nivel 1: No corresponde a Ley Karin" in html
     login(cliente, "supervisor")
@@ -514,7 +515,8 @@ def test_bandejas_por_rol_llevan_el_descarte_al_supervisor(entorno):
     assert "DESCARTE-ROL" not in cliente.get("/").text
     login(cliente, "supervisor")
     html = cliente.get("/").text  # el supervisor entra directo a lo que debe validar
-    assert 'aria-current="page">Por validar <span class="contador">1</span>' in html
+    activa = re.search(r'aria-current="page">(.*?)</a>', html, re.DOTALL).group(1)
+    assert "Por validar" in activa and '<span class="contador">1</span>' in activa
     assert "DESCARTE-ROL" in html
 
 

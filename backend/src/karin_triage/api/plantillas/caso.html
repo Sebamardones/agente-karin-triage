@@ -1,31 +1,32 @@
+{% from '_iconos.html' import icono %}
 {% set p = panel.p %}{% set d = panel.denuncia %}
 <article class="panel-caso" id="panel-caso" data-caso="{{ d.id }}" data-bandeja="{{ bandeja or panel.categoria }}">
-<a class="volver-cola" href="/?bandeja={{ bandeja or panel.categoria }}">Volver a la cola</a>
+<a class="volver-cola" href="/?bandeja={{ bandeja or panel.categoria }}">{{ icono('volver') }}Volver a la cola</a>
 {% if p.urgencia_resguardo %}<img class="cinta" src="/estaticos/cinta-contingencia-dark.svg" alt="" aria-hidden="true">{% endif %}
 <p class="antetitulo">{{ d.id_externo_dt }} · ingresó {{ panel.tiempo }}</p>
-<h2 class="veredicto" id="titulo-caso">{% if p.decision %}<span class="veredicto-rotulo">El agente propone</span>
+<h2 class="veredicto" id="titulo-caso">{% if p.decision %}<span class="veredicto-rotulo">{{ icono('ia') }}El agente propone</span>
 {{ p.decision|etiqueta }}{% if p.tipo_conducta %} <span class="veredicto-por">por {{ p.tipo_conducta|etiqueta|lower }}</span>{% endif %}
-{% else %}<span class="veredicto-rotulo">Sin propuesta del agente</span>
+{% else %}<span class="veredicto-rotulo">{{ icono('escudo') }}Sin propuesta del agente</span>
 {{ p.estado_auxiliar|etiqueta if p.estado_auxiliar else 'Requiere revisión manual' }}{% endif %}</h2>
 <p class="chips-veredicto">
-{% if p.urgencia_resguardo %}<span class="chip chip-urgente">Urgencia de resguardo</span>{% endif %}
-{% if p.confianza is not none %}<span class="chip chip-neutro">Confianza {{ '%.2f'|format(p.confianza)|replace('.', ',') }}</span>{% endif %}
-{% if panel.citas_relato %}<span class="chip {{ 'chip-verificada' if panel.encontradas|length == panel.citas_relato|length else 'chip-reconducir' }}">Citas del relato verificadas: {{ panel.encontradas|length }} de {{ panel.citas_relato|length }}</span>{% endif %}
+{% if p.urgencia_resguardo %}<span class="chip chip-urgente">{{ icono('alerta') }}Urgencia de resguardo</span>{% endif %}
+{% if p.confianza is not none %}<span class="chip chip-neutro">{{ icono('balanza') }}Confianza {{ '%.2f'|format(p.confianza)|replace('.', ',') }}</span>{% endif %}
+{% if panel.citas_relato %}<span class="chip {{ 'chip-verificada' if panel.encontradas|length == panel.citas_relato|length else 'chip-reconducir' }}">{{ icono('check' if panel.encontradas|length == panel.citas_relato|length else 'alerta') }}Citas del relato verificadas: {{ panel.encontradas|length }} de {{ panel.citas_relato|length }}</span>{% endif %}
 {% if p.vulneracion_ddff %}<span class="chip chip-neutro">Vulneración de derechos fundamentales</span>{% endif %}
 {% if p.decision == 'DESCARTADO' %}<span class="chip chip-reconducir">Motivo: {{ p.motivo_descarte|etiqueta if p.motivo_descarte else 'sin motivo registrado' }}</span>{% endif %}
 </p>
-{% if p.urgencia_resguardo %}<p class="aviso aviso-urgencia">La propuesta marca riesgo para la persona denunciante. El plazo para pedir medidas de resguardo es corto: revisa este caso primero.</p>{% endif %}
+{% if p.urgencia_resguardo %}<p class="aviso aviso-urgencia con-icono-bloque">{{ icono('alerta', 'icono-bloque') }}<span>La propuesta marca riesgo para la persona denunciante. El plazo para pedir medidas de resguardo es corto: revisa este caso primero.</span></p>{% endif %}
 {% if not p.decision %}<p role="status" class="aviso">Sin propuesta: {{ (p.estado_auxiliar or p.marcas_pipeline)|etiqueta if (p.estado_auxiliar or p.marcas_pipeline) else 'Evaluación no disponible' }}. Requiere revisión humana.</p>{% endif %}
-{% if panel.decision_corregida %}<p class="correccion" role="alert"><strong>Una regla dura corrigió al modelo.</strong>
+{% if panel.decision_corregida %}<p class="correccion con-icono-bloque" role="alert">{{ icono('escudo', 'icono-bloque') }}<span><strong>Una regla dura corrigió al modelo.</strong>
 El modelo propuso <strong>{{ panel.decision_corregida|etiqueta }}</strong> y la propuesta quedó en <strong>{{ p.decision|etiqueta }}</strong>.
-La justificación de abajo es la original del modelo y se conserva sin editar.</p>{% endif %}
+La justificación de abajo es la original del modelo y se conserva sin editar.</span></p>{% endif %}
 
 <div class="panel-columnas">
 <section class="panel-relato" aria-labelledby="titulo-relato">
-<h3 id="titulo-relato">Relato seudonimizado</h3>
+<h3 id="titulo-relato">{{ icono('documento') }}Relato seudonimizado</h3>
 <div class="relato" id="relato">{{ panel.relato_marcado }}</div>
 <p class="nota">Lo marcado son las citas literales en que se apoya el agente.{% if panel.puede_descartar and not panel.bloqueo %} Para un descarte, selecciona aquí la frase que lo respalda.{% endif %}</p>
-{% if panel.citas_relato or panel.citas_normativas %}<h3>Citas</h3><ol class="citas">
+{% if panel.citas_relato or panel.citas_normativas %}<h3>{{ icono('cita') }}Citas</h3><ol class="citas">
 {% for cita in panel.citas_relato %}<li data-cita="{{ loop.index }}"{% if loop.index not in panel.encontradas %} class="no-verificada"{% endif %}><q>{{ cita.texto_literal }}</q>
 <span class="fuente nota">Cita del relato{% if cita.referencia %} · {{ cita.referencia }}{% endif %}{% if loop.index not in panel.encontradas %} · no aparece tal cual en el texto{% endif %}</span></li>{% endfor %}
 {% for cita in panel.citas_normativas %}<li class="cita-normativa"><q>{{ cita.texto_literal }}</q>
@@ -33,13 +34,13 @@ La justificación de abajo es la original del modelo y se conserva sin editar.</
 </ol>{% endif %}
 </section>
 <section class="panel-analisis" aria-labelledby="titulo-recorrido">
-<h3 id="titulo-recorrido">Recorrido del caso</h3>
+<h3 id="titulo-recorrido">{{ icono('ruta') }}Recorrido del caso</h3>
 <ol class="recorrido">{% for paso in panel.recorrido %}
 <li class="paso paso-{{ paso.estado }}"><span class="paso-nombre">{{ paso.nombre }}</span><span class="paso-detalle">{{ paso.detalle }}</span></li>{% endfor %}
 </ol>
 <p class="reglas-codigos"><span class="nota">Reglas duras aplicadas:</span> {% for regla in panel.reglas %}<span class="etiqueta">{{ regla }}</span> {% else %}<span class="nota">ninguna</span>{% endfor %}</p>
 {% for bloque in p.justificacion_y_citas %}
-<details class="justificacion" open><summary>Por qué lo propone</summary>
+<details class="justificacion" open><summary>{{ icono('ia') }}Por qué lo propone</summary>
 <p>{{ bloque.justificacion }}</p>
 {% if bloque.supuestos %}<p class="nota">Supuestos: {{ bloque.supuestos|join('; ') }}</p>{% endif %}
 </details>{% endfor %}
@@ -47,12 +48,12 @@ La justificación de abajo es la original del modelo y se conserva sin editar.</
 </div>
 
 <section class="decision" id="decision" aria-labelledby="titulo-decision">
-<h3 id="titulo-decision">{% if panel.primera and not panel.bloqueo %}Tu validación{% else %}Tu decisión{% endif %}</h3>
+<h3 id="titulo-decision">{{ icono('validar') }}{% if panel.primera and not panel.bloqueo %}Tu validación{% else %}Tu decisión{% endif %}</h3>
 {% if panel.mensaje %}<p role="status" class="confirmacion">{{ panel.mensaje }}</p>{% endif %}
-{% if 'ACOSO_SEXUAL' in p.tipo_conducta %}<p role="alert" class="alerta-rd10"><strong>Advertencia RD-10:</strong>
+{% if 'ACOSO_SEXUAL' in p.tipo_conducta %}<p role="alert" class="alerta-rd10 con-icono-bloque">{{ icono('alerta', 'icono-bloque') }}<span><strong>Advertencia RD-10:</strong>
 La mediación en una conducta tipificada como acoso sexual contradice el art. 211-D inciso final.
-Una excepción requiere comentario fundado del analista y validación de un supervisor distinto.
-<a href="https://www.bcn.cl/leychile/navegar?idNorma=1200096">Consultar la norma</a>.</p>{% endif %}
+Una excepción requiere comentario fundado del inspector y validación de un supervisor distinto.
+<a href="https://www.bcn.cl/leychile/navegar?idNorma=1200096" class="con-icono">Consultar la norma{{ icono('externo') }}</a>.</span></p>{% endif %}
 {% if p.urgencia_resguardo %}<p class="nota">Un descarte requiere motivo, fundamento y cita literal; no elimina la alerta de resguardo.</p>{% endif %}
 {% with denuncia=d, historial=panel.historial, estado_revision=panel.estado_revision %}{% include '_estado_caso.html' %}{% endwith %}
 
@@ -75,9 +76,9 @@ Una excepción requiere comentario fundado del analista y validación de un supe
 <input type="hidden" name="cita_respaldo" value="{{ primera.cita_respaldo }}">{% endif %}
 <label>Comentario de validación{% if primera.decision_final == 'DESCARTADO' or primera.excepcion_rd10 %} (obligatorio){% endif %}
 <textarea name="comentario" rows="2"{% if primera.decision_final == 'DESCARTADO' or primera.excepcion_rd10 %} required{% endif %}></textarea></label>
-<div class="acciones"><button id="accion-confirmar">Validar decisión</button>
-<button type="button" class="boton-secundario" data-abre="form-corregir" id="accion-corregir">Decidir distinto</button>
-{% if panel.puede_descartar and primera.decision_final != 'DESCARTADO' %}<button type="button" class="boton-secundario" data-abre="form-descartar" id="accion-descartar">Descartar</button>{% endif %}</div>
+<div class="acciones"><button id="accion-confirmar">{{ icono('validar') }}Validar decisión</button>
+<button type="button" class="boton-secundario" data-abre="form-corregir" id="accion-corregir">{{ icono('lapiz') }}Decidir distinto</button>
+{% if panel.puede_descartar and primera.decision_final != 'DESCARTADO' %}<button type="button" class="boton-secundario" data-abre="form-descartar" id="accion-descartar">{{ icono('descartar') }}Descartar</button>{% endif %}</div>
 </form>
 {% else %}
 <div class="acciones acciones-decision">
@@ -85,12 +86,12 @@ Una excepción requiere comentario fundado del analista y validación de un supe
 <form method="post" action="/casos/{{ d.id }}/revision" class="accion-rapida" {{ comun|safe }}>
 <input type="hidden" name="version" value="{{ panel.version }}">
 <input type="hidden" name="decision_final" value="{{ p.decision }}">
-<button id="accion-confirmar">Confirmar propuesta</button></form>
+<button id="accion-confirmar">{{ icono('check') }}Confirmar propuesta</button></form>
 {% elif p.decision == 'DESCARTADO' and panel.puede_descartar %}
-<button type="button" id="accion-confirmar" data-abre="form-descartar">Revisar descarte propuesto</button>
+<button type="button" id="accion-confirmar" data-abre="form-descartar">{{ icono('descartar') }}Revisar descarte propuesto</button>
 {% endif %}
-<button type="button" class="boton-secundario" data-abre="form-corregir" id="accion-corregir"{% if not p.decision %} aria-expanded="true"{% endif %}>Corregir</button>
-{% if panel.puede_descartar and p.decision != 'DESCARTADO' %}<button type="button" class="boton-secundario" data-abre="form-descartar" id="accion-descartar">Descartar</button>{% endif %}
+<button type="button" class="boton-secundario" data-abre="form-corregir" id="accion-corregir"{% if not p.decision %} aria-expanded="true"{% endif %}>{{ icono('lapiz') }}Corregir</button>
+{% if panel.puede_descartar and p.decision != 'DESCARTADO' %}<button type="button" class="boton-secundario" data-abre="form-descartar" id="accion-descartar">{{ icono('descartar') }}Descartar</button>{% endif %}
 </div>
 {% endif %}
 
@@ -102,7 +103,7 @@ Una excepción requiere comentario fundado del analista y validación de un supe
 </div></fieldset>
 <label>Comentario <textarea name="comentario" rows="3" placeholder="Qué corriges y por qué"></textarea></label>
 {% if 'ACOSO_SEXUAL' in p.tipo_conducta %}<p class="nota">Si eliges mediación en un caso de acoso sexual, el comentario es obligatorio y el caso pasa a un supervisor (RD-10).</p>{% endif %}
-<button>Registrar corrección</button>
+<button>{{ icono('lapiz') }}Registrar corrección</button>
 </form>
 
 {% if panel.puede_descartar %}
@@ -116,9 +117,9 @@ Una excepción requiere comentario fundado del analista y validación de un supe
 </div></fieldset>
 <label>Cita literal del relato que respalda el descarte
 <textarea name="cita_respaldo" rows="2" required id="cita-respaldo" placeholder="Selecciona la frase en el relato o escríbela tal cual"></textarea></label>
-<button type="button" class="boton-secundario boton-chico" data-usar-seleccion>Usar el texto seleccionado</button>
+<button type="button" class="boton-secundario boton-chico" data-usar-seleccion>{{ icono('cita') }}Usar el texto seleccionado</button>
 <label>Comentario <textarea name="comentario" rows="3" required placeholder="Por qué no corresponde a Ley Karin"></textarea></label>
-<button>Enviar a supervisor</button>
+<button>{{ icono('enviar') }}Enviar a supervisor</button>
 </form>
 {% endif %}
 {% endif %}

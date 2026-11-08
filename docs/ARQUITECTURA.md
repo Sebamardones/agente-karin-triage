@@ -57,7 +57,7 @@ Funcionarios de la DT con cuatro roles:
 
 | Rol | Qué hace |
 |---|---|
-| `analista` | Revisa y confirma o corrige pre-clasificaciones |
+| `inspector` | Revisa y confirma o corrige pre-clasificaciones |
 | `supervisor` | Hace la segunda revisión de los descartes y ve su inspección o región |
 | `admin` | Administra los funcionarios autorizados |
 | `auditor` | Tiene acceso de solo lectura transversal |
@@ -182,7 +182,7 @@ Mientras exista alguna regla en `PROVISIONAL`, el `GATE_SOMBRA_ASISTIDO` queda b
 
 ```mermaid
 flowchart LR
-    FU["Funcionario DT<br/>analista · supervisor · auditor"]
+    FU["Funcionario DT<br/>inspector · supervisor · auditor"]
     CU["ClaveÚnica<br/>OIDC"]
     DTS["Sistema DT / Mi DT<br/>exportación horaria"]
     ANT["API Anthropic<br/>claude-sonnet-5-5"]
@@ -428,7 +428,7 @@ erDiagram
     FUNCIONARIO_AUTORIZADO {
         uuid id PK
         text run_hash UK "HMAC del RUN de ClaveUnica"
-        text rol "analista, supervisor, admin, auditor"
+        text rol "inspector, supervisor, admin, auditor"
         int inspeccion_id FK
         bool activo
         timestamptz vigente_hasta

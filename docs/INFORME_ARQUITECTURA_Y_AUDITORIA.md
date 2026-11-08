@@ -53,7 +53,7 @@ con estado `succeeded`. El commit posterior **bbfae39** agregó documentación d
 verificación. Este informe documenta esa base; no introduce cambios al software.
 La rama de trabajo y publicación es `entrega/codex-revision`.
 
-Acceso a la aplicación: usuarios `analista_demo` y `supervisor_demo`. Las
+Acceso a la aplicación: usuarios `inspector_demo` y `supervisor_demo`. Las
 contraseñas deben compartirse por un canal privado del equipo y por la
 plataforma del curso para el profesor. El operador las obtiene en Config Vars
 de Heroku, campos `KARIN_DEMO_PASSWORD_ANALISTA` y
@@ -65,7 +65,7 @@ Los revisores no necesitan acceso administrativo a Heroku para probar la app.
 KARIN triage prepara una propuesta de preclasificación para revisión humana.
 Combina reglas deterministas con dos funciones de IA: extraer hechos y proponer
 tipificación. La salida incluye justificación, citas, prioridad y reglas
-aplicadas. Un analista puede confirmar o corregir; un descarte exige una segunda
+aplicadas. Un inspector puede confirmar o corregir; un descarte exige una segunda
 revisión de un supervisor distinto.
 
 La edición publicada usa **solo los ocho casos sintéticos del golden set**.
@@ -82,7 +82,7 @@ existentes.
 
 ```mermaid
 flowchart TD
-    U[Analista o supervisor] -->|HTTPS| H[Router Heroku]
+    U[Inspector o supervisor] -->|HTTPS| H[Router Heroku]
     H --> W[Un dyno Basic: Uvicorn y FastAPI]
     W --> V[Jinja2, HTML, CSS y HTMX local]
     W --> S[Sesiones firmadas y control de roles]

@@ -92,7 +92,7 @@ revisar los logs localmente sin copiarlos a un repositorio público.
 
 ## 5. Evidencia de aceptación y comunicación
 
-- Abrir en incógnito; entrar como analista; cargar únicamente un caso sintético.
+- Abrir en incógnito; entrar como inspector; cargar únicamente un caso sintético.
 - Ver propuesta generada con IA activa, citas y reglas; corregir y volver a
   abrir para comprobar persistencia de la revisión.
 - Probar supervisor y doble revisión de un descarte con usuarios distintos.

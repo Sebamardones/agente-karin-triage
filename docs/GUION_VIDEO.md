@@ -58,9 +58,9 @@ informe de la propia institución.
 
 ### 2.1 · Entrar (0:10)
 
-**Acción:** login como `analista_demo`.
+**Acción:** login como `inspector_demo`.
 
-> Entro como analista de una Inspección. Son dos roles de demostración; los
+> Entro como inspector de una Inspección. Son dos roles de demostración; los
 > datos son todos sintéticos, no hay ninguna denuncia real acá.
 
 ### 2.2 · Un caso que procede (0:30)
@@ -164,7 +164,7 @@ Config Vars ni contraseñas. La grabación real sigue pendiente del equipo.
 
 - 0:00-0:25: problema, cliente y precio propuesto de la ficha; no afirmar ahorro
   de tiempo medido ni una contratación ya validada.
-- 0:25-1:30: entrar como analista, abrir «Probar IA con un relato sintético
+- 0:25-1:30: entrar como inspector, abrir «Probar IA con un relato sintético
   nuevo», pegar ficción sin datos personales y enviar. Mostrar estado de carga,
   propuesta, citas y reglas. Explicar cualquier espera; no simular IA con
   respuestas escritas a mano.

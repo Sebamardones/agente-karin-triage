@@ -1,15 +1,16 @@
+{% from '_iconos.html' import icono %}
 <div id="bandeja-viva" hx-get="/bandeja/contenido?bandeja={{ bandeja }}" hx-swap="outerHTML"
  hx-trigger="every 5s [document.visibilityState === 'visible'], refrescar" data-bandeja="{{ bandeja }}">
 <div class="metricas" aria-label="Resumen de la bandeja">
-<p class="metrica metrica-principal"><span class="cifra">{{ pendientes }}</span><span class="cifra-rotulo">pendientes de revisión</span></p>
-<p class="metrica"><span class="metrica-valor">{{ metricas.revisadas_hoy }}</span><span class="metrica-rotulo">revisiones hoy</span></p>
-<p class="metrica"><span class="metrica-valor">{% if metricas.coincidencia is not none %}{{ metricas.coincidencia }} %{% else %}—{% endif %}</span><span class="metrica-rotulo" title="Primeras revisiones en que la persona confirmó la propuesta del agente">coincidencia con el agente</span></p>
-<p class="metrica"><span class="metrica-valor">{{ metricas.sin_ia }}</span><span class="metrica-rotulo">resueltos por reglas, sin IA</span></p>
+<p class="metrica metrica-principal">{{ icono('bandeja', 'icono-metrica') }}<span class="cifra">{{ pendientes }}</span><span class="cifra-rotulo">pendientes de revisión</span></p>
+<p class="metrica">{{ icono('revisado', 'icono-metrica') }}<span class="metrica-valor">{{ metricas.revisadas_hoy }}</span><span class="metrica-rotulo">revisiones hoy</span></p>
+<p class="metrica">{{ icono('balanza', 'icono-metrica') }}<span class="metrica-valor">{% if metricas.coincidencia is not none %}{{ metricas.coincidencia }} %{% else %}—{% endif %}</span><span class="metrica-rotulo" title="Primeras revisiones en que la persona confirmó la propuesta del agente">coincidencia con el agente</span></p>
+<p class="metrica">{{ icono('escudo', 'icono-metrica') }}<span class="metrica-valor">{{ metricas.sin_ia }}</span><span class="metrica-rotulo">resueltos por reglas, sin IA</span></p>
 </div>
 <p class="nota total">Total de casos guardados: {{ total_casos }}</p>
 <nav class="pestanas" aria-label="Bandejas">
 {% for b in ('por-revisar', 'esperando', 'revisados', 'cerrados', 'anteriores') if b != 'anteriores' or conteos[b] %}
-<a href="/?bandeja={{ b }}" class="pestana{% if b == bandeja %} activa{% endif %}"{% if b == bandeja %} aria-current="page"{% endif %}>{{ nombres[b] }} <span class="contador">{{ conteos[b] }}</span></a>
+<a href="/?bandeja={{ b }}" class="pestana{% if b == bandeja %} activa{% endif %}"{% if b == bandeja %} aria-current="page"{% endif %}>{{ icono({'por-revisar': 'bandeja', 'esperando': ('validar' if usuario.rol == 'supervisor' else 'reloj'), 'revisados': 'revisado', 'cerrados': 'archivo', 'anteriores': 'historial'}[b]) }}{{ nombres[b] }} <span class="contador">{{ conteos[b] }}</span></a>
 {% endfor %}
 </nav>
 {% if carga and (carga.en_curso or carga.procesados or carga.saltados or carga.fallidos) %}
@@ -22,12 +23,12 @@
 <div class="progreso" aria-hidden="true"><div id="progreso-carga" class="progreso-barra" style="width: {{ (100 * hechos / carga.total)|round|int if carga.total else 0 }}%"></div></div>{% endif %}
 {% else %}<p>Carga terminada: {{ carga.procesados }} casos nuevos, {{ carga.saltados }} ya estaban en la bandeja, {{ carga.fallidos }} con error.</p>{% endif %}
 </div>{% endif %}
-{% if urgentes %}<h2 class="carril carril-urgente">Urgencia de resguardo · {{ urgentes|length }}</h2>
+{% if urgentes %}<h2 class="carril carril-urgente">{{ icono('alerta') }}Urgencia de resguardo · {{ urgentes|length }}</h2>
 <ul class="tarjetas">{% for fila in urgentes %}{% include '_fila.html' %}{% endfor %}</ul>{% endif %}
 {% if resto %}<h2 class="carril">{% if urgentes %}Resto de la bandeja{% else %}{{ nombres[bandeja] }}{% endif %} · {{ resto|length }}</h2>
 <ul class="tarjetas">{% for fila in resto %}{% include '_fila.html' %}{% endfor %}</ul>{% endif %}
 {% if not cola %}<div class="cola-vacia"><p><strong>No hay casos en esta bandeja.</strong></p>
 <p class="nota">{% if bandeja == 'por-revisar' %}Cuando entre un caso nuevo aparecerá aquí.{% elif bandeja == 'esperando' %}Aquí llegan los descartes y las excepciones que requieren la firma de un supervisor.{% else %}Los casos llegan aquí después de una revisión humana.{% endif %}</p></div>{% endif %}
 {% if bandeja == 'anteriores' %}<p class="nota">Casos y revisiones de tandas anteriores. Se conservan como registro; no se borran.</p>{% endif %}
-<p class="nota">Se actualiza sola cada 5 segundos · <button type="button" class="enlace" data-abrir-ayuda>Atajos de teclado</button></p>
+<p class="nota con-icono">{{ icono('actualizar') }}Se actualiza sola cada 5 segundos · <button type="button" class="enlace con-icono" data-abrir-ayuda>{{ icono('teclado') }}Atajos de teclado</button></p>
 </div>

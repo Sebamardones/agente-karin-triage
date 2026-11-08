@@ -29,7 +29,7 @@ misma imagen Docker que luego corre en cualquier otra parte:
 - **Datos**: Heroku Postgres. No se usa SQLite en el entorno publicado: el
   sistema de archivos de un dyno es efímero y los datos se perderían en cada
   reinicio. SQLite se mantiene en dev y tests, como fija Q4.
-- **Acceso**: login de demostración con dos usuarios, `analista_demo` y
+- **Acceso**: login de demostración con dos usuarios, `inspector_demo` y
   `supervisor_demo`. Las contraseñas son secretos de la plataforma
   (`heroku config:set`) y se entregan al profesor por la plataforma del curso,
   nunca por el repositorio.

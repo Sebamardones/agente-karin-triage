@@ -9,7 +9,7 @@ Aplicación: https://karin-triage-grupo7-c7c6a3fb2988.herokuapp.com/
 - 253 pruebas aprobadas en 14,60 s; Ruff sin hallazgos.
 - Build Docker y release correctos; migración aditiva 0002 para fundamentos
   de revisión humana, sin borrar casos ni revisiones existentes.
-- Formulario de ficción accesible al analista y bloqueado al supervisor.
+- Formulario de ficción accesible al inspector y bloqueado al supervisor.
 - Un relato ficticio nuevo respondió al envío en 0,86 segundos, sin timeout;
   apareció con propuesta real de Claude y citas.
 - El servidor rechazó un descarte humano sin fundamento con HTTP 422.
@@ -83,7 +83,7 @@ con IA activa y datos sintéticos, sin publicar credenciales.
 | Dyno web | Activo, Basic |
 | GET HTTPS `/salud` | `estado=ok` |
 | Acceso sin cookie a `/` | Redirección a `/entrar` |
-| Login analista y supervisor | Correcto en sesiones separadas |
+| Login inspector y supervisor | Correcto en sesiones separadas |
 | Carga sintética después de la corrección | Respuesta inmediata, sin 503 |
 | Casos guardados en Postgres | 8 |
 | Propuestas con citas | 6; otros dos casos tienen estado auxiliar |
@@ -133,7 +133,7 @@ no están en el repositorio porque pertenecen al entorno local del operador.
 
 ## Acceso y pendientes
 
-Usuarios de demostración: `analista_demo` y `supervisor_demo`. El operador
+Usuarios de demostración: `inspector_demo` y `supervisor_demo`. El operador
 consulta las contraseñas en Settings / Config Vars de la aplicación Heroku,
 en `KARIN_DEMO_PASSWORD_ANALISTA` y `KARIN_DEMO_PASSWORD_SUPERVISOR`, y las
 entrega al profesor por la plataforma del curso.

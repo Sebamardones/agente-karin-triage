@@ -41,5 +41,8 @@ class Ajustes(AjustesNucleo):
     """Agrega lo que solo necesita la aplicacion web."""
 
     session_secret: SecretStr
+    # El perfil se llama «inspector» (usuario inspector_demo). La variable conserva
+    # su nombre histórico, KARIN_DEMO_PASSWORD_ANALISTA, para no cambiar la
+    # configuración publicada en Heroku.
     demo_password_analista: SecretStr
     demo_password_supervisor: SecretStr

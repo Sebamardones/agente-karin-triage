@@ -1,4 +1,4 @@
-# ADR-019 · El descarte lo abre el analista y lo valida un supervisor
+# ADR-019 · El descarte lo abre el inspector y lo valida un supervisor
 
 - **Estado**: Aceptado
 - **Fecha**: 2026-11-07
@@ -9,7 +9,7 @@ La segunda revisión de un descarte exige un supervisor distinto de quien hizo l
 primera. La edición publicada tiene un solo supervisor (`supervisor_demo`). Si
 ese supervisor firmaba la primera revisión de un caso con propuesta
 `DESCARTADO` (o marcaba él mismo `DESCARTADO`), nadie podía hacer la segunda: el
-analista recibía 403 por rol y el supervisor 403 por ser la misma persona. El
+inspector recibía 403 por rol y el supervisor 403 por ser la misma persona. El
 caso quedaba trabado (ocurrió con SINT-0007 en producción).
 
 Además, la interfaz no mostraba esos rechazos: htmx no intercambia respuestas
@@ -17,7 +17,7 @@ Además, la interfaz no mostraba esos rechazos: htmx no intercambia respuestas
 
 ## Decisión
 
-- La primera revisión de un descarte la hace siempre el analista: el supervisor
+- La primera revisión de un descarte la hace siempre el inspector: el supervisor
   no puede abrir un caso con propuesta `DESCARTADO` ni registrar `DESCARTADO` en
   una primera revisión.
 - El nivel 2 es siempre una validación: lo firma un supervisor distinto de quien

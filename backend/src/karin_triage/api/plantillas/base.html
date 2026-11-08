@@ -1,3 +1,4 @@
+{% from '_iconos.html' import icono %}
 <!doctype html>
 <html lang="es">
 <head><meta charset="utf-8"><meta name="viewport" content="width=device-width, initial-scale=1">
@@ -9,13 +10,14 @@
 <script src="/estaticos/htmx.min.js" defer></script>
 <script src="/estaticos/interaccion.js?v={{ version_js }}" defer></script></head>
 <body>
+{% include "_sprite.html" %}
 <a class="saltar" href="#contenido">Saltar al contenido</a>
 <div class="franja-prototipo">Prototipo académico UAI · no es un servicio de la Dirección del Trabajo · Datos sintéticos</div>
 <header class="encabezado"><div class="encabezado-interior">
 <a class="marca" href="/"><img src="/estaticos/logo-dt.svg" alt="Logo de la Dirección del Trabajo" width="62" height="56">
 <span><span class="marca-nombre">Karin Triage</span>
 <span class="marca-bajada">El agente propone, una persona decide</span></span></a>
-{% if usuario %}<nav class="sesion" aria-label="Sesión"><p>{{ usuario.nombre }} · {{ usuario.rol|capitalize }} · <a href="/salir">Salir</a></p></nav>{% endif %}
+{% if usuario %}<nav class="sesion" aria-label="Sesión"><p><span class="con-icono">{{ icono('persona') }}{{ usuario.nombre }} · {{ usuario.rol|capitalize }}</span> <a class="con-icono" href="/salir">{{ icono('salir') }}Salir</a></p></nav>{% endif %}
 </div></header>
 <main id="contenido" tabindex="-1">{% block contenido %}{% endblock %}</main>
 <div id="avisos" class="avisos" role="status" aria-live="polite"></div>

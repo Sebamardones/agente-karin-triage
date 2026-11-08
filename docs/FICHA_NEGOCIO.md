@@ -9,7 +9,7 @@ La ficha PDF de una página se conserva como resumen de la entrega.
 
 ## Cliente y problema
 
-Dirección del Trabajo de Chile: analistas y supervisores de recepción de
+Dirección del Trabajo de Chile: inspectores y supervisores de recepción de
 denuncias. El balance oficial registra **44.212 denuncias entre agosto de 2024
 y junio de 2025**, unas 4.019 por mes. **17.980 (40%)** se preclasificaron como
 no Ley Karin y se cerraron. La carga de clasificación y la necesidad de revisar

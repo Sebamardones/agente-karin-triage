@@ -1,7 +1,7 @@
 flowchart TD
   A[Pendiente de revisión humana] --> B{Descarte o excepción RD-10}
   B -->|no| C[Primera firma según permisos]
-  B -->|sí| D[Analista con fundamento obligatorio]
+  B -->|sí| D[Inspector con fundamento obligatorio]
   C --> E[Revisado; segunda firma disponible]
   D --> F[Pendiente de supervisor]
   E -. opcional .-> G[Supervisor distinto; control de versión]

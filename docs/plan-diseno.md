@@ -202,3 +202,22 @@ Sin dependencias nuevas, sin cambios de esquema y sin migraciones.
   prototipo.
 - **D3 · Esfuerzo.** Estimado en 5–7 h para el rediseño y 2–3 h para la
   limpieza de UX, pruebas y capturas incluidas.
+
+## 8. Cambios posteriores aprobados (2026-11-08)
+
+Decisiones del responsable del proyecto que se apartan de la norma gráfica de
+redes sociales de la DT, aplicadas a la interfaz web:
+
+- **Formas redondeadas.** La norma pide esquinas rectas salvo la cápsula. La
+  interfaz usa cápsulas en botones, chips, pestañas y opciones, y cajas de
+  puntas redondeadas (18 px) en tarjetas, paneles y avisos. Tokens
+  `--radio-capsula`, `--radio-caja`, `--radio-control` y `--radio-chico`.
+- **Iconos.** La norma no tiene un set de íconos. La interfaz usa un sprite SVG
+  propio de trazo (`plantillas/_sprite.html`), con varios iconos en el estilo y la
+  geometría de Lucide (licencia ISC). No se agregó ninguna librería. Los iconos
+  acompañan siempre un texto; no hay botones que solo tengan un icono.
+- **Perfil «inspector».** El perfil de primera revisión se llama inspector
+  (usuario `inspector_demo`). La contraseña sigue en la Config Var
+  `KARIN_DEMO_PASSWORD_ANALISTA` para no cambiar la configuración publicada. Las
+  revisiones guardadas antes del cambio conservan `analista_demo` como
+  funcionario y su rol se muestra como «inspector».

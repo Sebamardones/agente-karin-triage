@@ -15,7 +15,7 @@ from karin_triage.models.tablas import ahora
 BANDEJAS = ("por-revisar", "esperando", "revisados", "cerrados", "anteriores")
 
 NOMBRES_BANDEJA = {
-    "analista": {"por-revisar": "Por revisar", "esperando": "Esperando supervisor",
+    "inspector": {"por-revisar": "Por revisar", "esperando": "Esperando supervisor",
                  "revisados": "Revisados", "cerrados": "Cerrados",
                  "anteriores": "Tandas anteriores"},
     "supervisor": {"por-revisar": "Sin revisar", "esperando": "Por validar",

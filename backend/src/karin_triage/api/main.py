@@ -144,14 +144,14 @@ def motivo_bloqueo(historial, propuesta, usuario):
     """Por qué este usuario no puede registrar una revisión ahora; None si puede.
 
     El nivel 2 es siempre la validación de un supervisor distinto de quien
-    firmó el nivel 1. Flujo de un descarte: el analista hace la primera revisión
+    firmó el nivel 1. Flujo de un descarte: el inspector hace la primera revisión
     y un supervisor la valida. Si el supervisor firmara primero, la demo (un solo
     supervisor) no tendría quién hiciera la segunda y el caso quedaría trabado.
     """
     if len(historial) >= 2:
         return 409, "El caso ya tiene dos revisiones humanas"
-    if not historial and propuesta.decision == "DESCARTADO" and usuario["rol"] != "analista":
-        return 403, "La primera revisión de un descarte la hace el analista"
+    if not historial and propuesta.decision == "DESCARTADO" and usuario["rol"] != "inspector":
+        return 403, "La primera revisión de un descarte la hace el inspector"
     if historial:
         # El nivel 2 es siempre una validación: supervisor y persona distinta.
         # Si dependiera de que el descarte viniera de antes, un descarte firmado
@@ -227,7 +227,7 @@ def crear_app(ajustes=None, motor=None):
         publicas = {"/entrar", "/salir", "/salud"}
         if (request.url.path not in publicas
                 and not request.url.path.startswith("/estaticos/")
-                and request.session.get("usuario") not in {"analista_demo", "supervisor_demo"}):
+                and request.session.get("usuario") not in {"inspector_demo", "supervisor_demo"}):
             if request.headers.get("HX-Request") == "true":
                 # Un refresco periódico con la sesión vencida no debe pintar el login en la tabla.
                 return Response(headers={"HX-Redirect": "/entrar"})
@@ -248,7 +248,7 @@ def crear_app(ajustes=None, motor=None):
 
     @app.post("/entrar")
     def autenticar(request: Request, usuario: str = Form(""), password: str = Form("")):
-        cuentas = {"analista_demo": ajustes.demo_password_analista,
+        cuentas = {"inspector_demo": ajustes.demo_password_analista,
                    "supervisor_demo": ajustes.demo_password_supervisor}
         secreto = cuentas.get(usuario)
         valido = secrets.compare_digest(password.encode(), (
@@ -318,7 +318,7 @@ def crear_app(ajustes=None, motor=None):
         fila = datos_fila(sesion, denuncia, propuesta)
         bloqueo = motivo_bloqueo(fila["historial"], propuesta, usuario)
         decisiones = list(Decision)
-        if not fila["historial"] and usuario["rol"] != "analista":
+        if not fila["historial"] and usuario["rol"] != "inspector":
             decisiones.remove(Decision.DESCARTADO)
         citas_relato, citas_normativas = presentacion.citas_de(propuesta)
         relato, encontradas = presentacion.resaltar(denuncia.texto_seudonimizado, citas_relato)
@@ -345,8 +345,8 @@ def crear_app(ajustes=None, motor=None):
 
     @app.post("/cargar-golden-set")
     def cargar(request: Request, usuario: Usuario, background_tasks: BackgroundTasks):
-        if usuario["rol"] != "analista":
-            raise HTTPException(403, "Solo el analista puede cargar casos sintéticos")
+        if usuario["rol"] != "inspector":
+            raise HTTPException(403, "Solo el inspector puede cargar casos sintéticos")
         try:
             # El total se conoce antes de empezar: la barra de progreso es determinada.
             total = sum(1 for linea in resolver_golden_set().read_text(
@@ -371,16 +371,16 @@ def crear_app(ajustes=None, motor=None):
 
     @app.get("/demo/nuevo")
     def formulario_demo(request: Request, usuario: Usuario):
-        if usuario["rol"] != "analista":
-            raise HTTPException(403, "Solo el analista puede crear casos sintéticos")
+        if usuario["rol"] != "inspector":
+            raise HTTPException(403, "Solo el inspector puede crear casos sintéticos")
         return vista(request, "nuevo.html", usuario)
 
     @app.post("/demo/nuevo")
     def nuevo_demo(request: Request, usuario: Usuario, background_tasks: BackgroundTasks,
                    relato: Annotated[str, Form(min_length=40, max_length=6000)],
                    confirmar_sintetico: Annotated[bool, Form()] = False):
-        if usuario["rol"] != "analista":
-            raise HTTPException(403, "Solo el analista puede crear casos sintéticos")
+        if usuario["rol"] != "inspector":
+            raise HTTPException(403, "Solo el inspector puede crear casos sintéticos")
         if not confirmar_sintetico:
             raise HTTPException(422, "Debes confirmar que el relato es ficticio y sin datos reales")
         registro = {"id_externo_dt": f"DEMO-{uuid4().hex[:12]}", "relato": relato,
@@ -415,8 +415,8 @@ def crear_app(ajustes=None, motor=None):
 
     @app.post("/demo/nueva-tanda")
     def nueva_tanda(request: Request, usuario: Usuario, background_tasks: BackgroundTasks):
-        if usuario["rol"] != "analista":
-            raise HTTPException(403, "Solo el analista puede crear una tanda de demo")
+        if usuario["rol"] != "inspector":
+            raise HTTPException(403, "Solo el inspector puede crear una tanda de demo")
         tanda = uuid4().hex[:8]
         registros = []
         for linea in resolver_golden_set().read_text(encoding="utf-8").splitlines():
@@ -466,15 +466,15 @@ def crear_app(ajustes=None, motor=None):
         if bloqueo:
             raise HTTPException(*bloqueo)
         nivel = 2 if historial else 1
-        if nivel == 1 and decision_final == Decision.DESCARTADO and usuario["rol"] != "analista":
+        if nivel == 1 and decision_final == Decision.DESCARTADO and usuario["rol"] != "inspector":
             # Un descarte iniciado por el supervisor no tendría quién lo validara.
-            raise HTTPException(403, "La primera revisión de un descarte la hace el analista")
+            raise HTTPException(403, "La primera revisión de un descarte la hace el inspector")
         excepcion = contradice_rd10(p, decision_final.value)
         if excepcion:
             if not comentario.strip():
                 raise HTTPException(422, "RD-10: la excepción requiere fundamento y validación de supervisor")
-            if nivel == 1 and usuario["rol"] != "analista":
-                raise HTTPException(403, "La excepción RD-10 debe iniciarla el analista y validarla otro supervisor")
+            if nivel == 1 and usuario["rol"] != "inspector":
+                raise HTTPException(403, "La excepción RD-10 debe iniciarla el inspector y validarla otro supervisor")
         if decision_final == Decision.DESCARTADO:
             if motivo_descarte not in {m.value for m in MotivoDescarte} or not comentario.strip():
                 raise HTTPException(422, "El descarte requiere un motivo del catálogo y un comentario")

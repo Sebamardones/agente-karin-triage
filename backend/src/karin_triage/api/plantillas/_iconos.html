@@ -1,0 +1,6 @@
+{#- Iconos de trazo de la interfaz. Se dibujan con el sprite de _sprite.html, que
+    vive una sola vez en base.html; los parciales que llegan por htmx lo reutilizan.
+    Uso: {% from '_iconos.html' import icono %} ... {{ icono('check') }} -#}
+{% macro icono(nombre, clase='') -%}
+<svg class="icono{% if clase %} {{ clase }}{% endif %}" aria-hidden="true" focusable="false"><use href="#i-{{ nombre }}"></use></svg>
+{%- endmacro %}

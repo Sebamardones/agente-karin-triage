@@ -6,7 +6,7 @@ from sqlalchemy.orm import Session
 
 def usuario_actual(request: Request):
     usuario = request.session.get("usuario")
-    if usuario not in {"analista_demo", "supervisor_demo"}:
+    if usuario not in {"inspector_demo", "supervisor_demo"}:
         raise HTTPException(303, headers={"Location": "/entrar"})
     return {"nombre": usuario, "rol": usuario.removesuffix("_demo")}
 

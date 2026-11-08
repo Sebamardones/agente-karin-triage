@@ -16,7 +16,7 @@ citas son de la p. 1). Versión auditada: commit `4bd760f`, Heroku release
 | `heroku config` (solo nombres de variables) | `ANTHROPIC_API_KEY`, contraseñas demo y `KARIN_SESSION_SECRET` están como Config Vars; `KARIN_TOPE_USD_DIA=3`, `KARIN_TOPE_LLAMADAS_DIA=200` |
 | `heroku ps` / `heroku addons` | 1 dyno web Basic activo; Postgres essential-0 |
 | `git log --all -p \| grep -E 'sk-ant-…'` | Sin coincidencias. Búsqueda por patrón, no un escáner completo |
-| Recorrido autenticado (navegador integrado, `analista_demo`) | Bandeja con 23 casos, ficha de SINT-0002 y formulario `/demo/nuevo` |
+| Recorrido autenticado (navegador integrado, `inspector_demo`) | Bandeja con 23 casos, ficha de SINT-0002 y formulario `/demo/nuevo` |
 
 No se creó ningún caso nuevo para no gastar créditos de Anthropic. La llamada
 en vivo al modelo **no se probó hoy**; la evidencia de IA es la propuesta

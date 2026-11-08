@@ -1,15 +1,16 @@
 {% extends "base.html" %}
+{% from '_iconos.html' import icono %}
 {% block titulo %}Entrar{% endblock %}
 {% block contenido %}<div class="lienzo">
 <p class="antetitulo">Pre-clasificación asistida · Ley Karin (Ley 21.643)</p>
 <h1>Entrar</h1>
-<p class="bajada">Herramienta de apoyo para analistas y supervisores que reciben denuncias de acoso laboral, acoso sexual y violencia en el trabajo. La IA propone una pre-clasificación con citas literales; una persona revisa y decide.</p>
+<p class="bajada">Herramienta de apoyo para inspectores y supervisores que reciben denuncias de acoso laboral, acoso sexual y violencia en el trabajo. La IA propone una pre-clasificación con citas literales; una persona revisa y decide.</p>
 {% if error %}<p role="alert" class="aviso-urgencia">{{ error }}</p>{% endif %}
 <form method="post" action="/entrar">
 <label>Usuario <input name="usuario" autocomplete="username" required></label>
 <label>Contraseña <input name="password" type="password" autocomplete="current-password" required></label>
-<button>Entrar</button></form>
-<div class="tarjeta tarjeta-secundaria">
-<p><strong>Cuentas de demostración:</strong> <code>analista_demo</code> revisa y propone; <code>supervisor_demo</code> valida los descartes. Las contraseñas se entregan en la plataforma del curso.</p>
+<button>{{ icono('entrar') }}Entrar</button></form>
+<div class="tarjeta tarjeta-secundaria con-icono-bloque">{{ icono('info', 'icono-bloque') }}<div>
+<p><strong>Cuentas de demostración:</strong> <code>inspector_demo</code> revisa y propone; <code>supervisor_demo</code> valida los descartes. Las contraseñas se entregan en la plataforma del curso.</p>
 <p>Todos los casos son sintéticos. Esta demostración no acepta denuncias reales.</p>
-</div></div>{% endblock %}
+</div></div></div>{% endblock %}

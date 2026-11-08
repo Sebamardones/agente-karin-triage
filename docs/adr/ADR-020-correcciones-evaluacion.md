@@ -12,11 +12,11 @@ comprobarlas. Una amenaza de pérdida de turnos elevaba urgencia indebidamente.
 ## Decisiones
 
 - Formulario de ficción con confirmación explícita y límite de longitud; solo
-  analista. Tandas con IDs nuevos, sin eliminar casos ni historial.
+  inspector. Tandas con IDs nuevos, sin eliminar casos ni historial.
 - Descarte humano con catálogo, comentario y cita literal, rechazando fundamentos
   por falta de prueba. Los campos quedan en revisión humana mediante migración
   aditiva 0002; los eventos solo contienen motivo y bandera, sin comentario libre.
-- RD-10 humana: advertencia y comentario; primera excepción por analista y
+- RD-10 humana: advertencia y comentario; primera excepción por inspector y
   segunda revisión por otro supervisor. No se convierte en decisión automática
   ni se afirma que una excepción humana cambia el texto de la norma.
 - Las citas se validan según su fuente; v3 produce solo citas de denuncia y

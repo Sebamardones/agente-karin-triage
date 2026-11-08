@@ -16,6 +16,8 @@ ETIQUETAS = {
     "PRESUPUESTO_AGOTADO": "Presupuesto agotado · revisión manual",
     "FUERA_DE_ALCANCE": "Fuera del alcance de la demo",
     "REGIMEN_ANTERIOR": "Revisar régimen anterior",
+    # Revisiones guardadas antes de renombrar el perfil «analista» a «inspector».
+    "analista": "inspector",
 }
 
 

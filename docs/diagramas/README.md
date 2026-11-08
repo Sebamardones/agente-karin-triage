@@ -22,7 +22,7 @@ La arquitectura original de octubre se conserva como antecedente en la carpeta l
 
 ```mermaid
 flowchart LR
-  A[Analista demo] --> UI[FastAPI + Jinja2 + HTMX]
+  A[Inspector demo] --> UI[FastAPI + Jinja2 + HTMX]
   S[Supervisor demo] --> UI
   I[Formulario ficticio y golden set] --> G[BackgroundTasks + LangGraph]
   UI --> G
@@ -206,7 +206,7 @@ flowchart TD
 flowchart TD
   A[Pendiente de revisión humana] --> B{Descarte o excepción RD-10}
   B -->|no| C[Primera firma según permisos]
-  B -->|sí| D[Analista con fundamento obligatorio]
+  B -->|sí| D[Inspector con fundamento obligatorio]
   C --> E[Revisado; segunda firma disponible]
   D --> F[Pendiente de supervisor]
   E -. opcional .-> G[Supervisor distinto; control de versión]

@@ -23,7 +23,7 @@ decidir y el paso de un caso entre bandejas.
 Se reemplaza la tabla única por pestañas con contador. El estado se deriva de
 `estado_revision`, que ya existe.
 
-| Pestaña | Analista ve | Supervisor ve |
+| Pestaña | Inspector ve | Supervisor ve |
 |---|---|---|
 | Por revisar | Casos sin revisión | Casos sin revisión que puede firmar |
 | Esperando supervisor | Descartes y excepciones RD-10 que firmó, en espera | **Por validar**: lo que le toca firmar (pestaña principal) |
@@ -71,7 +71,7 @@ caso sigue funcionando.
 | **Descartar** | Abre un paso guiado: motivo (botones del catálogo), cita (**se selecciona con el mouse en el relato** y se copia sola al campo) y comentario. El botón final dice «Enviar a supervisor» |
 
 El supervisor ve, en vez de la propuesta sola, **la comparación**: «El agente
-propuso X · el analista decidió Y», con el comentario y la cita del analista.
+propuso X · el inspector decidió Y», con el comentario y la cita del inspector.
 Sus acciones son «Validar» (misma decisión) o «Decidir distinto».
 
 ## 4. Paso entre bandejas y retroalimentación

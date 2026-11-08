@@ -56,7 +56,7 @@ corrigió queda registrado.
 | R3 | Seudonimización antes de cualquier llamada al LLM, y corte del flujo si queda PII residual (RD-06) |
 | R4 | Salida del LLM validada con Pydantic y citas verificadas literalmente contra el texto seudonimizado (RD-15) |
 | R5 | Bandeja web con orden por prioridad, detalle del caso con sus citas, acciones de confirmar y corregir, y doble revisión obligatoria de los descartes (RD-14) |
-| R6 | Login de demostración con los roles `analista` y `supervisor` |
+| R6 | Login de demostración con los roles `inspector` y `supervisor` |
 | R7 | Tope de gasto en código: límite diario de llamadas y de dólares; al tocarlo, marca `PRESUPUESTO_AGOTADO` y cola manual |
 
 ### 3.2 De la entrega
