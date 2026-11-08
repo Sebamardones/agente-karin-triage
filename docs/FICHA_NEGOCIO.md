@@ -2,6 +2,11 @@
 
 Grupo 7 · UAI · Noviembre de 2026. Prototipo público con datos sintéticos.
 
+**Desarrollo ampliado:** [caso de negocio en HTML](FICHA_NEGOCIO_AMPLIADA.html),
+con el formato visual de la bitácora del equipo, escenarios económicos y plan
+de validación. [Abrir versión pública](https://karin-triage-grupo7-c7c6a3fb2988.herokuapp.com/estaticos/ficha-negocio.html).
+La ficha PDF de una página se conserva como resumen de la entrega.
+
 ## Cliente y problema
 
 Dirección del Trabajo de Chile: analistas y supervisores de recepción de

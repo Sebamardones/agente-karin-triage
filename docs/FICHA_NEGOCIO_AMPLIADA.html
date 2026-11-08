@@ -1,0 +1,500 @@
+<!doctype html>
+<html lang="es"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1">
+<meta name="description" content="Caso de negocio ampliado de KARIN Triage: problema, propuesta, precio, costos, retorno hipotético, evidencia y validación.">
+<title>KARIN Triage · Ficha de negocio ampliada</title>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=DM+Serif+Display:ital@0;1&family=Inter:wght@400;500;600;700&family=JetBrains+Mono:wght@400;500&display=swap">
+<style>
+  :root {
+    --bg: #0A0A0A;
+    --surface: #141414;
+    --surface-2: #1C1C1C;
+    --border: #2A2A2A;
+    --text: #F5F5F5;
+    --text-2: #A0A0A0;
+    --text-3: #555555;
+    --accent: #009FD4;
+    --accent-light: #0D2833;
+    --accent-mid: #1A4A5C;
+    --green: #22C55E;
+    --green-light: #052E16;
+    --yellow: #F59E0B;
+    --yellow-light: #1C1400;
+    --red: #EF4444;
+    --red-light: #1C0000;
+    --mono: 'JetBrains Mono', 'Fira Code', monospace;
+    --uai-blue: #009FD4;
+  }
+
+  *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+
+  body {
+    font-family: 'Inter', system-ui, sans-serif;
+    background: var(--bg);
+    color: var(--text);
+    font-size: 14px;
+    line-height: 1.6;
+    min-height: 100vh;
+  }
+
+  /* UAI header bar */
+  .uai-bar {
+    background: #000;
+    border-bottom: 3px solid var(--uai-blue);
+    padding: 14px 24px;
+    display: flex;
+    align-items: center;
+    gap: 16px;
+  }
+  .uai-logo {
+    display: flex;
+    align-items: stretch;
+    gap: 0;
+    font-size: 11px;
+    font-weight: 700;
+    letter-spacing: 0.04em;
+  }
+  .uai-left {
+    background: #1A1A1A;
+    color: #F5F5F5;
+    padding: 6px 10px;
+    font-family: 'Inter', sans-serif;
+    font-size: 12px;
+    font-weight: 800;
+    letter-spacing: -0.5px;
+    line-height: 1.15;
+    border: 1px solid #333;
+  }
+  .uai-right {
+    background: var(--uai-blue);
+    color: #000;
+    padding: 6px 10px;
+    font-family: 'Inter', sans-serif;
+    font-size: 9px;
+    font-weight: 700;
+    letter-spacing: 0.08em;
+    text-transform: uppercase;
+    line-height: 1.4;
+  }
+  .uai-course-name {
+    color: var(--text-2);
+    font-size: 13px;
+    letter-spacing: 0.01em;
+  }
+
+  .page {
+    max-width: 860px;
+    margin: 0 auto;
+    padding: 48px 24px 80px;
+  }
+
+  /* Header */
+  .header {
+    border-bottom: 1px solid var(--border);
+    padding-bottom: 36px;
+    margin-bottom: 40px;
+  }
+  .doc-title {
+    font-family: 'DM Serif Display', Georgia, serif;
+    font-size: clamp(28px, 5vw, 44px);
+    line-height: 1.1;
+    text-wrap: balance;
+    color: var(--text);
+    margin-bottom: 12px;
+    margin-top: 32px;
+  }
+  .doc-subtitle {
+    color: var(--text-2);
+    font-size: 14px;
+    max-width: 580px;
+    line-height: 1.6;
+    margin-bottom: 28px;
+  }
+
+  .meta-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(180px, 1fr));
+    gap: 0;
+    border: 1px solid var(--border);
+    border-radius: 8px;
+    overflow: hidden;
+  }
+  .meta-item {
+    display: flex;
+    flex-direction: column;
+    gap: 4px;
+    padding: 16px 20px;
+    border-right: 1px solid var(--border);
+    border-bottom: 1px solid var(--border);
+  }
+  .meta-item:last-child { border-right: none; }
+  .meta-label {
+    font-size: 9px;
+    font-weight: 700;
+    letter-spacing: 0.12em;
+    text-transform: uppercase;
+    color: var(--uai-blue);
+  }
+  .meta-value { font-size: 13px; font-weight: 500; color: var(--text); line-height: 1.4; }
+  .meta-value small { display: block; color: var(--text-2); font-weight: 400; font-size: 11px; margin-top: 2px; }
+
+  /* Stats row */
+  .stats {
+    display: grid;
+    grid-template-columns: repeat(4, 1fr);
+    gap: 1px;
+    background: var(--border);
+    border: 1px solid var(--border);
+    border-radius: 8px;
+    overflow: hidden;
+    margin-bottom: 40px;
+  }
+  .stat-card {
+    background: var(--surface);
+    padding: 20px 20px 16px;
+    display: flex;
+    flex-direction: column;
+    gap: 4px;
+  }
+  .stat-number {
+    font-size: 32px;
+    font-weight: 700;
+    color: var(--uai-blue);
+    font-variant-numeric: tabular-nums;
+    letter-spacing: -1.5px;
+    line-height: 1;
+  }
+  .stat-label { font-size: 11px; color: var(--text-2); font-weight: 500; }
+
+  /* Section heading */
+  .section-heading {
+    font-family: 'DM Serif Display', Georgia, serif;
+    font-size: 18px;
+    color: var(--text);
+    margin-bottom: 16px;
+    padding-bottom: 12px;
+    border-bottom: 1px solid var(--border);
+    display: flex;
+    align-items: center;
+    gap: 10px;
+  }
+  .section-heading-accent {
+    width: 4px;
+    height: 20px;
+    background: var(--uai-blue);
+    border-radius: 2px;
+    flex-shrink: 0;
+  }
+
+  /* Prompt entries */
+  .entries { display: flex; flex-direction: column; gap: 1px; background: var(--border); border: 1px solid var(--border); border-radius: 8px; overflow: hidden; }
+
+  .entry { background: var(--surface); }
+  .entry:hover { background: var(--surface-2); }
+
+  .entry-header {
+    display: flex;
+    align-items: flex-start;
+    gap: 14px;
+    padding: 14px 18px;
+    cursor: pointer;
+    user-select: none;
+    list-style: none;
+  }
+  .entry-header::-webkit-details-marker { display: none; }
+  .entry-header:focus-visible { outline: 2px solid var(--uai-blue); outline-offset: -2px; }
+
+  .num-badge {
+    flex-shrink: 0;
+    width: 28px;
+    height: 28px;
+    border-radius: 4px;
+    background: var(--accent-light);
+    color: var(--uai-blue);
+    font-size: 11px;
+    font-weight: 700;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-variant-numeric: tabular-nums;
+    border: 1px solid var(--accent-mid);
+    font-family: var(--mono);
+  }
+
+  .entry-meta { flex: 1; min-width: 0; }
+  .entry-title {
+    font-size: 13px;
+    font-weight: 600;
+    color: var(--text);
+    line-height: 1.3;
+    margin-bottom: 5px;
+  }
+  .entry-tags {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 5px;
+    align-items: center;
+  }
+  .tag {
+    display: inline-flex;
+    align-items: center;
+    padding: 1px 7px;
+    border-radius: 3px;
+    font-size: 10px;
+    font-weight: 600;
+    letter-spacing: 0.03em;
+  }
+  .tag-tool { background: var(--surface-2); color: var(--text-2); border: 1px solid var(--border); }
+  .tag-role { background: var(--accent-light); color: var(--uai-blue); border: 1px solid var(--accent-mid); }
+  .tag-date { color: var(--text-3); font-size: 11px; font-family: var(--mono); }
+
+  .chevron {
+    flex-shrink: 0;
+    width: 16px;
+    height: 16px;
+    color: var(--text-3);
+    transition: transform 0.18s;
+    margin-top: 6px;
+  }
+  details[open] .chevron { transform: rotate(180deg); }
+
+  .entry-body {
+    border-top: 1px solid var(--border);
+    padding: 16px 18px 18px 60px;
+    display: flex;
+    flex-direction: column;
+    gap: 14px;
+    background: var(--bg);
+  }
+
+  .field-label {
+    font-size: 9px;
+    font-weight: 700;
+    letter-spacing: 0.12em;
+    text-transform: uppercase;
+    color: var(--text-3);
+    margin-bottom: 6px;
+  }
+
+  .prompt-block {
+    font-family: var(--mono);
+    font-size: 11.5px;
+    line-height: 1.7;
+    color: var(--text-2);
+    background: var(--surface);
+    border: 1px solid var(--border);
+    border-left: 2px solid var(--uai-blue);
+    border-radius: 0 4px 4px 0;
+    padding: 10px 14px;
+    white-space: pre-wrap;
+    word-break: break-word;
+  }
+
+  .result-block {
+    font-size: 13px;
+    color: var(--text-2);
+    line-height: 1.6;
+  }
+
+  .outcome-pill {
+    display: inline-flex;
+    align-items: center;
+    gap: 5px;
+    padding: 2px 9px;
+    border-radius: 3px;
+    font-size: 10px;
+    font-weight: 700;
+    letter-spacing: 0.05em;
+    text-transform: uppercase;
+    font-family: var(--mono);
+  }
+  .outcome-ok { background: var(--green-light); color: var(--green); border: 1px solid #14532D; }
+  .outcome-fix { background: var(--yellow-light); color: var(--yellow); border: 1px solid #451A03; }
+  .outcome-pending { background: var(--accent-light); color: var(--uai-blue); border: 1px solid var(--accent-mid); }
+
+  .dot { width: 5px; height: 5px; border-radius: 50%; background: currentColor; }
+
+  @media (max-width: 600px) {
+    .stats { grid-template-columns: repeat(2, 1fr); }
+    .entry-body { padding-left: 18px; }
+    .uai-bar { flex-direction: column; align-items: flex-start; gap: 8px; }
+  }
+
+  a { color: #57c8ed; text-underline-offset: 3px; }
+  .toolbar { display:flex; flex-wrap:wrap; gap:10px; margin:20px 0; }
+  button,.button { border:1px solid var(--accent-mid); background:var(--accent-light); color:var(--text); padding:9px 14px; border-radius:5px; font:inherit; cursor:pointer; text-decoration:none; }
+  button:hover,.button:hover { border-color:var(--accent); }
+  .entry-body { gap:16px; padding:22px 24px 24px 60px; }
+  .entry-body p { color:#c9c9c9; font-size:13.5px; line-height:1.8; }
+  .entry-body strong { color:var(--text); }
+  ul,ol { padding-left:22px; color:#c9c9c9; display:grid; gap:9px; }
+  table { width:100%; border-collapse:collapse; font-size:12px; color:#c9c9c9; }
+  th,td { text-align:left; padding:10px 12px; border:1px solid var(--border); vertical-align:top; }
+  th { color:#f5f5f5; background:var(--surface-2); font-weight:600; }
+  .table-wrap { overflow-x:auto; }
+  .callout,.price,.calculator { border:1px solid var(--accent-mid); border-left:3px solid var(--accent); padding:18px; background:var(--accent-light); border-radius:5px; color:#d9e9ef; }
+  .price { display:grid; gap:8px; }.price strong { font-size:26px; line-height:1.2; }
+  small { font-size:11px; color:var(--text-2); display:block; line-height:1.6; }
+  .calc-grid { display:grid; grid-template-columns:repeat(3,1fr); gap:12px; margin:16px 0; }
+  label { display:grid; gap:6px; font-size:12px; }
+  input { width:100%; padding:9px; background:var(--surface); color:var(--text); border:1px solid var(--border); border-radius:4px; font:inherit; }
+  output { display:block; font-size:15px; color:#fff; padding:12px 0; }
+  .sources { margin-top:32px; }.sources li { font-size:12px; overflow-wrap:anywhere; }
+  .toc { color:var(--text-2); font-size:12px; padding:20px; border:1px solid var(--border); border-radius:6px; margin-bottom:28px; }
+  .toc a { display:inline-block; margin:3px 10px 3px 0; }
+  .tag-date { color:#a0a0a0; }.field-label { color:#aaa; }
+  @media(max-width:600px) { .entry-body{padding:18px;} .calc-grid{grid-template-columns:1fr;} .stat-number{font-size:26px;} }
+  @media print { :root{--bg:#fff;--surface:#fff;--surface-2:#eee;--text:#111;--text-2:#444;--border:#bbb;--accent-light:#eef8fb;} body{font-size:11px;} .uai-bar{background:#fff;} .uai-left{background:#fff;color:#111;} .toolbar,.calculator{display:none;} .page{padding:20px 0;max-width:none;} .entry-body p,li,td{color:#222;} .entry-header{break-after:avoid;} .entry-body{display:block;padding:14px;} .entry-body>*{margin-bottom:12px;} .entries{overflow:visible;} .entry{break-inside:auto;} a{color:#005a80;} .price strong{font-size:20px;} }
+</style></head><body>
+<div class="uai-bar"><div class="uai-logo"><div class="uai-left">UNIVERSIDAD<br>ADOLFO IBÁÑEZ</div><div class="uai-right">FACULTAD DE<br>INGENIERÍA<br>Y CIENCIAS</div></div><span class="uai-course-name">Advance Prompt Engineering</span></div>
+<main class="page"><header class="header"><h1 class="doc-title">KARIN Triage:<br>un caso de negocio para la revisión humana asistida</h1>
+<p class="doc-subtitle">Ficha de negocio ampliada · Fundamentos, propuesta de valor, economía del servicio y criterios para validar un piloto responsable. El agente propone; una persona decide.</p>
+<div class="meta-grid"><div class="meta-item"><span class="meta-label">Integrantes</span><span class="meta-value">Sebastián Mardones · Edith Seguel · Nicolás Mores</span></div>
+<div class="meta-item"><span class="meta-label">Curso</span><span class="meta-value">Advance Prompt Engineering</span></div>
+<div class="meta-item"><span class="meta-label">Profesor</span><span class="meta-value">Ahmad Armoush</span></div>
+<div class="meta-item"><span class="meta-label">Fecha</span><span class="meta-value">7 de noviembre de 2026</span></div>
+<div class="meta-item"><span class="meta-label">Ámbito</span><span class="meta-value">Apoyo a preclasificación<small>Sector público · Chile · Demo sintética</small></span></div></div>
+<div class="toolbar"><a class="button" href="https://karin-triage-grupo7-c7c6a3fb2988.herokuapp.com/entrar">Abrir la demo</a><a class="button" href="https://github.com/Sebamardones/agente-karin-triage">Repositorio y evidencia</a><button id="expand" type="button">Abrir todas las secciones</button><button id="collapse" type="button">Contraer</button><button id="print" type="button">Imprimir / guardar PDF</button></div></header>
+<div class="stats"><div class="stat-card"><span class="stat-number">44.212</span><span class="stat-label">denuncias · ago. 2024–jun. 2025</span></div><div class="stat-card"><span class="stat-number">4.019</span><span class="stat-label">promedio mensual histórico</span></div><div class="stat-card"><span class="stat-number">11</span><span class="stat-label">casos del golden set ampliado</span></div><div class="stat-card"><span class="stat-number">3,6 M</span><span class="stat-label">CLP/año + IVA · precio propuesto</span></div></div>
+<p class="toc"><strong>Lectura del documento:</strong> las cifras históricas tienen fuente; los resultados técnicos tienen evidencia en el repositorio; precio, soporte y retorno son hipótesis explícitas. <a href="#s10">Retorno ilustrativo</a><a href="#s11">Plan de validación</a><a href="#fuentes">Fuentes y evidencia</a></p>
+<h2 class="section-heading"><span class="section-heading-accent"></span>Fundamentos del caso de negocio</h2><div class="entries">
+<details class="entry" id="s1" open><summary class="entry-header"><span class="num-badge">01</span><span class="entry-meta"><span class="entry-title">Resumen ejecutivo y tesis del negocio</span><span class="entry-tags"><span class="tag tag-role">Propuesta</span><span class="tag tag-tool">Hipótesis a validar</span></span></span><svg class="chevron" viewBox="0 0 20 20" fill="currentColor" aria-hidden="true"><path d="M5 7l5 5 5-5" stroke="currentColor" fill="none" stroke-width="1.5"/></svg></summary><div class="entry-body">
+<p><strong>KARIN Triage propone un servicio de apoyo a la preclasificación de denuncias para la Dirección del Trabajo (DT).</strong> Su valor no está en reemplazar al funcionario, sino en preparar una lectura estructurada del relato, reunir citas comprobables y hacer visibles las reglas que sostienen una propuesta. El funcionario mantiene la decisión y registra por qué confirma o corrige.</p>
+<p>La tesis económica es que parte del tiempo dedicado a organizar información puede trasladarse a una preparación asistida, liberando capacidad para revisar el fondo del caso. Para que exista negocio deben cumplirse simultáneamente tres condiciones: una mejora medible del tiempo total de revisión, calidad compatible con el criterio institucional y un costo completo inferior al valor de la capacidad liberada. Ninguna de esas condiciones se presume satisfecha solo porque el software funcione.</p>
+<div class="callout"><strong>Oferta propuesta:</strong> piloto anual de una inspección por <strong>CLP 3.600.000 + IVA</strong>, hasta 1.000 casos por mes. Es una hipótesis comercial del equipo, no una tarifa adjudicada ni una relación contractual con la DT.</div>
+<p>La edición académica ya está publicada y opera exclusivamente con situaciones ficticias. El paso a uso institucional exige validar el criterio jurídico, el tratamiento de datos, la contratación y la operación antes de recibir información real.</p></div></details>
+<details class="entry" id="s2" ><summary class="entry-header"><span class="num-badge">02</span><span class="entry-meta"><span class="entry-title">Problema: volumen, heterogeneidad y costo de coordinación</span><span class="entry-tags"><span class="tag tag-role">Evidencia</span><span class="tag tag-tool">Dato oficial + inferencia</span></span></span><svg class="chevron" viewBox="0 0 20 20" fill="currentColor" aria-hidden="true"><path d="M5 7l5 5 5-5" stroke="currentColor" fill="none" stroke-width="1.5"/></svg></summary><div class="entry-body">
+<p>El balance oficial registra <strong>44.212 denuncias entre agosto de 2024 y junio de 2025</strong>. Dividir ese volumen por once meses da aproximadamente <strong>4.019 ingresos mensuales</strong>. Es un antecedente histórico de demanda, no una proyección garantizada para 2026 ni el volumen de una inspección concreta. <a href="#fuentes">[1, 2]</a></p>
+<p>El informe de la DT distingue 18.367 preclasificadas como Ley Karin, 17.980 como no Ley Karin y 7.865 pendientes. El grupo no Ley Karin equivale aproximadamente al 40% del total. Ese porcentaje <strong>no representa una fracción que deba descartarse automáticamente</strong>: muestra que separar materias y reconducirlas constituye parte relevante del trabajo. No se ha demostrado con esa fuente cuánto tiempo fue manual ni cuánto podría automatizarse. <a href="#fuentes">[2]</a></p>
+<p>La oportunidad identificada es reducir la variabilidad de la preparación: relatos con estructura distinta, necesidad de ubicar evidencia literal y coordinación entre quien propone una ruta y quien valida. La heterogeneidad y las demoras de revisión son hipótesis operacionales que deben contrastarse con observación del proceso; el volumen por sí solo no acredita un cuello de botella.</p>
+<div class="table-wrap"><table><thead><tr><th>Problema a contrastar</th><th>Consecuencia esperada</th><th>Cómo medirlo</th></tr></thead><tbody>
+<tr><td>Lectura y organización repetitiva</td><td>Tiempo que no se dedica a evaluación de fondo</td><td>Minutos por caso, separando lectura, verificación y registro</td></tr>
+<tr><td>Fundamentos registrados de forma desigual</td><td>Retrabajo del supervisor</td><td>Revisiones devueltas y campos que faltan</td></tr>
+<tr><td>Priorización con señales poco explícitas</td><td>Alertas excesivas o casos urgentes no advertidos</td><td>Falsos positivos y negativos contra criterio humano acordado</td></tr>
+</tbody></table></div></div></details>
+<details class="entry" id="s3" ><summary class="entry-header"><span class="num-badge">03</span><span class="entry-meta"><span class="entry-title">Cliente, usuarios y proceso de compra</span><span class="entry-tags"><span class="tag tag-role">Cliente B2G</span><span class="tag tag-tool">Roles propuestos</span></span></span><svg class="chevron" viewBox="0 0 20 20" fill="currentColor" aria-hidden="true"><path d="M5 7l5 5 5-5" stroke="currentColor" fill="none" stroke-width="1.5"/></svg></summary><div class="entry-body">
+<p><strong>Cliente objetivo:</strong> Dirección del Trabajo, comenzando por una unidad con volumen acotado y un responsable dispuesto a medir resultados. La unidad contratante, la disponibilidad presupuestaria y la autonomía de compra de una inspección deben confirmarse; el proyecto no las da por establecidas.</p>
+<ul><li><strong>Analista:</strong> necesita una propuesta que pueda contrastar con el relato y corregir sin rehacer toda la preparación.</li><li><strong>Supervisor:</strong> necesita revisar el fundamento, detectar excepciones y validar descartes sin perder trazabilidad.</li><li><strong>Responsable de operación:</strong> busca capacidad, tiempos y calidad estables; es el candidato a sponsor del piloto.</li><li><strong>TI, seguridad y privacidad:</strong> revisan acceso, proveedor, datos, continuidad y requisitos de integración.</li><li><strong>Compras y finanzas:</strong> validan procedimiento, elegibilidad, presupuesto y costo total.</li></ul>
+<p>La persona denunciante es beneficiaria indirecta, pero <strong>no paga ni debe quedar expuesta a una decisión automática</strong>. La adopción debe considerar que una clasificación errónea puede perjudicar derechos, aunque el costo de inferencia sea bajo. La medición de calidad tiene prioridad sobre maximizar el número de casos procesados.</p></div></details>
+<details class="entry" id="s4" ><summary class="entry-header"><span class="num-badge">04</span><span class="entry-meta"><span class="entry-title">Propuesta de valor y justificación del uso de IA</span><span class="entry-tags"><span class="tag tag-role">Producto</span><span class="tag tag-tool">Capacidad implementada</span></span></span><svg class="chevron" viewBox="0 0 20 20" fill="currentColor" aria-hidden="true"><path d="M5 7l5 5 5-5" stroke="currentColor" fill="none" stroke-width="1.5"/></svg></summary><div class="entry-body">
+<p>Una regla determinista sirve para condiciones explícitas, como identificar una vía fuera del alcance de la demo. La IA aporta donde la entrada es un relato: extraer hechos, describir conductas y proponer una tipificación con fundamento textual. El diseño distribuye esas tareas en dos funciones acotadas, en lugar de pedir una decisión institucional completa al modelo.</p>
+<p>Antes de llamar al proveedor se aplica seudonimización y un control residual. Las salidas se validan con esquemas y citas. El modelo no tiene herramientas, no escribe por sí mismo en la base y no notifica. Las reglas posteriores pueden corregir o priorizar una propuesta; la revisión humana confirma o cambia su contenido.</p>
+<div class="table-wrap"><table><thead><tr><th>Valor para el usuario</th><th>Mecanismo del producto</th><th>Límite que debe explicarse</th></tr></thead><tbody>
+<tr><td>Preparación más uniforme</td><td>Hechos y propuesta estructurados</td><td>No garantiza que el modelo interprete correctamente cada relato</td></tr>
+<tr><td>Fundamento verificable</td><td>Citas literales contra su fuente</td><td>Una cita exacta puede ser irrelevante; el humano evalúa pertinencia</td></tr>
+<tr><td>Revisión trazable</td><td>Historial, roles y reglas aplicadas</td><td>La cadena hash no es un registro inmutable ni una firma externa</td></tr>
+<tr><td>Uso responsable del modelo</td><td>PII residual, topes y cola humana</td><td>La heurística de PII no garantiza anonimato universal</td></tr>
+</tbody></table></div>
+<p><strong>Resultado esperado del servicio:</strong> una propuesta más rápida de verificar, no una tasa máxima de descartes. La revisión humana, incluida la posibilidad de disentir de la IA, es parte del costo y del valor del producto.</p></div></details>
+<details class="entry" id="s5" ><summary class="entry-header"><span class="num-badge">05</span><span class="entry-meta"><span class="entry-title">Flujo de trabajo y alcance de la solución</span><span class="entry-tags"><span class="tag tag-role">Operación</span><span class="tag tag-tool">Demo frente a piloto</span></span></span><svg class="chevron" viewBox="0 0 20 20" fill="currentColor" aria-hidden="true"><path d="M5 7l5 5 5-5" stroke="currentColor" fill="none" stroke-width="1.5"/></svg></summary><div class="entry-body">
+<ol><li>El evaluador ingresa un relato declarado ficticio o crea una tanda nueva de ejemplos.</li><li>El sistema valida entrada y aplica reglas previas; algunos casos se reconducen sin llamar a IA.</li><li>Seudonimiza, comprueba datos residuales y, si corresponde, extrae hechos y propone una clasificación.</li><li>Valida la salida, calcula prioridad y guarda propuesta, citas y metadatos.</li><li>El analista revisa; un descarte requiere motivo del catálogo, comentario y cita literal.</li><li>Un supervisor distinto valida la segunda revisión. Las excepciones humanas a RD-10 quedan advertidas y requieren fundamento y validación.</li></ol>
+<p>La demo cuenta con un servicio web en Heroku, Postgres, sesiones con dos roles y carga en segundo plano. Las nuevas tandas conservan los registros anteriores. Solo hay un dyno y un worker; las tareas y sus contadores no son durables, aunque los datos ya guardados sí persisten.</p>
+<p><strong>Fuera del alcance actual:</strong> denuncias reales, integración con Mi DT, ClaveÚnica, recuperación documental o RAG, alta disponibilidad institucional y operación nacional. El bloque de dictámenes se envía vacío. Esas capacidades exigirían diseño, presupuesto y validaciones adicionales; no están incluidas implícitamente en el precio del piloto.</p></div></details>
+<details class="entry" id="s6" ><summary class="entry-header"><span class="num-badge">06</span><span class="entry-meta"><span class="entry-title">Alternativas y criterio de diferenciación</span><span class="entry-tags"><span class="tag tag-role">Estrategia</span><span class="tag tag-tool">Comparación conceptual</span></span></span><svg class="chevron" viewBox="0 0 20 20" fill="currentColor" aria-hidden="true"><path d="M5 7l5 5 5-5" stroke="currentColor" fill="none" stroke-width="1.5"/></svg></summary><div class="entry-body">
+<div class="table-wrap"><table><thead><tr><th>Alternativa</th><th>Ventaja</th><th>Limitación que el piloto debe contrastar</th></tr></thead><tbody>
+<tr><td>Mantener el proceso actual</td><td>Conserva procedimientos y conocimiento institucional</td><td>No incorpora preparación asistida; su tiempo y variabilidad son la línea base</td></tr>
+<tr><td>Plantillas y reglas sin IA</td><td>Control y menor dependencia externa</td><td>Puede requerir más estructuración manual de relatos libres</td></tr>
+<tr><td>Chat genérico con instrucciones</td><td>Prototipado rápido y flexible</td><td>No incluye por sí solo validación de citas, separación de roles y flujo auditado</td></tr>
+<tr><td>KARIN Triage</td><td>Combina lectura de relatos con reglas y revisión trazable</td><td>Añade dependencia del proveedor, controles de datos y mantenimiento de criterio</td></tr>
+</tbody></table></div>
+<p>La diferenciación propuesta es el <strong>flujo verificable y gobernado</strong>, no acceso exclusivo al modelo. No se realizó un estudio exhaustivo de competidores ni se afirma que no existan soluciones equivalentes. Antes de vender debe contrastarse la oferta con herramientas institucionales y proveedores disponibles.</p></div></details>
+<details class="entry" id="s7" ><summary class="entry-header"><span class="num-badge">07</span><span class="entry-meta"><span class="entry-title">Modelo de ingresos y condiciones de la oferta</span><span class="entry-tags"><span class="tag tag-role">Monetización</span><span class="tag tag-tool">Precio propuesto</span></span></span><svg class="chevron" viewBox="0 0 20 20" fill="currentColor" aria-hidden="true"><path d="M5 7l5 5 5-5" stroke="currentColor" fill="none" stroke-width="1.5"/></svg></summary><div class="entry-body">
+<div class="price"><span>Servicio anual por inspección</span><strong>CLP 3.600.000 + IVA</strong><small>Equivalente mensual: CLP 300.000 netos · hasta 1.000 casos por mes</small></div>
+<p>Ingreso recurrente por operación y soporte básico. La referencia comercial contempla una instalación, acompañamiento de uso y seguimiento de calidad dentro de un alcance acordado. Como hipótesis de dimensionamiento del soporte se presupuestan ocho horas por mes; tiempos de atención y entregables deben quedar definidos en contrato antes de ofertar.</p>
+<ul><li>Volumen adicional: cotización separada; no se ofrece inferencia ilimitada.</li><li>Integraciones, migración de información, desarrollo institucional, capacitación extendida y validación jurídica: fuera del precio de referencia.</li><li>El mantenimiento de reglas requiere un responsable del criterio y control de cambios; no se presume actualización jurídica automática.</li><li>No se vende la información de las denuncias ni se propone publicidad como ingreso.</li></ul>
+<p>El precio es una hipótesis académica que debe validarse con disposición a pagar, costo de soporte y proceso de compra. El equipo no ha demostrado ventas, retención, margen comercial ni adquisición de clientes.</p></div></details>
+<details class="entry" id="s8" ><summary class="entry-header"><span class="num-badge">08</span><span class="entry-meta"><span class="entry-title">Costos: separar evidencia, presupuesto y costo completo</span><span class="entry-tags"><span class="tag tag-role">Economía unitaria</span><span class="tag tag-tool">USD y CLP separados</span></span></span><svg class="chevron" viewBox="0 0 20 20" fill="currentColor" aria-hidden="true"><path d="M5 7l5 5 5-5" stroke="currentColor" fill="none" stroke-width="1.5"/></svg></summary><div class="entry-body">
+<div class="table-wrap"><table><thead><tr><th>Componente</th><th>Referencia</th><th>Naturaleza del dato</th></tr></thead><tbody>
+<tr><td>Heroku Basic</td><td>USD 7/mes</td><td>Precio público consultado, sujeto a condiciones de plataforma</td></tr>
+<tr><td>Postgres Essential-0</td><td>USD 5/mes</td><td>Precio público consultado</td></tr>
+<tr><td>Inferencia en la demo</td><td>Reserva de USD 3/mes</td><td>Supuesto de uso reducido; no costo fijo del proveedor</td></tr>
+<tr><td>v3 sobre nueve casos con IA</td><td>USD 0,1600 total; ≈ USD 0,0178/caso</td><td>Estimación del código en una corrida, no factura conciliada</td></tr>
+<tr><td>Presupuesto de inferencia</td><td>USD 0,10/caso</td><td>Reserva conservadora para variación y reintentos; no costo observado</td></tr>
+</tbody></table></div>
+<p>La demo se presenta con un presupuesto orientativo de <strong>USD 15 mensuales</strong>: USD 12 de infraestructura más USD 3 de inferencia. El servicio a 1.000 casos mensuales es otro escenario: con la reserva de USD 0,10 por caso requiere <strong>USD 112 mensuales</strong> de infraestructura e inferencia, antes de soporte, seguridad y desarrollo. <a href="#fuentes">[3, 5]</a></p>
+<p>Las estimaciones de IA usan tarifas codificadas pendientes de conciliación con la factura vigente. No incluyen una garantía de latencia, tamaño de contexto ni costo futuro. Tampoco debe confundirse un depósito de saldo con un límite de gasto efectivamente configurado.</p></div></details>
+<details class="entry" id="s9" ><summary class="entry-header"><span class="num-badge">09</span><span class="entry-meta"><span class="entry-title">Sostenibilidad del proveedor y sensibilidad de volumen</span><span class="entry-tags"><span class="tag tag-role">Viabilidad</span><span class="tag tag-tool">Escenario ilustrativo</span></span></span><svg class="chevron" viewBox="0 0 20 20" fill="currentColor" aria-hidden="true"><path d="M5 7l5 5 5-5" stroke="currentColor" fill="none" stroke-width="1.5"/></svg></summary><div class="entry-body">
+<p>Para no presentar ingresos como utilidad, el siguiente ejercicio incorpora soporte y una reserva operativa. Se usa <strong>CLP 1.000 por USD como supuesto de cálculo, no como cotización vigente</strong>; inferencia presupuestada de USD 0,10 por caso; soporte de ocho horas a CLP 15.000 por hora; y CLP 40.000 mensuales para seguimiento y calidad. Son supuestos del equipo, no costos contratados.</p>
+<div class="table-wrap"><table><thead><tr><th>Casos/mes</th><th>Infraestructura + IA</th><th>Soporte + reserva</th><th>Ingreso neto mensual</th><th>Saldo antes de otros costos</th></tr></thead><tbody>
+<tr><td>250</td><td>CLP 37.000</td><td>CLP 160.000</td><td>CLP 300.000</td><td>CLP 103.000</td></tr>
+<tr><td>500</td><td>CLP 62.000</td><td>CLP 160.000</td><td>CLP 300.000</td><td>CLP 78.000</td></tr>
+<tr><td>1.000</td><td>CLP 112.000</td><td>CLP 160.000</td><td>CLP 300.000</td><td>CLP 28.000</td></tr>
+</tbody></table></div>
+<p>El saldo <strong>no es utilidad neta</strong>: faltan adquisición de cliente, administración, desarrollo inicial, impuestos y eventuales exigencias institucionales. A máximo volumen queda poco espacio para imprevistos. Si el soporte o la infraestructura aumentan, debe revisarse precio, capacidad incluida o alcance antes de contratar.</p>
+<p>Con estos supuestos, el equilibrio operacional simplificado está cerca de 1.280 casos mensuales, pero el plan solo incluye 1.000. La diferencia no autoriza excedentes gratuitos: el límite contractual y la reserva de riesgo siguen siendo necesarios. Un caso de negocio defendible debe probar tanto el valor para la DT como la capacidad del proveedor de sostenerlo.</p></div></details>
+<details class="entry" id="s10" ><summary class="entry-header"><span class="num-badge">10</span><span class="entry-meta"><span class="entry-title">Retorno para el cliente: capacidad, no ahorro fiscal prometido</span><span class="entry-tags"><span class="tag tag-role">Justificación económica</span><span class="tag tag-tool">Hipótesis cuantificada</span></span></span><svg class="chevron" viewBox="0 0 20 20" fill="currentColor" aria-hidden="true"><path d="M5 7l5 5 5-5" stroke="currentColor" fill="none" stroke-width="1.5"/></svg></summary><div class="entry-body">
+<p>Ejemplo de sensibilidad: 1.000 casos por mes, cuatro minutos netos liberados por caso y costo de oportunidad de CLP 9.000 por hora. El resultado sería <strong>66,7 horas mensuales de capacidad</strong>, valoradas en CLP 600.000. Frente a una licencia equivalente a CLP 300.000 mensuales, aparece un excedente teórico de capacidad valorizada de CLP 300.000, antes de adopción.</p>
+<p>No significa que la institución reduzca su gasto en personal ni que ese ahorro esté medido. La capacidad puede reasignarse a investigación, control de calidad o atención. Si comprobar la propuesta de la IA toma tanto tiempo como preparar el caso manualmente, el beneficio desaparece aunque las respuestas sean correctas.</p>
+<p>Incluyendo una hipótesis de doce horas iniciales de adopción a CLP 9.000/hora, distribuidas en un año, el costo de comparación es CLP 309.000 mensuales. Para cubrirlo se requerirían aproximadamente <strong>2,06 minutos netos liberados por caso a 1.000 casos/mes</strong>, 4,12 minutos a 500 o 8,24 minutos a 250. Estos umbrales orientan el diseño del piloto; no son resultados observados.</p>
+<div class="calculator" aria-label="Calculadora ilustrativa de capacidad">
+<h3>Explorar el supuesto de retorno</h3><p>Cambia los supuestos. El cálculo ocurre en tu navegador y no envía datos.</p>
+<div class="calc-grid"><label>Casos al mes<input id="cases" type="number" min="1" max="10000" value="1000"></label><label>Minutos netos liberados por caso<input id="minutes" type="number" min="0" max="60" step="0.5" value="4"></label><label>Costo de oportunidad por hora (CLP)<input id="hourly" type="number" min="1" max="100000" step="500" value="9000"></label></div>
+<output id="roi" aria-live="polite"></output><small>Licencia equivalente: CLP 300.000/mes. Adopción amortizada supuesta: CLP 9.000/mes. Valores sin evaluar el tratamiento tributario del cliente. No es ahorro fiscal garantizado.</small></div></div></details>
+<details class="entry" id="s11" ><summary class="entry-header"><span class="num-badge">11</span><span class="entry-meta"><span class="entry-title">Piloto: cómo demostrar o refutar el caso de negocio</span><span class="entry-tags"><span class="tag tag-role">Validación</span><span class="tag tag-tool">Plan propuesto</span></span></span><svg class="chevron" viewBox="0 0 20 20" fill="currentColor" aria-hidden="true"><path d="M5 7l5 5 5-5" stroke="currentColor" fill="none" stroke-width="1.5"/></svg></summary><div class="entry-body">
+<p>Se propone un piloto con línea base comparable y dos etapas. La etapa académica utiliza solo ficción. Una etapa con información institucional solo puede comenzar tras las autorizaciones, controles de datos y validación jurídica correspondientes; no es una ampliación automática de la demo pública.</p>
+<div class="table-wrap"><table><thead><tr><th>Etapa</th><th>Actividad</th><th>Condición de avance</th></tr></thead><tbody>
+<tr><td>1. Diseño con la unidad</td><td>Entrevistas y observación; acordar criterios, volumen y responsables</td><td>Problema, línea base y costo de revisión definidos</td></tr>
+<tr><td>2. Evaluación controlada</td><td>Casos sintéticos independientes y comparación ciega de propuestas</td><td>Sin errores críticos; diferencias documentadas y corregidas</td></tr>
+<tr><td>3. Aprobaciones institucionales</td><td>Revisar seguridad, privacidad, proveedor, contratación y criterio jurídico</td><td>Autorización explícita antes de información real</td></tr>
+<tr><td>4. Prueba operacional acotada</td><td>Medir tiempo total humano, retrabajo, costos y calidad con protocolo autorizado</td><td>Beneficio neto positivo y controles efectivos</td></tr>
+<tr><td>5. Decisión de continuidad</td><td>Contrastar valor obtenido con costo completo y riesgos</td><td>Continuar, ajustar o detener con evidencia</td></tr>
+</tbody></table></div>
+<p><strong>Indicadores:</strong> mediana y percentil 90 de tiempo humano por caso; concordancia de ruta con criterio acordado; falsos descartes; urgencias omitidas y falsas alertas; citas exactas y pertinentes; porcentaje de correcciones; costo real por caso; disponibilidad y tiempo de recuperación.</p>
+<p>Un diseño inicial razonable es revisar entre 50 y 100 casos de prueba diversos, con dos revisores y desacuerdos adjudicados. Es una propuesta de diseño, no una muestra ya ejecutada ni una garantía estadística. Deben quedar representados casos difíciles, entradas adversarias, urgencias y reconducciones; no seleccionar solo ejemplos favorables.</p></div></details>
+<details class="entry" id="s12" ><summary class="entry-header"><span class="num-badge">12</span><span class="entry-meta"><span class="entry-title">Evidencia técnica disponible y alcance de lo demostrado</span><span class="entry-tags"><span class="tag tag-role">Pruebas</span><span class="tag tag-tool">Resultado registrado</span></span></span><svg class="chevron" viewBox="0 0 20 20" fill="currentColor" aria-hidden="true"><path d="M5 7l5 5 5-5" stroke="currentColor" fill="none" stroke-width="1.5"/></svg></summary><div class="entry-body">
+<p>La revisión de correcciones registró <strong>253 pruebas automáticas aprobadas</strong> y Ruff sin hallazgos. El golden set ampliado tiene once casos: nueve con decisión y dos con estado auxiliar. La comparación real final de v2/v3 usó el mismo pipeline de reglas corregido. <a href="#fuentes">[5, 6]</a></p>
+<div class="table-wrap"><table><thead><tr><th>Indicador</th><th>v2</th><th>v3</th></tr></thead><tbody>
+<tr><td>Decisión final correcta</td><td>9/9</td><td>9/9</td></tr>
+<tr><td>Citas válidas contra su fuente</td><td>25/29</td><td>22/22</td></tr>
+<tr><td>Salida validada sin reintento</td><td>5/9</td><td>9/9</td></tr>
+<tr><td>Urgencia correcta / positivos detectados</td><td>9/9 · 3/3</td><td>9/9 · 3/3</td></tr>
+<tr><td>Llamadas / costo estimado USD</td><td>22 · 0,2142</td><td>18 · 0,1600</td></tr>
+</tbody></table></div>
+<p>La reducción observada de costo entre esas dos corridas es 25,3%. Se conservaron también las iteraciones iniciales insuficientes. La mejora de urgencia respecto de las primeras pruebas corresponde a cambios del pipeline común, no solo al prompt. Los resultados finales incluyen reglas deterministas; no miden al modelo aislado.</p>
+<p>No se capturó JSON crudo: el SDK entrega objetos parseados. «Sin reintento» mide validación de estructura y citas, no sintaxis JSON independiente. Una muestra pequeña y conocida no demuestra generalización, ahorro de tiempo de funcionarios ni calidad jurídica institucional. Es evidencia de viabilidad técnica para seguir validando.</p></div></details>
+<details class="entry" id="s13" ><summary class="entry-header"><span class="num-badge">13</span><span class="entry-meta"><span class="entry-title">Riesgos y condiciones para escalar</span><span class="entry-tags"><span class="tag tag-role">Gobernanza</span><span class="tag tag-tool">Responsables por acordar</span></span></span><svg class="chevron" viewBox="0 0 20 20" fill="currentColor" aria-hidden="true"><path d="M5 7l5 5 5-5" stroke="currentColor" fill="none" stroke-width="1.5"/></svg></summary><div class="entry-body">
+<div class="table-wrap"><table><thead><tr><th>Riesgo</th><th>Control actual o propuesto</th><th>Condición de negocio</th></tr></thead><tbody>
+<tr><td>Descarte o reconducción incorrectos</td><td>Fundamento, citas y doble revisión humana</td><td>No sacrificar protección por velocidad; responsable del criterio identificado</td></tr>
+<tr><td>Exposición de datos</td><td>Demo solo ficticia, seudonimización y corte residual</td><td>Evaluación de privacidad y proveedor antes de información real</td></tr>
+<tr><td>Dependencia o fallo del modelo</td><td>Ruta manual y pruebas de rechazo del proveedor en el repositorio</td><td>Procedimiento manual disponible y continuidad acordada</td></tr>
+<tr><td>Consumo no previsto</td><td>Topes del código y control del proveedor</td><td>Evidencia del límite en consola pendiente; conciliar costos con factura</td></tr>
+<tr><td>Soporte más caro que lo presupuestado</td><td>Medición de horas, alcance acotado y revisión de precio</td><td>No prometer operación institucional con costos de una demo</td></tr>
+<tr><td>Resistencia de usuarios</td><td>Co-diseño, explicabilidad y derecho a corregir</td><td>Medir uso efectivo y retrabajo; no imponer sustitución de criterio</td></tr>
+</tbody></table></div>
+<p>La arquitectura actual no acredita alta disponibilidad, recuperación institucional, certificaciones ni cumplimiento integral. Tampoco cuenta con identidad individual de funcionarios: las dos cuentas son de demostración. El alcance comercial debe reflejar esas brechas y presupuestar su resolución antes de escalar.</p></div></details>
+<details class="entry" id="s14" ><summary class="entry-header"><span class="num-badge">14</span><span class="entry-meta"><span class="entry-title">Ruta comercial y contratación pública</span><span class="entry-tags"><span class="tag tag-role">Adopción</span><span class="tag tag-tool">Viabilidad condicionada</span></span></span><svg class="chevron" viewBox="0 0 20 20" fill="currentColor" aria-hidden="true"><path d="M5 7l5 5 5-5" stroke="currentColor" fill="none" stroke-width="1.5"/></svg></summary><div class="entry-body">
+<p>La entrada propuesta es una conversación de descubrimiento con una unidad, seguida de un piloto con métricas y alcance verificables. No se parte ofreciendo cobertura nacional ni integraciones que no existen. Un expediente comercial debe incluir problema, entregables, seguridad, soporte, costo total y criterios de aceptación.</p>
+<p>ChileCompra informa un límite de <strong>100 UTM para Compra Ágil</strong>, participación preferente de empresas de menor tamaño en la primera convocatoria y exigencia de inscripción y habilitación en el Registro de Proveedores. La modalidad es una posibilidad a evaluar, no una adjudicación asegurada. Deben revisarse impuestos, valor de UTM, elegibilidad y monto total al cotizar. <a href="#fuentes">[4]</a></p>
+<ol><li>Confirmar dolor, volumen y responsable institucional; registrar alternativas existentes.</li><li>Validar precio y alcance con presupuesto completo, sin ocultar tareas de puesta en marcha.</li><li>Comprobar requisitos de proveedor y procedimiento aplicable con la unidad compradora.</li><li>Contratar, si corresponde, con criterios de calidad, responsabilidades sobre datos y salida del servicio definidos.</li><li>Decidir expansión solo después de medir beneficios y riesgos del piloto.</li></ol>
+<p>El mercado inicial es una institución objetivo, no un mercado capturado. No se presenta un tamaño nacional de ingresos multiplicando denuncias por una tarifa arbitraria. La previsión de ventas debe construirse con unidades elegibles, ciclos reales de compra y evidencia de disposición a pagar.</p></div></details>
+<details class="entry" id="s15" ><summary class="entry-header"><span class="num-badge">15</span><span class="entry-meta"><span class="entry-title">Decisión propuesta y próximos hitos</span><span class="entry-tags"><span class="tag tag-role">Cierre del caso</span><span class="tag tag-tool">Avanzar condicionado</span></span></span><svg class="chevron" viewBox="0 0 20 20" fill="currentColor" aria-hidden="true"><path d="M5 7l5 5 5-5" stroke="currentColor" fill="none" stroke-width="1.5"/></svg></summary><div class="entry-body">
+<p><strong>La decisión defendible es financiar validación acotada, no declarar resuelto el problema institucional.</strong> Hay una necesidad pública documentada y un prototipo técnico ejecutable. Existe una hipótesis de precio y un umbral económico explícito. Todavía faltan pruebas con usuarios para demostrar que verificar una propuesta de IA libera más capacidad de la que consume y que la calidad se mantiene en casos nuevos.</p>
+<ul><li><strong>Avanzar</strong> si se confirma sponsor, tiempo neto liberado suficiente, ausencia de errores críticos, protección de datos y costo sostenible.</li><li><strong>Ajustar</strong> si el valor existe pero el volumen, soporte, precio o diseño de revisión no coinciden con las hipótesis.</li><li><strong>Detener</strong> si la verificación humana anula el beneficio, los riesgos no se controlan o no existe una vía de contratación y operación responsable.</li></ul>
+<p>Próximos hitos: entrevistas y línea base; validación del precio; evaluación independiente de casos; evidencia del límite de gasto; revisión visual y de uso; y diseño del piloto autorizado. Este documento amplía la justificación de negocio; el PDF de una página se conserva como resumen para la entrega del curso.</p></div></details>
+</div><section class="sources" id="fuentes"><h2 class="section-heading"><span class="section-heading-accent"></span>Fuentes y evidencia para auditar</h2><ol>
+<li><a href="https://www.mintrab.gob.cl/ministerio-del-trabajo-y-ministerio-de-la-mujer-presentan-balance-de-la-ley-karin-a-un-ano-de-su-implementacion/">Mintrab · Balance de Ley Karin, 1 de agosto de 2025</a>. Base del volumen histórico de 44.212 denuncias.</li>
+<li><a href="https://www.dt.gob.cl/portal/1626/articles-128897_archivo_01.pdf">DT · Informe agosto de 2024 a junio de 2025</a>. Clasificaciones y estados del período; no prueba ahorro de trabajo humano.</li>
+<li><a href="https://www.heroku.com/pricing/">Heroku · Precios públicos</a>. Basic y Postgres Essential-0; no incluye todos los costos institucionales.</li>
+<li><a href="https://www.chilecompra.cl/compraagil/">ChileCompra · Compra Ágil</a>. Límite y condiciones generales; verificar aplicación al momento de cotizar.</li>
+<li><a href="https://github.com/Sebamardones/agente-karin-triage/blob/52ed7ad/docs/MEJORA_PROMPTS.md">Mejora de prompts y costos de la muestra</a>. Incluye resultados iniciales insuficientes y comparación final.</li>
+<li><a href="https://github.com/Sebamardones/agente-karin-triage/blob/52ed7ad/docs/VERIFICACION_PUBLICA.md">Verificación pública y pruebas registradas</a>. Las cifras técnicas de este documento corresponden al corte del 7 de noviembre.</li>
+<li><a href="https://github.com/Sebamardones/agente-karin-triage/blob/entrega/codex-revision/docs/LIMITE_GASTO.md">Estado del límite de gasto</a>. Su configuración en consola requiere evidencia del operador.</li>
+<li><a href="https://github.com/Sebamardones/agente-karin-triage/blob/entrega/codex-revision/docs/FICHA_NEGOCIO.pdf">Ficha PDF resumida de una página</a>. El presente HTML es el desarrollo ampliado, no sustituye ese entregable.</li>
+</ol><p class="doc-subtitle" style="margin-top:20px">Consulta de fuentes: 7 de noviembre de 2026. Documento académico; no implica patrocinio o validación de la Dirección del Trabajo. Los enlaces a evidencia con commit fijo permiten distinguir resultados registrados de cambios posteriores.</p></section>
+<footer style="margin-top:40px;border-top:1px solid var(--border);padding-top:20px"><p class="tag-date">KARIN Triage · Advance Prompt Engineering · UAI · 7 de noviembre de 2026</p><small>Formato visual adaptado de la bitácora proporcionada por el equipo. Desarrollo del caso de negocio con fuentes, evidencia técnica e hipótesis diferenciadas.</small></footer></main>
+<script>
+const sections = () => document.querySelectorAll('details.entry');
+document.getElementById('expand').addEventListener('click', () => sections().forEach(d => d.open = true));
+document.getElementById('collapse').addEventListener('click', () => sections().forEach(d => d.open = false));
+document.getElementById('print').addEventListener('click', () => { sections().forEach(d => d.open = true); window.print(); });
+window.addEventListener('beforeprint', () => sections().forEach(d => d.open = true));
+const money = n => new Intl.NumberFormat('es-CL', {style:'currency', currency:'CLP', maximumFractionDigits:0}).format(n);
+function calculate() {
+ const n = Number(document.getElementById('cases').value), m = Number(document.getElementById('minutes').value), h = Number(document.getElementById('hourly').value);
+ const out = document.getElementById('roi');
+ if (![n,m,h].every(Number.isFinite) || n < 1 || n > 10000 || m < 0 || m > 60 || h < 1 || h > 100000) { out.textContent = 'Ingresa supuestos dentro de los rangos indicados.'; return; }
+ if (n > 1000) { out.textContent = 'El plan incluye hasta 1.000 casos/mes. Para este volumen se requiere una cotización antes de calcular retorno.'; return; }
+ const hours = n*m/60, value = hours*h, cost = 309000, threshold = cost*60/(n*h);
+ out.textContent = hours.toLocaleString('es-CL', {maximumFractionDigits:1}) + ' horas de capacidad/mes · valor hipotético ' + money(value) + ' · diferencia frente a licencia y adopción ' + money(value-cost) + ' · umbral ' + threshold.toLocaleString('es-CL', {maximumFractionDigits:2}) + ' min/caso.' + (n > 1000 ? ' Volumen fuera del plan: requiere cotización; el precio fijo deja de ser aplicable.' : '');
+}
+['cases','minutes','hourly'].forEach(id => document.getElementById(id).addEventListener('input', calculate)); calculate();
+</script></body></html>
