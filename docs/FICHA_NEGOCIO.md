@@ -100,9 +100,9 @@ consola pendiente de evidencia del operador.
 
 ## Fuentes
 
-- Dirección del Trabajo, *Informe estadístico semestral sobre denuncias en
+- [Dirección del Trabajo, *Informe estadístico semestral sobre denuncias en
   materias de la Ley N.° 21.643 con corte al 30 de junio de 2026*, agosto de
-  2026. URL pública PENDIENTE_VERIFICAR.
+  2026](https://www.dt.gob.cl/portal/1626/articles-129626_archivo_01.pdf).
 - [Informe DT, agosto de 2024 a junio de 2025](https://www.dt.gob.cl/portal/1626/articles-128897_archivo_01.pdf), antecedente anterior cuyas cifras ajustó el informe de 2026.
 - [Compra Ágil, ChileCompra](https://www.chilecompra.cl/compraagil/).
 - [Precios Heroku](https://www.heroku.com/pricing/).

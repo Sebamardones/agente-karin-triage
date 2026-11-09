@@ -311,7 +311,7 @@ y **no** está implementado aquí, por decisión explícita:
 [^informe]: Dirección del Trabajo, *Informe estadístico semestral sobre
 denuncias en materias de la Ley N.° 21.643 con corte al 30 de junio de 2026.
 Período acumulado: 1 de agosto de 2024 a 30 de junio de 2026*, agosto de 2026.
-URL pública PENDIENTE_VERIFICAR. Reemplaza las cifras del informe anterior
+<https://www.dt.gob.cl/portal/1626/articles-129626_archivo_01.pdf>. Reemplaza las cifras del informe anterior
 (<https://www.dt.gob.cl/portal/1626/articles-128897_archivo_01.pdf>), que la DT
 ajustó por consolidación de registros.
 
