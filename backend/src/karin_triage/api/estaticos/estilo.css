@@ -728,7 +728,8 @@ body:has(.landing) .pie { margin-top: 0; }
   grid-template-columns: minmax(0, 0.42fr) minmax(0, 2fr) minmax(0, 0.42fr);
 }
 .landing-figura-alto { width: min(100%, 190px); }
-.landing-figura-alto .landing-mancha { background: var(--blush); inset: 18% -12% 10% -12%; }
+/* Figuras altas y angostas: mancha redonda tras el torso, dentro del ancho de la figura */
+.landing-figura-alto .landing-mancha { background: var(--blush); inset: auto; top: 15%; left: -12.5%; width: 125%; aspect-ratio: 1; }
 .landing-enfasis-rojo { color: inherit; }
 .landing-plazos { display: grid; grid-template-columns: repeat(3, minmax(0, 1fr)); gap: var(--space-4); }
 .landing-plazo {
@@ -824,7 +825,7 @@ body:has(.landing) .pie { margin-top: 0; }
 
 /* Animaciones de la landing (intensidad alta; todas fuera con movimiento reducido) */
 @keyframes landing-letra { from { opacity: 0; transform: translateY(0.45em) rotate(4deg); } to { opacity: 1; transform: none; } }
-@keyframes landing-palabra { from { opacity: 0; transform: translateY(0.6em); filter: blur(4px); } to { opacity: 1; transform: none; filter: none; } }
+@keyframes landing-palabra { from { opacity: 0; transform: translateY(0.6em); } to { opacity: 1; transform: none; } }
 @keyframes landing-trazo { from { stroke-dashoffset: 1; } to { stroke-dashoffset: 0; } }
 @keyframes landing-flotar { 0%, 100% { transform: translateY(0); } 50% { transform: translateY(-8px); } }
 @keyframes landing-mancha {
@@ -839,8 +840,10 @@ body:has(.landing) .pie { margin-top: 0; }
 @keyframes landing-linea { from { transform: scaleX(0); } to { transform: scaleX(1); } }
 @keyframes landing-pop { from { opacity: 0; transform: translateY(20px) scale(0.92); } to { opacity: 1; transform: none; } }
 
-.landing-palabra { display: inline-block; white-space: nowrap; }
+/* Margen interno para que los descendentes (g, p, y) no se recorten al animar */
+.landing-palabra { display: inline-block; white-space: nowrap; padding-bottom: 0.18em; margin-bottom: -0.18em; }
 .landing-letra { display: inline-block; }
+.landing-letra { padding-bottom: 0.18em; margin-bottom: -0.18em; }
 .landing-anima .landing-letra { animation: landing-letra 500ms var(--entrada) both; animation-delay: calc(150ms + var(--n) * 18ms); }
 .landing-anima .landing-titular .landing-trazo path { stroke-dasharray: 1; animation: landing-trazo 600ms var(--entrada) both; animation-delay: var(--trazo, 1.2s); }
 .landing-anima .landing-mancha { animation: landing-mancha 14s ease-in-out infinite; }
@@ -876,7 +879,7 @@ body:has(.landing) .pie { margin-top: 0; }
 
 @media (prefers-reduced-motion: reduce) {
   .landing [data-revelar], .landing .landing-palabra, .landing .landing-letra, .landing .landing-recorte,
-  .landing .landing-pasos li, .landing .landing-garantias li { opacity: 1 !important; transform: none !important; filter: none !important; }
+  .landing .landing-pasos li, .landing .landing-garantias li { opacity: 1 !important; transform: none !important; }
   .landing .landing-trazo path { stroke-dashoffset: 0 !important; }
   .landing .landing-pasos::before { transform: none !important; }
   .landing-figura { transform: none !important; }
