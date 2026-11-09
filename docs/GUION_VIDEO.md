@@ -32,14 +32,14 @@ funcionar.
 ## Bloque 1 · El problema (0:35)
 
 **En pantalla:** el informe de la Dirección del Trabajo abierto en la página de
-las cifras, o una lámina con el número 44.212.
+las cifras, o una lámina con el número 92.643.
 
-> La Dirección del Trabajo recibió 44.212 denuncias por acoso laboral, acoso
-> sexual y violencia en el trabajo en los primeros once meses de la Ley Karin.
-> Unas cuatro mil al mes.
+> La Dirección del Trabajo registró 92.643 ingresos por acoso laboral, acoso
+> sexual y violencia en el trabajo en los primeros veintitrés meses de la Ley
+> Karin. En el primer semestre de 2026, más de cuatro mil trescientos al mes.
 >
-> De esas, ella misma pre-clasificó 18.367 como Ley Karin y cerró 17.980 porque
-> no lo eran. Esa etapa de pre-clasificación existe, es obligatoria por
+> De esos, ella misma clasificó 32.565 para continuar como Ley Karin y derivó o
+> cerró 48.505 porque no correspondían a esa vía. Esa etapa de pre-clasificación existe, es obligatoria por
 > reglamento, y hoy se hace a mano.
 >
 > Y corre contra el reloj: dos días hábiles para pedir medidas de resguardo,
