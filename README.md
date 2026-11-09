@@ -73,17 +73,28 @@ El caso de negocio completo está en [`docs/FICHA_NEGOCIO.md`](docs/FICHA_NEGOCI
    de incógnito.
 2. Entra con uno de los dos usuarios de demostración. **Las contraseñas van en
    la plataforma del curso, nunca en este repositorio.**
-   - `inspector_demo` — revisa y confirma o corrige pre-clasificaciones.
-   - `supervisor_demo` — además hace la segunda revisión obligatoria de los
-     descartes.
-3. En la bandeja, carga los once casos sintéticos del golden set o crea un relato ficticio nuevo.
-4. Abre el caso. Verás la propuesta, su justificación, las **citas literales**
-   que la sostienen y la lista de **reglas duras aplicadas**.
-5. Confirma o corrige. Si la decisión propuesta es `DESCARTADO`, el caso queda
-   esperando la segunda revisión de un supervisor distinto: entra con el otro
-   usuario para completarla.
+   - `inspector_demo` — ingresa casos y hace la primera revisión: confirma,
+     corrige o descarta la propuesta del agente.
+   - `supervisor_demo` — valida los descartes y las excepciones a RD-10 en la
+     bandeja «Por validar».
+3. Al entrar se abre una guía de tres pasos (una vez por sesión; se reabre desde
+   «Cómo usar» en el menú). La bandeja no preselecciona ningún caso.
+4. A la izquierda está la **cola**: bandejas por estado (Por revisar, Esperando
+   supervisor, Revisados, Cerrados) y tarjetas con los urgentes arriba. Para
+   tener casos, usa «Más acciones → Crear tanda nueva» o registra uno en
+   **«Ingreso de caso»** (`/ingresos/nuevo`), con tipo de ingreso, fecha,
+   empleador, sector y relato. Un ingreso del sector público se deriva por
+   RD-02 sin llamar a la IA.
+5. Al elegir un caso, el panel muestra el **veredicto** del agente, el relato
+   con las **citas literales resaltadas**, el **recorrido** por las reglas duras
+   y la justificación.
+6. Decide con **Confirmar propuesta**, **Corregir** o **Descartar**. El
+   descarte pide motivo, comentario y una cita que se toma seleccionando la
+   frase en el relato, y pasa a un supervisor distinto. Tras cada decisión se
+   abre el siguiente caso y un aviso indica a qué bandeja pasó.
 
 Todos los datos son sintéticos. No hay ninguna denuncia real en este sistema.
+La franja superior y el pie de página lo declaran en todas las pantallas.
 
 ### En local
 
@@ -212,16 +223,30 @@ distinto invalida el caché, y se nota en `usage.cache_read_input_tokens`.
 │   │   ├── services/          # seudonimizador, cliente del modelo
 │   │   ├── models/            # Pydantic y SQLAlchemy
 │   │   ├── agent/             # grafo y nodos
-│   │   └── api/               # FastAPI, bandeja, login de demostración
-│   └── tests/                 # reglas · seudonimización · fuga de PII · inyección
+│   │   └── api/               # FastAPI: puesto de trabajo, ingreso de caso, login
+│   │       ├── presentacion.py    # bandejas, citas resaltadas y recorrido (solo lectura)
+│   │       ├── plantillas/        # Jinja2: bandeja.html (puesto), caso.html (panel), nuevo.html (ingreso)
+│   │       └── estaticos/         # estilo.css, interaccion.js, htmx, logo y cinta DT
+│   └── tests/                 # reglas · seudonimización · fuga de PII · inyección · interfaz
 └── docs/
     ├── ARQUITECTURA.md        # arquitectura del piloto (hoja de ruta)
-    ├── FICHA_NEGOCIO.md
+    ├── FICHA_NEGOCIO.md · FICHA_NEGOCIO.pdf
     ├── MEJORA_PROMPTS.md
     ├── GUION_VIDEO.md
+    ├── plan-entrega.md        # auditoría contra la pauta y plan priorizado
+    ├── plan-diseno.md         # identidad DT, HIG, animaciones y accesibilidad
+    ├── plan-interaccion.md    # puesto de trabajo: bandejas, panel y decisión
+    ├── capturas/              # antes y después del rediseño
+    ├── diagramas/
     ├── adr/
     └── INFORME_ARQUITECTURA_Y_AUDITORIA.md
 ```
+
+La interfaz es HTML renderizado en el servidor con Jinja2 y htmx, sin
+frameworks de frontend ([ADR-016](docs/adr/ADR-016-bandeja-servidor.md)). Las
+decisiones del puesto de trabajo y del perfil «inspector» están en
+[ADR-021](docs/adr/ADR-021-puesto-de-trabajo.md). Suite actual: **283 pruebas**
+(`uv run --extra dev pytest -q` en `backend/`).
 
 ## Seguridad y datos
 

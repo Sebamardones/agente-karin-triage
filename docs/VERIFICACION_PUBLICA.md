@@ -1,3 +1,45 @@
+# Verificación del rediseño de la interfaz · 2026-11-08
+
+Rama `entrega/codex-revision`. Ocho despliegues desde la release v13 (`4bd760f`):
+
+| Release | Commit | Cambio |
+|---|---|---|
+| v14 | `3347eb4` | Identidad DT, franja de prototipo, limpieza de UX |
+| v15 | `1de916b` | CSS versionado por contenido (caché del navegador) |
+| v16 | `503e294` | Puesto de trabajo: bandejas por rol, cola y panel de decisión |
+| v17 | `2664676` | Perfil «inspector», cápsulas e iconos |
+| v18 | `8ceaf6b` | «Ingreso de caso» con campos reales y pie de página |
+| v19 | `62d233c` | Menú, guía de bienvenida, animaciones y ajuste de botones |
+| v20 | `5a68bc1` | Grilla común de encabezado y pie, cola y panel más limpios |
+| v21 | `e775425` | Porcentaje del resumen sin cortes |
+
+Evidencia de cada despliegue:
+- `pytest -q` antes del commit: 266 → 273 → 280 → 283 pruebas aprobadas;
+  `ruff check .` sin hallazgos.
+- Revisión de `git diff --cached` sin claves.
+- `heroku releases` con el commit esperado.
+- `/salud` 200 y `/entrar` 200 sin sesión; las rutas nuevas
+  (`/ingresos/nuevo`) redirigen al login sin sesión.
+- Sin errores en los últimos 40 registros de Heroku.
+- CSS publicado con la huella esperada.
+
+Recorridos verificados en una copia local con SQLite, casos sintéticos y sin
+clave de API (sin gasto):
+- confirmar → aviso «pasó a Revisados» → apertura del siguiente caso;
+- descarte con cita tomada de la selección → «Enviado a un supervisor» →
+  validación del supervisor → «caso cerrado»;
+- ingreso del sector público → seguimiento → apertura automática con RD-02,
+  sin IA;
+- teclado (`j`/`k`, `c`, `?`), móvil a 375 px sin desplazamiento horizontal y
+  bordes alineados a 1440 px.
+
+En producción se verificó la bandeja con la sesión del responsable después de
+v14. Las releases siguientes se comprobaron sin sesión (rutas, recursos y
+registros); no se registraron casos ni revisiones en producción para no gastar
+créditos. El usuario de acceso cambió a `inspector_demo` en v17.
+
+---
+
 # Verificación actualizada tras EVALUACION_KARIN_TRIAGE
 
 Fecha: 2026-11-07. Código desplegado: **2ed92a2**, Heroku **release v10**,

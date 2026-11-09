@@ -164,6 +164,8 @@ Config Vars ni contraseñas. La grabación real sigue pendiente del equipo.
 
 - 0:00-0:25: problema, cliente y precio propuesto de la ficha; no afirmar ahorro
   de tiempo medido ni una contratación ya validada.
+- (Desactualizado tras el 8 de noviembre: la fase 3 reescribe este guion sobre
+  el puesto de trabajo, el «Ingreso de caso» y las bandejas por rol.)
 - 0:25-1:30: entrar como inspector, abrir «Probar IA con un relato sintético
   nuevo», pegar ficción sin datos personales y enviar. Mostrar estado de carga,
   propuesta, citas y reglas. Explicar cualquier espera; no simular IA con

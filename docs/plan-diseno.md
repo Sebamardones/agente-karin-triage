@@ -1,5 +1,9 @@
 # Plan de diseño · rediseño con identidad DT
 
+> Nota posterior: `/demo/nuevo` pasó a `/ingresos/nuevo` («Ingreso de caso») y el
+> perfil «analista» a «inspector». Las secciones 0–7 se conservan como se
+> aprobaron; los cambios posteriores están en la sección 8.
+
 Fecha: 2026-11-08. Alcance: las cinco pantallas de la bandeja (`/entrar`, `/`,
 `/casos/{id}`, `/demo/nuevo`, estado en vivo de la bandeja y del caso). Las
 páginas estáticas (`ficha-negocio.html`, `diagramas-karin-triage.html`) quedan

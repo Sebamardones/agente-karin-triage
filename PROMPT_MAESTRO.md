@@ -199,3 +199,14 @@ los denominadores ampliados y los errores como fallos. JSON crudo no observable
 con el SDK parseado se declara como tal, sin convertir ausencia de reintento
 en evidencia de sintaxis JSON. El formulario de demo solo admite situaciones
 declaradas ficticias; las revisiones siguen siendo humanas.
+
+## Ampliación por rediseño de la interfaz del 8 de noviembre
+
+R5 se cumple con un puesto de trabajo: bandejas por estado según el rol, cola
+con urgentes primero, panel con veredicto, citas resaltadas y recorrido por
+las reglas, y decisión en tres acciones (confirmar, corregir, descartar hacia
+un supervisor). El formulario de demo pasa a «Ingreso de caso»
+(`/ingresos/nuevo`) con los campos que procesa el pipeline; sigue sin pedir
+datos de identidad y exige declarar que no hay datos personales reales. El
+perfil de primera revisión se llama «inspector». Decisiones en
+`docs/adr/ADR-021-puesto-de-trabajo.md`.

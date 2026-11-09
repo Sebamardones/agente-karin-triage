@@ -1,5 +1,10 @@
 # Plan de interacción · puesto de trabajo del funcionario
 
+> **Estado: implementado y desplegado** (releases v16–v21, ADR-021). Cambios
+> posteriores a esta propuesta, decididos por el responsable: la bandeja ya no
+> abre el primer caso (se muestra una guía de bienvenida por rol), las bandejas
+> son una lista lateral y el formulario de relato pasó a «Ingreso de caso».
+
 Fecha: 2026-11-08. Complementa `docs/plan-diseno.md`, que fijó la identidad
 visual DT, y se mantiene dentro de ella. Este plan cambia **cómo se trabaja**:
 la cola de casos, la forma de presentar la propuesta del modelo, la manera de

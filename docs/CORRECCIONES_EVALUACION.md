@@ -6,7 +6,7 @@ con el estado corregido. Objetivo: cerrar cada observación con evidencia.
 
 | Observación | Corrección y evidencia |
 |---|---|
-| Evaluador no puede ejecutar IA | Formulario `/demo/nuevo`, confirmación de ficción y procesamiento real en segundo plano |
+| Evaluador no puede ejecutar IA | Formulario `/demo/nuevo` (desde el 8 de noviembre, «Ingreso de caso» en `/ingresos/nuevo`), declaración obligatoria de que no hay datos reales y procesamiento real en segundo plano |
 | Casos agotan revisiones | Nueva tanda con IDs diferentes; no borra historial ni modifica revisiones ajenas |
 | RD-10 humana | Advertencia normativa, comentario obligatorio y supervisor distinto para validar una excepción |
 | Descarte humano sin motivo | Motivo de catálogo, comentario y cita literal obligatorios; no se permite falta de prueba |

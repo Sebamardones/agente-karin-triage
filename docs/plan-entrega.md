@@ -99,3 +99,20 @@ puedes hacerlo en paralelo cuando quieras.
   aprobación.
 - El ítem 10 gasta créditos de Anthropic; solo con tu aprobación.
 - `pauta.pdf` está sin versionar en la raíz: ¿se agrega al repo o queda fuera?
+
+## Estado al cierre del 8 de noviembre
+
+| # | Ítem | Estado | Evidencia |
+|---|---|---|---|
+| 1 | Video | Pendiente (fase 3) | — |
+| 2 | Límite de gasto en la consola | Pendiente del responsable | `docs/LIMITE_GASTO.md` sigue en PENDIENTE |
+| 3–4 | Rediseño y experiencia de uso | Hecho y desplegado (v14–v21) | `docs/VERIFICACION_PUBLICA.md`, ADR-021, `docs/capturas/` |
+| 5 | Refuerzo de la ficha | Pendiente (fase 4) | Solo se actualizó el texto del ingreso de caso |
+| 6–7 | README y consistencia de documentos | Actualizados con los cambios del día | Este commit |
+| 8 | Escaneo de secretos con herramienta dedicada | Pendiente (requiere aprobar una dependencia) | — |
+| 9 | Verificación final en incógnito | Pendiente (13 nov) | — |
+| 10 | Tildes del golden set | No iniciado (gasta API) | — |
+
+Cambio para la entrega: el usuario de acceso es `inspector_demo` (antes
+`analista_demo`); la contraseña no cambió. Hay que informarlo en la plataforma
+del curso.

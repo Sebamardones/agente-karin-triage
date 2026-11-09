@@ -1,3 +1,24 @@
+# Actualización de la interfaz · 2026-11-08
+
+El código publicado corresponde a **e775425**, release Heroku **v21**. La
+arquitectura del agente no cambió: mismo grafo, mismas reglas duras, mismos
+prompts y mismo esquema de datos (sin migraciones nuevas). Cambió la capa de
+presentación:
+
+- puesto de trabajo maestro-detalle con bandejas por rol y panel de decisión
+  ([ADR-021](adr/ADR-021-puesto-de-trabajo.md));
+- `api/presentacion.py`, módulo de solo lectura que arma bandejas, citas
+  resaltadas y verificadas al mostrarlas, y el recorrido del caso;
+- `api/estaticos/interaccion.js`: avisos de paso entre bandejas, siguiente caso,
+  cita de descarte por selección, atajos, menú y guía;
+- «Ingreso de caso» (`/ingresos/nuevo`) con los campos que procesa el pipeline;
+- perfil «inspector» (usuario `inspector_demo`).
+
+La suite tiene **283 pruebas aprobadas**. El detalle de despliegues y
+verificaciones está en [VERIFICACION_PUBLICA.md](VERIFICACION_PUBLICA.md).
+
+---
+
 # Actualización de arquitectura y auditoría: correcciones aplicadas
 
 El código vigente publicado corresponde a **2ed92a2**, release Heroku **v10**.
@@ -99,7 +120,7 @@ flowchart TD
 
 | Capa | Tecnología y responsabilidad | Evidencia en el repositorio |
 |---|---|---|
-| Presentación | HTML renderizado en servidor, Jinja2 y HTMX para fragmentos | `backend/src/karin_triage/api/plantillas/`, `api/estaticos/` |
+| Presentación | HTML renderizado en servidor, Jinja2 y HTMX para fragmentos; puesto de trabajo maestro-detalle (ADR-021) | `backend/src/karin_triage/api/plantillas/`, `api/presentacion.py`, `api/estaticos/` |
 | Web y autorización | FastAPI, formularios, login y roles | `backend/src/karin_triage/api/main.py`, `api/dependencias.py` |
 | Orquestación | Grafo finito LangGraph con ramas y reintento de validación | `backend/src/karin_triage/agent/grafo.py`, `agent/nodos.py` |
 | Dominio | Catálogos y reglas deterministas | `backend/src/karin_triage/core/taxonomia.py`, `core/reglas.py` |
@@ -234,7 +255,7 @@ pruebas del proveedor real ni una suite completa de integración sobre Postgres.
 | Inyección | `test_inyeccion.py` | Señales adversarias incluidas en el set de prueba |
 | Cliente IA | `test_llm.py` | Contrato con dobles, caché, rutas y control de uso |
 | Datos y auditoría | `test_persistencia.py` | Tablas, unicidad, Alembic y alteración de detalle en cadena hash |
-| Interfaz y revisión | `test_api.py` | Login, roles, HTML escapado, conflictos, revisiones y carga en segundo plano |
+| Interfaz y revisión | `test_api.py` | Login, roles, HTML escapado, conflictos, revisiones, carga en segundo plano, bandejas por rol, panel y citas marcadas, siguiente caso, ingreso de caso, menú, guía y pie |
 
 Prueba agregada tras el primer despliegue:
 `test_carga_programada_responde_sin_esperar_y_no_duplica`. Retiene la tarea,

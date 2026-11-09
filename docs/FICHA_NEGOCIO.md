@@ -60,8 +60,8 @@ Las tarifas codificadas aún deben conciliarse con factura vigente.
 
 ## Adopción, protección y validación
 
-La demo permite crear relatos ficticios nuevos y tandas para revisión sin borrar
-historial. La edición institucional requiere validación jurídica, autorización
+La demo permite registrar ingresos de caso sintéticos (con los mismos campos que
+procesa el sistema) y tandas para revisión sin borrar historial. La edición institucional requiere validación jurídica, autorización
 de datos y evaluación de privacidad antes de admitir información real. Se mide
 calidad, tiempo de revisión y falsos descartes antes de ampliar el servicio.
 La seudonimización heurística y las pruebas sintéticas no garantizan anonimato

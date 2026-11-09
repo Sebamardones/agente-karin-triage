@@ -24,7 +24,7 @@ La arquitectura original de octubre se conserva como antecedente en la carpeta l
 flowchart LR
   A[Inspector demo] --> UI[FastAPI + Jinja2 + HTMX]
   S[Supervisor demo] --> UI
-  I[Formulario ficticio y golden set] --> G[BackgroundTasks + LangGraph]
+  I[Ingreso de caso y golden set] --> G[BackgroundTasks + LangGraph]
   UI --> G
   G --> P[Reglas + seudonimización + PII]
   P --> C[API Anthropic: hechos y tipificación]
@@ -74,7 +74,7 @@ sequenceDiagram
   participant G as LangGraph
   participant C as Anthropic
   participant D as Postgres
-  U->>W: POST ficción
+  U->>W: POST ingreso de caso
   W->>B: Programar
   W-->>U: Redirección inmediata
   B->>G: Procesar caso
