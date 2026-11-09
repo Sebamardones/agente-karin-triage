@@ -45,11 +45,17 @@ Universidad Adolfo Ibáñez · Certificado en Prompt Engineering · Grupo 7
 
 ## La idea
 
-La Dirección del Trabajo informó **44.212 denuncias** por acoso laboral, acoso
-sexual y violencia en el trabajo entre el 1 de agosto de 2024 y el 30 de junio
-de 2025: unas **4.019 al mes**. De ellas, **18.367 (42%)** fueron
-pre-clasificadas como Ley Karin y **17.980 (40%)** fueron pre-clasificadas como
-*no* Ley Karin y cerradas.[^informe]
+La Dirección del Trabajo registró **92.643 ingresos** asociados a denuncias por
+acoso laboral, acoso sexual y violencia en el trabajo entre el 1 de agosto de
+2024 y el 30 de junio de 2026. Solo el primer semestre de 2026 sumó 25.830:
+unas **4.305 al mes**. De esos 92.643 registros, **32.565 (35%)** fueron
+clasificados para continuar como Ley Karin, **48.505 (52%)** fueron derivados o
+cerrados por no corresponder a esa vía y 11.573 (12%) seguían pendientes de
+clasificación.[^informe]
+
+La plataforma está pensada para **400 usuarios**: 200 inspectores dedicados
+exclusivamente a la recepción de casos Ley Karin y 200 funcionarios con
+dedicación no exclusiva, entre ellos los supervisores.
 
 Esa etapa de pre-clasificación es obligatoria, ya existe, y hoy se hace a mano
 contra plazos que no admiten holgura: **2 días hábiles** para pedir medidas de
@@ -302,10 +308,12 @@ y **no** está implementado aquí, por decisión explícita:
 
 ---
 
-[^informe]: Dirección del Trabajo, *Informe de denuncias por «Ley 21.643:
-Prevención y Protección contra el Acoso Laboral, Sexual y Violencia en el
-Trabajo», ingresadas entre 1° agosto 2024 y 30 de junio 2025*, julio de 2025.
-<https://www.dt.gob.cl/portal/1626/articles-128897_archivo_01.pdf>
+[^informe]: Dirección del Trabajo, *Informe estadístico semestral sobre
+denuncias en materias de la Ley N.° 21.643 con corte al 30 de junio de 2026.
+Período acumulado: 1 de agosto de 2024 a 30 de junio de 2026*, agosto de 2026.
+URL pública PENDIENTE_VERIFICAR. Reemplaza las cifras del informe anterior
+(<https://www.dt.gob.cl/portal/1626/articles-128897_archivo_01.pdf>), que la DT
+ajustó por consolidación de registros.
 
 
 ## Correcciones de la evaluación del equipo
@@ -328,5 +336,6 @@ Trabajo», ingresadas entre 1° agosto 2024 y 30 de junio 2025*, julio de 2025.
   no reemplazan el control del proveedor ni garantizan una reserva exacta de gasto.
 
 Ver [trazabilidad de correcciones](docs/CORRECCIONES_EVALUACION.md) y
-[comparación medida](docs/MEJORA_PROMPTS.md). Precio propuesto del piloto y
-costos observados/presupuestados: [ficha de negocio](docs/FICHA_NEGOCIO.md).
+[comparación medida](docs/MEJORA_PROMPTS.md). Precio propuesto del piloto,
+costos observados/presupuestados y costo proyectado del despliegue nacional
+(400 usuarios, unos CLP 1.391.000 al mes): [ficha de negocio](docs/FICHA_NEGOCIO.md).

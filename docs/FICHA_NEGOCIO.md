@@ -10,11 +10,20 @@ La ficha PDF de una página se conserva como resumen de la entrega.
 ## Cliente y problema
 
 Dirección del Trabajo de Chile: inspectores y supervisores de recepción de
-denuncias. El balance oficial registra **44.212 denuncias entre agosto de 2024
-y junio de 2025**, unas 4.019 por mes. **17.980 (40%)** se preclasificaron como
-no Ley Karin y se cerraron. La carga de clasificación y la necesidad de revisar
+denuncias. El informe estadístico semestral de la DT con corte al 30 de junio
+de 2026 registra **92.643 ingresos asociados a denuncias entre el 1 de agosto
+de 2024 y el 30 de junio de 2026**: 33.156 por oficinas, 44.938 por Mi DT y
+14.549 derivados por empleadores. El primer semestre de 2026 sumó 25.830, unos
+**4.305 por mes**. **32.565 (35%)** se clasificaron para continuar como Ley
+Karin, **48.505 (52%)** se derivaron o cerraron y 11.573 (12%) seguían
+pendientes. La carga de clasificación y la necesidad de revisar
 criterios consistentes justifican probar apoyo al funcionario; el tiempo humano
 ahorrado debe medirse en un piloto, no se declara demostrado.
+
+**Usuarios proyectados: 400.** Son 200 inspectores dedicados exclusivamente a
+la recepción de casos Ley Karin y 200 funcionarios con dedicación no exclusiva,
+entre ellos los supervisores. Si toda la recepción recayera en los 200
+dedicados, cada uno atendería unos 22 ingresos al mes.
 
 ## Propuesta de valor e IA
 
@@ -58,6 +67,27 @@ de longitud y reintentos; no es el costo observado. A 1.000 casos/mes: presupues
 de inferencia USD 100, más USD 12 de infraestructura, antes de soporte y desarrollo.
 Las tarifas codificadas aún deben conciliarse con factura vigente.
 
+### Despliegue nacional proyectado (400 usuarios, 4.305 casos/mes)
+
+Supuesto de cálculo: CLP 1.000 por USD.
+
+| Concepto | Costo mensual |
+|---|---:|
+| 2 dynos web + 1 worker Standard-2X (USD 50 c/u, PENDIENTE_VERIFICAR) | USD 150 |
+| Postgres Standard-0 (PENDIENTE_VERIFICAR) | USD 50 |
+| Inferencia presupuestada, 4.305 × USD 0,10 | USD 431 |
+| Soporte para 400 usuarios, 40 h × CLP 15.000 | CLP 600.000 |
+| Seguimiento de calidad | CLP 160.000 |
+| **Total operativo** | **≈ CLP 1.391.000** |
+
+Equivale a unos **CLP 16,7 millones al año**, CLP 3.478 por usuario y CLP 323
+por caso al mes. A la tasa observada en v3, la inferencia bajaría a unos
+USD 77. Con holgura para 5.000 casos/mes, el total sube a unos CLP 1.460.000.
+La adopción de 400 usuarios (2 h por persona a CLP 9.000) suma CLP 7.200.000
+una vez. No incluye desarrollo institucional, integración con Mi DT ni
+ClaveÚnica. Ese monto supera el límite de Compra Ágil y requeriría otro
+procedimiento de compra; la tarifa por inspección cubre solo el piloto.
+
 ## Adopción, protección y validación
 
 La demo permite registrar ingresos de caso sintéticos (con los mismos campos que
@@ -70,8 +100,10 @@ consola pendiente de evidencia del operador.
 
 ## Fuentes
 
-- [Balance oficial Mintrab, 1 de agosto de 2025](https://www.mintrab.gob.cl/ministerio-del-trabajo-y-ministerio-de-la-mujer-presentan-balance-de-la-ley-karin-a-un-ano-de-su-implementacion/).
-- [Informe DT, agosto de 2024 a junio de 2025](https://www.dt.gob.cl/portal/1626/articles-128897_archivo_01.pdf).
+- Dirección del Trabajo, *Informe estadístico semestral sobre denuncias en
+  materias de la Ley N.° 21.643 con corte al 30 de junio de 2026*, agosto de
+  2026. URL pública PENDIENTE_VERIFICAR.
+- [Informe DT, agosto de 2024 a junio de 2025](https://www.dt.gob.cl/portal/1626/articles-128897_archivo_01.pdf), antecedente anterior cuyas cifras ajustó el informe de 2026.
 - [Compra Ágil, ChileCompra](https://www.chilecompra.cl/compraagil/).
 - [Precios Heroku](https://www.heroku.com/pricing/).
 

@@ -62,6 +62,17 @@ Funcionarios de la DT con cuatro roles:
 | `admin` | Administra los funcionarios autorizados |
 | `auditor` | Tiene acceso de solo lectura transversal |
 
+**Dotación proyectada: 400 usuarios.** 200 inspectores dedicados exclusivamente
+a la recepción de casos Ley Karin y 200 funcionarios con dedicación no
+exclusiva, entre los que se cuentan los supervisores. Es la base para
+dimensionar sesiones concurrentes, conexiones a Postgres y soporte en el
+despliegue nacional; el piloto parte en una sola inspección.
+
+**Volumen de referencia.** El informe estadístico semestral de la DT con corte
+al 30 de junio de 2026 registra 92.643 ingresos entre el 1 de agosto de 2024 y
+el 30 de junio de 2026; el primer semestre de 2026 sumó 25.830, unos **4.305
+ingresos al mes**. Para dimensionar se usa 5.000 al mes como techo con holgura.
+
 ### Alcance del MVP
 
 | Dentro | Fuera |
@@ -755,7 +766,9 @@ Precios de Claude Sonnet 5.5 en la API de Anthropic: **USD 2 / MTok de entrada**
 
 **Escrituras de caché.** Con ráfagas horarias y TTL de 1 h son unas 24 escrituras al día: aproximadamente USD 70 al mes.
 
-**Lectura.** Con USD 15.000 al mes alcanzan para **más de 100.000 casos al mes**. El presupuesto no es la restricción real; el tope funciona como protección contra bucles o abusos.
+**Volumen nacional proyectado.** A 4.305 casos al mes (ritmo del primer semestre de 2026), el LLM cuesta unos **USD 431 al mes** más USD 70 de escrituras de caché: **≈ USD 500 al mes**. Con el techo de 5.000 casos, ≈ USD 570. Repartido entre los 400 usuarios proyectados, son unos USD 1,25 por usuario al mes.
+
+**Lectura.** Con USD 15.000 al mes alcanzan para **más de 100.000 casos al mes**, unas 23 veces el volumen nacional observado. El presupuesto no es la restricción real; el tope funciona como protección contra bucles o abusos.
 
 **Batch API.** No se usa: su latencia de hasta 24 h es incompatible con el SLA de 1 h.
 
