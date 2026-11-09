@@ -440,7 +440,7 @@
 <div class="calculator" aria-label="Calculadora ilustrativa de capacidad">
 <h3>Explorar el supuesto de retorno</h3><p>Cambia los supuestos. El cálculo ocurre en tu navegador y no envía datos.</p>
 <div class="calc-grid"><label>Casos al mes<input id="cases" type="number" min="1" max="10000" value="1000"></label><label>Minutos netos liberados por caso<input id="minutes" type="number" min="0" max="60" step="0.5" value="4"></label><label>Costo de oportunidad por hora (CLP)<input id="hourly" type="number" min="1" max="100000" step="500" value="9000"></label></div>
-<output id="roi" aria-live="polite"></output><small>Licencia equivalente: CLP 300.000/mes. Adopción amortizada supuesta: CLP 9.000/mes. Valores sin evaluar el tratamiento tributario del cliente. No es ahorro fiscal garantizado.</small></div></div></details>
+<output id="roi" aria-live="polite"></output><small>Hasta 1.000 casos/mes se compara con el piloto: licencia equivalente de CLP 300.000/mes y adopción amortizada de CLP 9.000/mes. Sobre 1.000 casos/mes se usa el escenario nacional de 400 usuarios: infraestructura USD 200, inferencia USD 0,10 por caso (CLP 1.000 por USD), soporte y calidad CLP 760.000 y adopción amortizada CLP 600.000; es costo operativo sin margen del proveedor. Valores sin evaluar el tratamiento tributario del cliente. No es ahorro fiscal garantizado.</small></div></div></details>
 <details class="entry" id="s11" ><summary class="entry-header"><span class="num-badge">11</span><span class="entry-meta"><span class="entry-title">Piloto: cómo demostrar o refutar el caso de negocio</span><span class="entry-tags"><span class="tag tag-role">Validación</span><span class="tag tag-tool">Plan propuesto</span></span></span><svg class="chevron" viewBox="0 0 20 20" fill="currentColor" aria-hidden="true"><path d="M5 7l5 5 5-5" stroke="currentColor" fill="none" stroke-width="1.5"/></svg></summary><div class="entry-body">
 <p>Se propone un piloto con línea base comparable y dos etapas. La etapa académica utiliza solo ficción. Una etapa con información institucional solo puede comenzar tras las autorizaciones, controles de datos y validación jurídica correspondientes; no es una ampliación automática de la demo pública.</p>
 <div class="table-wrap"><table><thead><tr><th>Etapa</th><th>Actividad</th><th>Condición de avance</th></tr></thead><tbody>
@@ -504,9 +504,12 @@ function calculate() {
  const n = Number(document.getElementById('cases').value), m = Number(document.getElementById('minutes').value), h = Number(document.getElementById('hourly').value);
  const out = document.getElementById('roi');
  if (![n,m,h].every(Number.isFinite) || n < 1 || n > 10000 || m < 0 || m > 60 || h < 1 || h > 100000) { out.textContent = 'Ingresa supuestos dentro de los rangos indicados.'; return; }
- if (n > 1000) { out.textContent = 'El plan incluye hasta 1.000 casos/mes. Para este volumen se requiere una cotización antes de calcular retorno.'; return; }
- const hours = n*m/60, value = hours*h, cost = 309000, threshold = cost*60/(n*h);
- out.textContent = hours.toLocaleString('es-CL', {maximumFractionDigits:1}) + ' horas de capacidad/mes · valor hipotético ' + money(value) + ' · diferencia frente a licencia y adopción ' + money(value-cost) + ' · umbral ' + threshold.toLocaleString('es-CL', {maximumFractionDigits:2}) + ' min/caso.' + (n > 1000 ? ' Volumen fuera del plan: requiere cotización; el precio fijo deja de ser aplicable.' : '');
+ const nacional = n > 1000;
+ // Piloto: licencia + adopción. Nacional: costo operativo proyectado (sección 08) + adopción de 400 usuarios.
+ const cost = nacional ? 200000 + n*100 + 760000 + 600000 : 309000;
+ const hours = n*m/60, value = hours*h, threshold = cost*60/(n*h);
+ const base = nacional ? 'costo nacional proyectado y adopción' : 'licencia y adopción';
+ out.textContent = hours.toLocaleString('es-CL', {maximumFractionDigits:1}) + ' horas de capacidad/mes · valor hipotético ' + money(value) + ' · diferencia frente a ' + base + ' (' + money(cost) + ') ' + money(value-cost) + ' · umbral ' + threshold.toLocaleString('es-CL', {maximumFractionDigits:2}) + ' min/caso.' + (nacional ? ' Escenario nacional: requiere cotización propia; no incluye margen del proveedor.' : '');
 }
 ['cases','minutes','hourly'].forEach(id => document.getElementById(id).addEventListener('input', calculate)); calculate();
 </script></body></html>

@@ -69,7 +69,8 @@ en citas literales: qué conducta se configura, si corresponde investigar,
 derivar a mediación o descartar, y si hay urgencia de medidas de resguardo. El
 funcionario confirma o corrige, y lo que corrige queda registrado.
 
-El caso de negocio completo está en [`docs/FICHA_NEGOCIO.md`](docs/FICHA_NEGOCIO.md).
+El caso de negocio completo está en [`docs/FICHA_NEGOCIO.md`](docs/FICHA_NEGOCIO.md),
+con su versión de una página en [`docs/FICHA_NEGOCIO.pdf`](docs/FICHA_NEGOCIO.pdf).
 
 ## Cómo usar la aplicación
 
