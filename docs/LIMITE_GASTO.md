@@ -30,6 +30,12 @@ además rota la clave usada hasta ahora.
 
 ## Procedimiento (quien administra la cuenta de Anthropic)
 
+No confundir con la página **Rate limits** (`platform.claude.com/usage/limits`):
+ahí los topes son de tokens y solicitudes por minuto, no de dinero. El límite en
+dólares está en **Settings → Billing → Spend limits** (organización) y en
+**Settings → Workspaces → (workspace) → Spend limits** (workspace). El workspace
+por defecto no admite límite en dólares.
+
 1. En la configuración de facturación de la organización, fijar un límite
    mensual de organización y una notificación por debajo de ese monto.
 2. Crear el workspace `karin-triage-demo`.
