@@ -30,3 +30,6 @@ evals/salidas/
 backend/.test-cache/
 backend/.test-tmp/
 backend/.tmp-*/
+
+# Tomas y montaje del video: archivos pesados, se entregan por enlace.
+docs/video/salida/

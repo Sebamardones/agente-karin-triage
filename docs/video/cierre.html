@@ -1,0 +1,38 @@
+<!doctype html>
+<html lang="es">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Karin Triage · cierre</title>
+<style>
+  :root { --azul: #0a3d7a; --rojo: #c8102e; --tinta: #0f1b2d; --suave: #5a6577; --fondo: #f6f7f9; }
+  * { box-sizing: border-box; margin: 0; }
+  body { min-height: 100vh; display: grid; place-items: center; background: var(--fondo);
+         font-family: "Inter", "Helvetica Neue", Arial, sans-serif; color: var(--tinta); }
+  main { width: min(1100px, 88vw); }
+  .franja { width: 96px; height: 8px; background: linear-gradient(90deg, var(--azul) 50%, var(--rojo) 50%); margin-bottom: 40px; }
+  h1 { font-size: 64px; line-height: 1.08; letter-spacing: -0.02em; color: var(--azul);
+       opacity: 0; transform: translateY(14px); animation: entra .9s .2s forwards; }
+  .lema { font-size: 30px; margin-top: 18px; color: var(--tinta);
+          opacity: 0; transform: translateY(14px); animation: entra .9s .8s forwards; }
+  dl { margin-top: 56px; display: grid; grid-template-columns: max-content 1fr; gap: 14px 28px; font-size: 22px;
+       opacity: 0; animation: entra .9s 1.6s forwards; }
+  dt { color: var(--suave); }
+  dd { font-family: "SF Mono", Menlo, monospace; font-size: 21px; }
+  .pie { margin-top: 56px; font-size: 17px; color: var(--suave); opacity: 0; animation: entra .9s 2.3s forwards; }
+  @keyframes entra { to { opacity: 1; transform: none; } }
+</style>
+</head>
+<body>
+<main>
+  <div class="franja" aria-hidden="true"></div>
+  <h1>Karin Triage</h1>
+  <p class="lema">Ningún caso se resuelve solo. El agente propone; una persona decide.</p>
+  <dl>
+    <dt>Aplicación</dt><dd>karin-triage-grupo7-c7c6a3fb2988.herokuapp.com</dd>
+    <dt>Repositorio</dt><dd>github.com/Sebamardones/agente-karin-triage</dd>
+  </dl>
+  <p class="pie">Grupo 7 · Edith Seguel, Nicolás Mores, Sebastián Mardones · UAI · Prototipo académico con datos sintéticos</p>
+</main>
+</body>
+</html>
