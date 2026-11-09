@@ -1,179 +1,180 @@
 # Guion del video · 3 minutos máximo
 
 Estructura que pide la pauta: **problema → demo en vivo → cómo lo construyeron.**
-
-Presupuesto de tiempo, y es un presupuesto estricto:
+Revisado el 9 de noviembre de 2026 contra la release v26 (landing `/entrar`,
+puesto de trabajo con bandejas, «Ingreso de caso» y panel de decisión).
 
 | Bloque | Duración | Acumulado |
 |---|---|---|
-| 1 · El problema | 0:35 | 0:35 |
-| 2 · La demo en vivo | 1:30 | 2:05 |
-| 3 · Cómo lo construimos | 0:45 | 2:50 |
-| Cierre | 0:10 | 3:00 |
+| 1 · El problema | 0:30 | 0:30 |
+| 2 · La demo en vivo | 1:35 | 2:05 |
+| 3 · Cómo lo construimos | 0:40 | 2:45 |
+| Cierre | 0:10 | 2:55 |
 
-**La demo se lleva la mitad del tiempo.** Es deliberado: la pauta exige ver IA
-generativa activa en la URL publicada, y eso solo se demuestra mostrándola
-funcionar.
+La narración tiene unas 420 palabras: a ritmo normal (unas 155 por minuto) son
+2:40 de voz. Si el ensayo pasa de 2:55, recortar primero el bloque 3.
 
-### Antes de grabar
+La meta es **2:55**: cinco segundos de margen bajo el máximo. La demo se lleva
+más de la mitad del tiempo porque la pauta exige ver la IA generativa activa en
+la URL publicada, y eso solo se demuestra mostrándola funcionar.
 
-- Abre la URL en **incógnito** y entra una vez, para que el dyno esté despierto
-  y la base tenga los casos cargados. Luego cierra y vuelve a abrir para grabar
-  desde el login.
-- Ten los casos **G-01** (acoso laboral), **G-02** (acoso sexual que pide
-  mediación) y **G-04** (municipal) ya cargados en la bandeja.
-- Ventana a 1920×1080 y zoom del navegador en 125%: el texto de las citas tiene
-  que leerse en el video.
-- Graba el audio aparte si puedes. Un video de 3 minutos con audio malo se
-  escucha peor que uno con pantalla simple.
+## Antes de grabar
 
----
+1. **Límite de gasto configurado** (`docs/LIMITE_GASTO.md`). La tanda nueva y el
+   caso en vivo gastan unos USD 0,25 en total.
+2. Abrir la URL en **incógnito**, entrar como `inspector_demo` y usar
+   «Más acciones → Crear tanda nueva». Esperar a que la bandeja muestre los
+   once casos de la tanda (pulsar «Actualizar bandeja»). Así la cola parte
+   limpia, con casos sin revisar.
+3. Revisar en esa tanda el caso **SINT-0002** (acoso sexual con pedido de
+   mediación) y anotar si aparece el aviso rojo «Una regla dura corrigió al
+   modelo». El modelo no es determinista: el texto del bloque 2.3 tiene dos
+   variantes según lo que muestre.
+4. Copiar el relato del bloque 2.2 en un editor aparte, listo para pegar.
+5. Cerrar sesión. La grabación parte en `/entrar`.
+6. Ventana a 1440×900 o 1920×1080 y zoom del navegador en 125 %: las citas
+   tienen que leerse en el video.
+7. Grabar la voz aparte si es posible, en un lugar silencioso.
 
-## Bloque 1 · El problema (0:35)
-
-**En pantalla:** el informe de la Dirección del Trabajo abierto en la página de
-las cifras, o una lámina con el número 92.643.
-
-> La Dirección del Trabajo registró 92.643 ingresos por acoso laboral, acoso
-> sexual y violencia en el trabajo en los primeros veintitrés meses de la Ley
-> Karin. En el primer semestre de 2026, más de cuatro mil trescientos al mes.
->
-> De esos, ella misma clasificó 32.565 para continuar como Ley Karin y derivó o
-> cerró 48.505 porque no correspondían a esa vía. Esa etapa de pre-clasificación existe, es obligatoria por
-> reglamento, y hoy se hace a mano.
->
-> Y corre contra el reloj: dos días hábiles para pedir medidas de resguardo,
-> treinta para cerrar la investigación. Y hay un detalle que cambia todo: si la
-> Inspección no se pronuncia en treinta días sobre un informe interno, **valen
-> las conclusiones del empleador**. El atraso no es neutro. Favorece a quien
-> está siendo investigado.
-
-**Por qué este bloque funciona:** no abre con la tecnología, abre con un número
-oficial y con una consecuencia jurídica concreta. Y no exagera: la cifra es del
-informe de la propia institución.
+No mostrar Config Vars, contraseñas ni la consola de Anthropic con la clave
+visible.
 
 ---
 
-## Bloque 2 · La demo en vivo (1:30)
+## Bloque 1 · El problema (0:30)
+
+**En pantalla:** la landing `/entrar`, con las cifras animadas (92.643 · 4.305 ·
+35 %). Bajar despacio hasta la fuente.
+
+> La Dirección del Trabajo registró 92.643 ingresos por Ley Karin en sus
+> primeros veintitrés meses: más de cuatro mil trescientos al mes en 2026.
+>
+> Cada uno pasa por una pre-clasificación que hoy se hace a mano y contra el
+> reloj: dos días hábiles para pedir medidas de resguardo y treinta para
+> investigar. Si la Inspección no se pronuncia a tiempo sobre un informe
+> interno, valen las conclusiones del empleador. El atraso no es neutro.
+
+**Por qué funciona:** abre con una cifra oficial y una consecuencia jurídica
+concreta, no con la tecnología.
+
+---
+
+## Bloque 2 · La demo en vivo (1:35)
 
 ### 2.1 · Entrar (0:10)
 
-**Acción:** login como `inspector_demo`.
+**Acción:** entrar como `inspector_demo`. Cerrar la guía de bienvenida.
 
-> Entro como inspector de una Inspección. Son dos roles de demostración; los
-> datos son todos sintéticos, no hay ninguna denuncia real acá.
+> Somos un inspector de la DT. A la izquierda está la cola, ordenada por
+> urgencia. Todos los datos son sintéticos.
 
-### 2.2 · Un caso que procede (0:30)
+### 2.2 · Un caso nuevo, procesado en vivo (0:35)
 
-**Acción:** abrir **G-01** y hacer scroll hasta las citas.
+**Acción:** «Ingreso de caso». Tipo «Denuncia directa», empleador
+«Comercial Los Aromos Limitada», sector privado. Pegar el relato, marcar la
+declaración y pulsar «Registrar ingreso». **Cortar la espera** en la edición
+(dejar ver un segundo de «Procesando el ingreso»). Abrir el caso cuando esté
+listo.
 
-> Esta denuncia dice que una jefatura humilla a una trabajadora en la reunión
-> de los lunes. El agente propone investigar, por acoso laboral.
+Relato para pegar (ficticio, sin datos de personas):
+
+> Trabajo como administrativa en la oficina de una empresa ficticia desde
+> marzo. Desde hace dos meses, mi jefatura me excluye de las reuniones del
+> equipo, revisa en voz alta mis errores frente a todos y me dijo que si sigo
+> reclamando me va a dejar sin contrato en diciembre. Ayer me tomó del brazo
+> con fuerza en el pasillo para que no me fuera de la oficina. Tengo miedo de
+> volver mañana.
+
+> Ingreso un caso que el sistema no ha visto nunca. Lo seudonimiza, aplica las
+> reglas y llama al modelo dos veces: una para extraer los hechos y otra para
+> proponer.
 >
-> Pero lo que importa es esto: **no me dice solo qué decidió, me muestra con
-> qué**. Esta cita es literal de la denuncia, y el sistema la verificó carácter
-> por carácter contra el texto. Si no calzara, la propuesta se habría anulado.
->
-> Y acá está la lista de reglas que se aplicaron. No es el modelo contándome lo
-> que hizo: es el registro de qué código corrió.
+> La propuesta no viene sola: viene con **citas literales**, resaltadas en el
+> relato. El sistema verificó cada una carácter por carácter contra el texto;
+> si una no calzara, la propuesta se anula.
 
-### 2.3 · El caso difícil (0:35)
+*Solo si aparece el chip «Resguardo»:*
 
-**Acción:** abrir **G-02**. Detenerse en la frase donde la persona pide
-mediación.
+> Y como hubo contacto físico y una amenaza, el caso sube a urgencia de
+> resguardo: es el plazo de dos días hábiles.
 
-> Este es el caso que de verdad pone a prueba el diseño. Hay acoso sexual, y la
-> persona afectada pide expresamente que la citen a conversar y llegar a un
-> acuerdo.
->
-> Lo intuitivo sería derivar a mediación. Y está prohibido. El artículo 211-D
-> inciso final excluye el acoso sexual de la mediación previa, porque mediar
-> significaría sentar a la víctima a negociar con quien la acosó.
->
-> El agente propone investigar y cita la norma. Y si el modelo se hubiera
-> equivocado acá, hay una regla en código —RD-10— que corrige la decisión y
-> deja constancia del error. **La parte que no se puede equivocar no se la
+### 2.3 · El caso difícil: SINT-0002 (0:30)
+
+**Acción:** abrir **SINT-0002** en la cola. Señalar la frase del relato donde se
+pide conversar y llegar a un acuerdo, y luego el recorrido del caso.
+
+> Este caso pone a prueba el diseño. Hay acoso sexual, y la persona pide que la
+> citen a conversar y lleguen a un acuerdo. Lo intuitivo sería mediación, y la
+> ley lo prohíbe: el artículo 211-D excluye el acoso sexual de la mediación.
+
+*Si aparece el aviso rojo «Una regla dura corrigió al modelo»:*
+
+> Y aquí el modelo se equivocó: propuso mediación. Una regla en código, RD-10,
+> lo corrigió y dejó constancia. **La parte que no se puede equivocar no se la
 > preguntamos al modelo.**
 
-### 2.4 · Corregir, y el caso que nunca llega al modelo (0:15)
+*Si no aparece:*
 
-**Acción:** corregir una propuesta y mostrar que queda registrada. Luego abrir
-**G-04**.
+> El modelo propone investigar. Si hubiera propuesto mediación, una regla en
+> código, RD-10, lo habría corregido y dejado constancia. **La parte que no se
+> puede equivocar no se la preguntamos al modelo.**
 
-> Yo decido. Confirmo o corrijo, y lo que corrijo queda registrado para medir
-> cuánto coincide el agente conmigo.
+### 2.4 · La persona decide (0:20)
+
+**Acción:** en el caso del bloque 2.2, pulsar «Confirmar propuesta» y mostrar
+el aviso de la bandeja de destino. Después señalar en la cola la tarjeta de
+**SINT-0004**, con el chip «Sin IA» y la regla que lo derivó.
+
+> Yo decido: confirmo, corrijo o descarto. Un descarte exige motivo, comentario
+> y una cita, y lo valida un supervisor distinto. Nunca se descarta por falta
+> de prueba.
 >
-> Y este último es un funcionario municipal. Una regla determinista lo deriva
-> antes de llamar al modelo: **este caso costó cero**.
+> Y este caso es de un funcionario municipal: una regla lo deriva antes de
+> llamar al modelo. Costó cero.
 
 ---
 
-## Bloque 3 · Cómo lo construimos (0:45)
+## Bloque 3 · Cómo lo construimos (0:40)
 
-**En pantalla:** el diagrama del flujo del README, y después el repositorio con
-la carpeta `prompts/` abierta.
+**En pantalla:** el diagrama del flujo en el README; luego `prompts/` y la tabla
+«Mejora medida de los prompts» del README.
 
-> Tres capas, y el orden es el punto.
+> Tres capas, en este orden. Primero, trece reglas duras en código, cada una
+> con su test: lo que no admite interpretación no se le pregunta al modelo.
+> Segundo, seudonimización antes de cualquier llamada: si queda un dato
+> personal, el flujo se corta. Tercero, dos llamadas a Claude con salida
+> validada y el texto literal de la ley en un prefijo cacheado.
 >
-> Primero, **reglas duras en código**: dieciséis reglas con precedencia
-> declarada y un test cada una. Lo que no admite interpretación no se le
-> pregunta a un modelo de lenguaje.
->
-> Segundo, **seudonimización antes de cualquier llamada**. Si queda un dato
-> personal residual, el flujo se corta y el caso no sale del sistema.
->
-> Tercero, **dos llamadas al modelo**, con salida estructurada validada y un
-> prefijo normativo cacheado que lleva el texto literal de la ley.
->
-> Los prompts están versionados en el repositorio y medidos: comparamos la
-> versión 2 contra la versión 3 sobre once casos sintéticos, con cuatro
-> métricas. Dos de ellas no se compensan con nada: **cero casos de acoso sexual
-> a mediación y cero falsos descartes.** Si una versión del prompt falla ahí, no
-> se publica, aunque el resto esté perfecto.
->
-> Y una cosa que encontramos verificando: el documento original usaba un
-> identificador de modelo **que no existe**. Lo habríamos descubierto en
-> producción, con todas las llamadas fallando.
+> Los prompts están versionados y medidos con once casos. De la versión 2 a la
+> 3, las citas verificadas subieron de 86 a 100 por ciento y el costo bajó 25
+> por ciento. Y dos metas no se compensan: cero acoso sexual a mediación y cero
+> falsos descartes.
 
 ---
 
 ## Cierre (0:10)
 
-> Ningún caso se resuelve solo. El agente propone, y una persona decide. Esa es
-> la restricción de la que salen todas las demás decisiones de diseño.
+**En pantalla:** la URL pública y el repositorio.
+
+> Ningún caso se resuelve solo. El agente propone; una persona decide.
 
 ---
 
-## Qué NO decir
+## Qué no decir
 
-- No prometas que reemplaza al funcionario. El argumento es el contrario, y es
-  además la respuesta a la objeción sindical.
-- No digas «con un 95% de precisión» ni ninguna cifra que no esté medida en
-  `docs/MEJORA_PROMPTS.md`.
-- No muestres GKE, ClaveÚnica ni Langfuse como si estuvieran funcionando. Si
-  los mencionas, es como hoja de ruta y se dice así.
-- No leas la pantalla en voz alta. Di lo que la pantalla **no** muestra.
-- No pidas disculpas por lo que falta. Tres minutos alcanzan para una cosa bien
-  mostrada, no para un inventario.
+- No prometer que reemplaza al funcionario. El argumento es el contrario.
+- No dar cifras que no estén en `docs/MEJORA_PROMPTS.md` o en la ficha. El
+  ahorro de tiempo no está medido: se mide en el piloto.
+- No mostrar GKE, ClaveÚnica ni Langfuse como si funcionaran. Si se mencionan,
+  es como hoja de ruta.
+- No leer la pantalla en voz alta. Decir lo que la pantalla **no** muestra.
+- No simular la IA con respuestas escritas a mano ni editar la propuesta.
+- No pedir disculpas por lo que falta.
 
+## Comprobación antes de subir
 
-## Actualización de la grabación tras la evaluación
-
-Antes de grabar: usar la nueva tanda y dejar un caso sin revisar. No mostrar
-Config Vars ni contraseñas. La grabación real sigue pendiente del equipo.
-
-- 0:00-0:25: problema, cliente y precio propuesto de la ficha; no afirmar ahorro
-  de tiempo medido ni una contratación ya validada.
-- (Desactualizado tras el 8 de noviembre: la fase 3 reescribe este guion sobre
-  el puesto de trabajo, el «Ingreso de caso» y las bandejas por rol.)
-- 0:25-1:30: entrar como inspector, abrir «Probar IA con un relato sintético
-  nuevo», pegar ficción sin datos personales y enviar. Mostrar estado de carga,
-  propuesta, citas y reglas. Explicar cualquier espera; no simular IA con
-  respuestas escritas a mano.
-- 1:30-2:10: mostrar descarte con motivo, comentario y cita; validarlo desde
-  otra sesión como supervisor. Mostrar advertencia de excepción RD-10 si aplica.
-- 2:10-2:45: abrir prompts v2/v3 y el informe de medición; citar resultados
-  reales, los denominadores y los límites. No llamar JSON a una métrica de citas.
-- 2:45-3:00: URL y repositorio; siguiente paso de validación institucional.
-
-Una secuencia de capturas o el guion no sustituye el video de la demo en vivo.
+- Duración ≤ 3:00 (meta 2:55).
+- Se ve la URL pública y la IA procesando un caso nuevo.
+- No aparece ninguna contraseña, clave ni Config Var.
+- El enlace del video es público o accesible para el profesor y queda en la
+  tabla de entregables del README.
