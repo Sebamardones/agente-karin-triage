@@ -4,16 +4,14 @@ Estado: **Configurado el 9 de noviembre de 2026**, como límite mensual de la
 organización: USD 20, que se restablece el 1 de cada mes. Evidencia:
 [`docs/evidencia/limite-gasto-consola.png`](evidencia/limite-gasto-consola.png).
 
-La captura muestra «Gasto de este mes USD 0.00 de USD 20 de límite». Lo que
-**no** acredita:
+La captura muestra «Gasto de este mes USD 0.00 de USD 20 de límite». El
+responsable de la cuenta confirmó el mismo día que la `ANTHROPIC_API_KEY`
+configurada en Heroku pertenece a esta organización, así que el límite cubre
+las llamadas de la aplicación publicada.
 
-- Que la `ANTHROPIC_API_KEY` de Heroku pertenezca a esta organización.
-  `PENDIENTE_VERIFICAR`: en **Settings → API keys** debe figurar la clave en uso
-  con fecha de último uso reciente. La captura indica «Sin actividad en los
-  últimos 7 días», aunque hubo corridas de evals el 7 de noviembre; si fueron
-  con esta organización, deberían aparecer.
-- Un workspace dedicado ni una alerta en USD 10. El límite es de organización,
-  que es lo que exige la pauta; el workspace queda como mejora opcional.
+La captura no acredita un workspace dedicado ni una alerta en USD 10. El límite
+es de organización, que es lo que exige la pauta; el workspace queda como
+mejora opcional.
 
 La organización tiene activada la recarga automática de créditos. La recarga
 repone saldo, pero el límite mensual sigue cortando las llamadas al llegar a

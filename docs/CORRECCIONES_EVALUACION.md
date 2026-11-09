@@ -48,8 +48,8 @@ menos). No se interpreta esto como garantía estadística ni medición de JSON c
 - Límite de USD 20 en la consola de Anthropic: configurado el 9 de noviembre de
   2026 como límite de la organización, con captura en
   [`evidencia/limite-gasto-consola.png`](evidencia/limite-gasto-consola.png).
-  Falta confirmar que la clave de Heroku pertenece a esa organización; ver
-  [LIMITE_GASTO.md](LIMITE_GASTO.md). Ya resuelto en código: un rechazo del
+  La clave de Heroku pertenece a esa organización (confirmado por el
+  responsable de la cuenta); ver [LIMITE_GASTO.md](LIMITE_GASTO.md). Ya resuelto en código: un rechazo del
   proveedor deja el caso en cola manual con RD-16 en vez de perderlo.
 - Video real de máximo tres minutos: pendiente de grabación por el equipo.
   No hay acceso al navegador/escritorio automatizado para grabar esta sesión.
