@@ -1,11 +1,5 @@
 # agente-karin-triage
 
-**Diagramas actualizados:** [atlas HTML público](https://karin-triage-grupo7-c7c6a3fb2988.herokuapp.com/estaticos/diagramas-karin-triage.html)
-· [SVG y fuentes Mermaid](docs/diagramas/README.md).
-Para presentar el negocio: [contexto](docs/diagramas/karin-1.svg) y
-[revisión humana](docs/diagramas/karin-8.svg). El atlas distingue implementación,
-evidencia y funcionalidades futuras.
-
 Pre-clasificación asistida de denuncias de Ley Karin (Ley 21.643) para
 funcionarios de la Dirección del Trabajo.
 
@@ -14,15 +8,20 @@ funcionarios de la Dirección del Trabajo.
 **Aplicación pública:** https://karin-triage-grupo7-c7c6a3fb2988.herokuapp.com/
 
 Acceso con `inspector_demo` y `supervisor_demo`. Las contraseñas se entregan por
-la plataforma del curso; no están en este repositorio. El operador puede
-consultarlas en Config Vars de la aplicación Heroku. Solo casos sintéticos.
+la plataforma del curso; no están en este repositorio. Solo casos sintéticos.
 
-La carga del golden set se ejecuta en segundo plano: pulsar una vez y usar
-«Actualizar bandeja» para ver el avance. Los casos procesados se conservan en
-Postgres. La tarea y sus contadores viven en un único proceso web; si el dyno
-se reinicia, volver a solicitar la carga omite los casos ya guardados. Esta
-implementación se limita a un dyno y un worker, sin cola durable distribuida.
+## Entregables
 
+| Entregable | Dónde |
+|---|---|
+| Software funcionando | [URL pública](https://karin-triage-grupo7-c7c6a3fb2988.herokuapp.com/) · [cómo usarlo](#cómo-usar-la-aplicación) |
+| Ficha de negocio (1 página) | [`docs/FICHA_NEGOCIO.pdf`](docs/FICHA_NEGOCIO.pdf) · [versión extendida](docs/FICHA_NEGOCIO.md) · [caso ampliado](https://karin-triage-grupo7-c7c6a3fb2988.herokuapp.com/estaticos/ficha-negocio.html) |
+| Video demo (≤ 3 min) | **Pendiente.** Guion en [`docs/GUION_VIDEO.md`](docs/GUION_VIDEO.md) |
+| Prompt maestro | [`PROMPT_MAESTRO.md`](PROMPT_MAESTRO.md) |
+| Prompts versionados | [`prompts/`](prompts/) · [mejora medida v1 → v3](#mejora-medida-de-los-prompts) |
+| Golden set | [`golden_set/denuncias.jsonl`](golden_set/denuncias.jsonl), 11 casos sintéticos |
+| Reglas del proyecto | [`CLAUDE.md`](CLAUDE.md) · [`AGENTS.md`](AGENTS.md) |
+| Despliegue | [`Dockerfile`](Dockerfile) · [`heroku.yml`](heroku.yml) · [control de gasto](docs/LIMITE_GASTO.md) |
 
 > **Estado de este repositorio.** Es la *edición de entrega* del Proyecto Final:
 > un prototipo público que opera con denuncias **sintéticas**. El piloto
@@ -69,8 +68,9 @@ en citas literales: qué conducta se configura, si corresponde investigar,
 derivar a mediación o descartar, y si hay urgencia de medidas de resguardo. El
 funcionario confirma o corrige, y lo que corrige queda registrado.
 
-El caso de negocio completo está en [`docs/FICHA_NEGOCIO.md`](docs/FICHA_NEGOCIO.md),
-con su versión de una página en [`docs/FICHA_NEGOCIO.pdf`](docs/FICHA_NEGOCIO.pdf).
+La ficha de una página está en [`docs/FICHA_NEGOCIO.pdf`](docs/FICHA_NEGOCIO.pdf)
+y el caso de negocio completo, con precio del piloto, margen por inspección y
+costo del despliegue nacional, en [`docs/FICHA_NEGOCIO.md`](docs/FICHA_NEGOCIO.md).
 
 ## Cómo usar la aplicación
 
@@ -103,6 +103,12 @@ con su versión de una página en [`docs/FICHA_NEGOCIO.pdf`](docs/FICHA_NEGOCIO.
 Todos los datos son sintéticos. No hay ninguna denuncia real en este sistema.
 La franja superior y el pie de página lo declaran en todas las pantallas.
 
+La carga del golden set se ejecuta en segundo plano: pulsar una vez y usar
+«Actualizar bandeja» para ver el avance. Los casos procesados se conservan en
+Postgres. La tarea y sus contadores viven en un único proceso web; si el dyno
+se reinicia, volver a solicitar la carga omite los casos ya guardados. Esta
+implementación se limita a un dyno y un worker, sin cola durable distribuida.
+
 ### En local
 
 ```bash
@@ -129,6 +135,11 @@ docker run --rm -p 8000:8000 --env-file .env karin-triage
 ```
 
 ## Arquitectura
+
+**Diagramas:** [atlas HTML público](https://karin-triage-grupo7-c7c6a3fb2988.herokuapp.com/estaticos/diagramas-karin-triage.html)
+· [SVG y fuentes Mermaid](docs/diagramas/README.md). Para presentar el negocio:
+[contexto](docs/diagramas/karin-1.svg) y [revisión humana](docs/diagramas/karin-8.svg).
+El atlas distingue implementación, evidencia y funcionalidades futuras.
 
 ### El flujo de un caso
 
@@ -201,11 +212,30 @@ Los prompts versionados están en [`prompts/`](prompts/):
 |---|---|
 | `prefijo_normativo.md` | Bloque de sistema **cacheado**, estable byte a byte, compartido por los dos nodos. Contiene el texto literal de las normas y la matriz de criterios |
 | `extraer_hechos_v1.md` | Nodo 1. Extrae hechos sin clasificar |
-| `tipificar_v1.md` | Nodo 2, **línea base**. Es el esqueleto propuesto en la retroalimentación, sin los ejemplos que dejaba pendientes |
-| `tipificar_v2.md` | Nodo 2, **en uso**. Procedimiento de decisión ordenado, tres ejemplos resueltos, guía de construcción de citas y antipatrones |
+| `tipificar_v1.md` | Nodo 2, **línea base**. Rol, delimitación de datos, criterios y esquema, sin ejemplos |
+| `tipificar_v2.md` | Nodo 2. Procedimiento de decisión ordenado, tres ejemplos resueltos, guía de citas y antipatrones |
+| `tipificar_v3.md` | Nodo 2, **en uso** (`agent/nodos.py`). Separa urgencia de gravedad, distingue represalia sindical sin acoso y limita las citas a fragmentos de la denuncia |
 
-La mejora medida de v1 a v2 sobre el golden set está en
-[`docs/MEJORA_PROMPTS.md`](docs/MEJORA_PROMPTS.md).
+#### Mejora medida de los prompts
+
+Mismo runner y mismo golden set en cada comparación. Detalle, límites de la
+medición y reproducción en [`docs/MEJORA_PROMPTS.md`](docs/MEJORA_PROMPTS.md);
+JSON de las corridas en [`evals/evidencia/`](evals/evidencia/).
+
+| Métrica | v1 | v2 | v3 |
+|---|---:|---:|---:|
+| Decisión final correcta | 6/6 | 6/6 · 9/9 | 9/9 |
+| Citas verificadas contra su fuente | — | — · 25/29 (86 %) | **22/22 (100 %)** |
+| Salida y citas válidas sin reintento | 0/6 | 1/6 · 5/9 | **9/9** |
+| Acoso sexual enviado a mediación | 0 | 0 · 0 | 0 |
+| Falsos descartes | 0 | 0 · 0 | 0 |
+| Costo estimado de la corrida, USD | 0,1942 | 0,1889 · 0,2142 | **0,1600** |
+
+v1 → v2 se midió con ocho casos (seis con LLM); v2 → v3, con once (nueve con
+LLM) y un runner corregido que verifica cada cita contra su fuente. En la
+columna v2, el primer valor es de la comparación con v1 y el segundo, de la
+comparación con v3. v3 costó 25,3 % menos que v2, con cuatro llamadas menos. Es
+una corrida por versión: no es una garantía estadística.
 
 El prefijo normativo va como primer bloque de `system` con `cache_control` y TTL
 de una hora, y es **idéntico** en los dos nodos para que ambos lean del mismo
@@ -238,6 +268,8 @@ distinto invalida el caché, y se nota en `usage.cache_read_input_tokens`.
 └── docs/
     ├── ARQUITECTURA.md        # arquitectura del piloto (hoja de ruta)
     ├── FICHA_NEGOCIO.md · FICHA_NEGOCIO.pdf
+    ├── generar_ficha_pdf.py   # regenera el PDF de una página
+    ├── CORRECCIONES_EVALUACION.md
     ├── MEJORA_PROMPTS.md
     ├── GUION_VIDEO.md
     ├── plan-entrega.md        # auditoría contra la pauta y plan priorizado
@@ -307,6 +339,11 @@ y **no** está implementado aquí, por decisión explícita:
   que no existe**. Están corregidas y documentadas en
   [`docs/adr/ADR-003`](docs/adr/ADR-003-sdk-anthropic.md).
 
+## Correcciones de la evaluación del equipo
+
+Las observaciones de la evaluación interna y cómo se cerró cada una están en
+[`docs/CORRECCIONES_EVALUACION.md`](docs/CORRECCIONES_EVALUACION.md).
+
 ---
 
 [^informe]: Dirección del Trabajo, *Informe estadístico semestral sobre
@@ -315,28 +352,3 @@ Período acumulado: 1 de agosto de 2024 a 30 de junio de 2026*, agosto de 2026.
 <https://www.dt.gob.cl/portal/1626/articles-129626_archivo_01.pdf>. Reemplaza las cifras del informe anterior
 (<https://www.dt.gob.cl/portal/1626/articles-128897_archivo_01.pdf>), que la DT
 ajustó por consolidación de registros.
-
-
-## Correcciones de la evaluación del equipo
-
-- Ingreso de caso en vivo: el inspector registra un caso desde
-  `/ingresos/nuevo` con los campos que el sistema procesa (tipo de ingreso,
-  fecha, empleador, sector y relato), por lo que las reglas RD-02, RD-03 y RD-05
-  se pueden activar desde el formulario. La declaración de que no hay datos de
-  personas reales es obligatoria; esta edición no admite denuncias reales.
-- El botón de nueva tanda crea copias sin revisiones y conserva las anteriores.
-  No borra la base. Cada tanda y cada relato nuevo consumen presupuesto de IA.
-- El catálogo implementa RD-01 a RD-06 y RD-10 a RD-16; RD-07 a RD-09 están
-  reservadas. RD-12 sigue sin bajar urgencias ya activas; distingue las amenazas
-  exclusivamente laborales de evidencia física inmediata.
-- Un descarte humano exige motivo del catálogo, comentario y cita literal.
-  La urgencia no se elimina. Una excepción humana a RD-10 requiere fundamento
-  y validación de supervisor distinto; no se presenta como decisión de la IA.
-- `<dictamenes>` se envía vacío. No hay búsqueda documental ni RAG implementado.
-- El límite en consola no se da por aplicado sin evidencia. Los topes de código
-  no reemplazan el control del proveedor ni garantizan una reserva exacta de gasto.
-
-Ver [trazabilidad de correcciones](docs/CORRECCIONES_EVALUACION.md) y
-[comparación medida](docs/MEJORA_PROMPTS.md). Precio propuesto del piloto,
-costos observados/presupuestados y costo proyectado del despliegue nacional
-(400 usuarios, unos CLP 1.391.000 al mes): [ficha de negocio](docs/FICHA_NEGOCIO.md).

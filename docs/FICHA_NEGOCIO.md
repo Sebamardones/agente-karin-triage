@@ -35,6 +35,14 @@ El agente propone; una persona decide. Descartar requiere motivo, comentario,
 cita y segunda revisión. Las excepciones humanas RD-10 quedan advertidas y
 requieren validación de otro supervisor. No hay RAG: `<dictamenes>` va vacío.
 
+**Por qué importa el tiempo.** La pre-clasificación corre contra plazos
+legales: **2 días hábiles** para pedir medidas de resguardo (art. 211-B bis del
+Código del Trabajo) y **30 días** para concluir la investigación (art. 211-C).
+Si la Inspección no se pronuncia en 30 días sobre un informe interno, se tienen
+por válidas las conclusiones del empleador. La propuesta llega ordenada por
+urgencia, con las citas que la fundan, para que el funcionario decida antes
+de que venza el plazo.
+
 ## Precio y modelo de ingresos propuestos
 
 **Servicio anual por inspección: CLP 3.600.000 + IVA** (equivalente a CLP 300.000
@@ -43,6 +51,20 @@ soporte básico y seguimiento de calidad. Volumen adicional: cotización separad
 y costo de inferencia según consumo. Es una **hipótesis comercial del proyecto**,
 no una tarifa contratada ni validada con la DT. Desarrollo institucional,
 integraciones y asesoría jurídica se cotizan aparte.
+
+**Margen estimado del piloto por inspección** (CLP 1.000 por USD como supuesto):
+
+| Concepto | Presupuesto conservador | Tasa observada v3 |
+|---|---:|---:|
+| Ingreso mensual (neto de IVA) | CLP 300.000 | CLP 300.000 |
+| Inferencia, 1.000 casos | CLP 100.000 (USD 0,10/caso) | CLP 18.000 (USD 0,0178/caso) |
+| Infraestructura (Heroku Basic + Postgres) | CLP 12.000 | CLP 12.000 |
+| Soporte básico, 8 h × CLP 15.000 | CLP 120.000 | CLP 120.000 |
+| **Margen bruto mensual** | **CLP 68.000 (23 %)** | **CLP 150.000 (50 %)** |
+
+Con menos de 1.000 casos al mes el margen sube, porque la inferencia es el
+único costo variable. No incluye desarrollo, adquisición del cliente ni
+impuestos a la renta; el margen comercial no está demostrado.
 
 Vía de entrada propuesta: **Compra Ágil**, si el total de la contratación queda
 dentro de **100 UTM** y se cumplen las condiciones del procedimiento. Solicita

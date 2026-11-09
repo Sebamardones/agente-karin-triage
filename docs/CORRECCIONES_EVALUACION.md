@@ -57,3 +57,24 @@ menos). No se interpreta esto como garantía estadística ni medición de JSON c
 
 Los cambios de software y documentos no garantizan una nota ni sustituyen la
 validación jurídica y la aceptación de fases por el responsable humano.
+
+## Resumen de las correcciones
+
+Resumen que hasta el 9 de noviembre de 2026 estaba al final del README.
+
+- Ingreso de caso en vivo: el inspector registra un caso desde
+  `/ingresos/nuevo` con los campos que el sistema procesa (tipo de ingreso,
+  fecha, empleador, sector y relato), por lo que las reglas RD-02, RD-03 y RD-05
+  se pueden activar desde el formulario. La declaración de que no hay datos de
+  personas reales es obligatoria; esta edición no admite denuncias reales.
+- El botón de nueva tanda crea copias sin revisiones y conserva las anteriores.
+  No borra la base. Cada tanda y cada relato nuevo consumen presupuesto de IA.
+- El catálogo implementa RD-01 a RD-06 y RD-10 a RD-16; RD-07 a RD-09 están
+  reservadas. RD-12 sigue sin bajar urgencias ya activas; distingue las amenazas
+  exclusivamente laborales de evidencia física inmediata.
+- Un descarte humano exige motivo del catálogo, comentario y cita literal.
+  La urgencia no se elimina. Una excepción humana a RD-10 requiere fundamento
+  y validación de supervisor distinto; no se presenta como decisión de la IA.
+- `<dictamenes>` se envía vacío. No hay búsqueda documental ni RAG implementado.
+- El límite en consola no se da por aplicado sin evidencia. Los topes de código
+  no reemplazan el control del proveedor ni garantizan una reserva exacta de gasto.
