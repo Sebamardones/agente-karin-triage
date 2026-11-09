@@ -297,8 +297,9 @@ decisiones del puesto de trabajo y del perfil «inspector» están en
   `<denuncia>` y el modelo no tiene herramientas. Hay un caso del golden set que
   intenta una inyección explícita.
 - **Control de gasto en tres capas** ([detalle y procedimiento](docs/LIMITE_GASTO.md)):
-  1. Límite mensual de USD 20 en un workspace dedicado de la consola de
-     Anthropic. **Pendiente** hasta versionar la captura de evidencia.
+  1. Límite mensual de USD 20 de la organización en la consola de Anthropic,
+     configurado el 9 de noviembre de 2026
+     ([captura](docs/evidencia/limite-gasto-consola.png)).
   2. Tope diario de llamadas y de dólares en el código. Al alcanzarlo, el caso se
      marca `PRESUPUESTO_AGOTADO` y pasa a cola manual.
   3. Si el proveedor rechaza la llamada (límite de la consola, cuota o caída),

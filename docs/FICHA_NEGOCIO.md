@@ -117,8 +117,8 @@ procesa el sistema) y tandas para revisión sin borrar historial. La edición in
 de datos y evaluación de privacidad antes de admitir información real. Se mide
 calidad, tiempo de revisión y falsos descartes antes de ampliar el servicio.
 La seudonimización heurística y las pruebas sintéticas no garantizan anonimato
-ni cumplimiento legal integral. Topes diarios de código; límite de proyecto en
-consola pendiente de evidencia del operador.
+ni cumplimiento legal integral. Topes diarios de código y límite mensual de
+USD 20 en la consola de Anthropic, configurado el 9 de noviembre de 2026.
 
 ## Fuentes
 

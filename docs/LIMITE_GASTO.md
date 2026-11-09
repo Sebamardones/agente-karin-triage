@@ -1,13 +1,29 @@
 # Límite de gasto del proveedor
 
-Estado: **PENDIENTE** hasta que exista `docs/evidencia/limite-gasto-consola.png`.
-Al completar el procedimiento, cambiar este estado a «Configurado» con la fecha.
+Estado: **Configurado el 9 de noviembre de 2026**, como límite mensual de la
+organización: USD 20, que se restablece el 1 de cada mes. Evidencia:
+[`docs/evidencia/limite-gasto-consola.png`](evidencia/limite-gasto-consola.png).
+
+La captura muestra «Gasto de este mes USD 0.00 de USD 20 de límite». Lo que
+**no** acredita:
+
+- Que la `ANTHROPIC_API_KEY` de Heroku pertenezca a esta organización.
+  `PENDIENTE_VERIFICAR`: en **Settings → API keys** debe figurar la clave en uso
+  con fecha de último uso reciente. La captura indica «Sin actividad en los
+  últimos 7 días», aunque hubo corridas de evals el 7 de noviembre; si fueron
+  con esta organización, deberían aparecer.
+- Un workspace dedicado ni una alerta en USD 10. El límite es de organización,
+  que es lo que exige la pauta; el workspace queda como mejora opcional.
+
+La organización tiene activada la recarga automática de créditos. La recarga
+repone saldo, pero el límite mensual sigue cortando las llamadas al llegar a
+USD 20.
 
 ## Tres capas de control
 
 | Capa | Dónde vive | Qué corta | Estado |
 |---|---|---|---|
-| Límite mensual del workspace | Consola de Anthropic, workspace `karin-triage-demo` | Toda llamada con la clave del workspace, sin importar quién la haga | PENDIENTE |
+| Límite mensual de la organización | Consola de Anthropic, Settings → Billing → Spend limits | Toda llamada con una clave de la organización, sin importar quién la haga | Configurado (9 nov 2026, USD 20) |
 | Tope diario en código | `KARIN_TOPE_LLAMADAS_DIA=200` y `KARIN_TOPE_USD_DIA=3.0` (Config Vars) | Llamadas de esta aplicación; marca `PRESUPUESTO_AGOTADO` | Activo |
 | Manejo del rechazo del proveedor | `agent/nodos.py` · `ejecutar_llm` | Si el proveedor rechaza la llamada, el caso queda en cola humana con RD-16 | Activo |
 

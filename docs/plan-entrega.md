@@ -65,7 +65,7 @@ guardada en los casos.
 | «Agreguen `CLAUDE.md` o `AGENTS.md` con las reglas del proyecto.» | Ambos en la raíz | Cumple |
 | «una función de IA generativa con su prompt de sistema guardado en `/prompts`.» | `prompts/prefijo_normativo.md`, `extraer_hechos_v1.md`, `tipificar_v3.md` | Cumple |
 | «documenten cómo mejoraron el prompt.» | `docs/MEJORA_PROMPTS.md` | Cumple |
-| «Las claves van como secreto de la plataforma y con un límite de gasto configurado en la API de IA.» | Config Vars sí; límite de consola PENDIENTE | Parcial |
+| «Las claves van como secreto de la plataforma y con un límite de gasto configurado en la API de IA.» | Config Vars sí; límite de consola PENDIENTE (configurado el 9 nov, ver el estado al final) | Parcial |
 | «verifiquen que el link funcione desde un navegador en modo incógnito.» | Solo `curl` sin cookies; no hubo navegador en incógnito | No verificable |
 
 ## Estimación de puntaje (criterio propio, no oficial)
@@ -131,7 +131,7 @@ al 30 de junio de 2026. Después, en el mismo día:
 | # | Ítem | Estado | Evidencia |
 |---|---|---|---|
 | 1 | Video | Pendiente (fase 3) | — |
-| 2 | Límite de gasto en la consola | Pendiente del responsable | `docs/LIMITE_GASTO.md` sigue en PENDIENTE |
+| 2 | Límite de gasto en la consola | Hecho (límite de organización, USD 20) | `docs/evidencia/limite-gasto-consola.png`. `PENDIENTE_VERIFICAR` que la clave de Heroku sea de esa organización |
 | 5 | Refuerzo de la ficha | Hecho | Plazos legales (arts. 211-B bis y 211-C) y margen del piloto por inspección (CLP 68.000–150.000 al mes, 23–50 %) en `FICHA_NEGOCIO.md`, la ficha ampliada y el PDF. El PDF se regenera con `uv run --with reportlab python docs/generar_ficha_pdf.py`, que falla si no cabe en una página |
 | 6 | Reordenar el README | Hecho | Título y URL primero; tabla de entregables (video marcado pendiente); tabla v1 → v2 → v3; diagramas bajo «Arquitectura»; correcciones movidas a `docs/CORRECCIONES_EVALUACION.md` |
 | 7 | Consistencia de documentos | Parcial | El README decía que `tipificar_v2.md` estaba en uso; el código usa `tipificar_v3.md` (`agent/nodos.py:49`). Corregido |

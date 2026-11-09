@@ -66,8 +66,9 @@ Aplicación: https://karin-triage-grupo7-c7c6a3fb2988.herokuapp.com/
 
 Las comprobaciones públicas son HTTPS con cookies independientes, no inspección
 visual en incógnito. La automatización del navegador no está disponible. La
-grabación real del video y evidencia del límite de proyecto USD 20 en consola
-Anthropic siguen pendientes del equipo/operador. No se cambió la clave.
+grabación real del video sigue pendiente del equipo. El límite de USD 20 en la
+consola de Anthropic quedó configurado el 9 de noviembre de 2026
+(`docs/LIMITE_GASTO.md`). No se cambió la clave.
 
 ## Comandos y archivos
 
