@@ -350,7 +350,123 @@
     setTimeout(function () { document.body.classList.remove("entrada-inicial"); }, 1600);
   }
 
+  // --- Landing de ingreso: letras, palabras, revelado, contadores y parallax --
+  // Solo corre en /entrar ([data-landing]). Sin JS o con movimiento reducido,
+  // la página se ve completa y estática.
+  function partirTexto(raiz, porLetra) {
+    var nodos = [];
+    var recorrido = document.createTreeWalker(raiz, NodeFilter.SHOW_TEXT);
+    while (recorrido.nextNode()) nodos.push(recorrido.currentNode);
+    var n = 0;
+    nodos.forEach(function (nodo) {
+      if (nodo.parentNode.closest("svg")) return;
+      var fragmento = document.createDocumentFragment();
+      nodo.textContent.split(/(\s+)/).forEach(function (trozo) {
+        if (!trozo) return;
+        if (/^\s+$/.test(trozo)) { fragmento.appendChild(document.createTextNode(trozo)); return; }
+        var palabra = document.createElement("span");
+        palabra.className = "landing-palabra";
+        if (porLetra) {
+          Array.prototype.forEach.call(trozo, function (letra) {
+            var span = document.createElement("span");
+            span.className = "landing-letra";
+            span.style.setProperty("--n", n++);
+            span.textContent = letra;
+            palabra.appendChild(span);
+          });
+        } else {
+          palabra.style.setProperty("--n", n++);
+          palabra.textContent = trozo;
+        }
+        fragmento.appendChild(palabra);
+      });
+      nodo.parentNode.replaceChild(fragmento, nodo);
+    });
+    return n;
+  }
+
+  // Divide el titular para animarlo sin perder el texto para lectores de pantalla.
+  function prepararTitular(titulo, porLetra) {
+    var oculto = document.createElement("span");
+    oculto.className = "landing-oculto";
+    oculto.textContent = titulo.textContent.replace(/\s+/g, " ").trim();
+    var visual = document.createElement("span");
+    visual.setAttribute("aria-hidden", "true");
+    while (titulo.firstChild) visual.appendChild(titulo.firstChild);
+    titulo.appendChild(oculto);
+    titulo.appendChild(visual);
+    var total = partirTexto(visual, porLetra);
+    if (porLetra) titulo.style.setProperty("--trazo", (150 + total * 18 + 350) + "ms");
+  }
+
+  function contar(el) {
+    var final = parseInt(el.getAttribute("data-contar"), 10);
+    if (isNaN(final)) return;
+    var formato = new Intl.NumberFormat("es-CL");
+    var inicio = null;
+    function paso(t) {
+      if (inicio === null) inicio = t;
+      var avance = Math.min(1, (t - inicio) / 1400);
+      el.textContent = formato.format(Math.round(final * (1 - Math.pow(1 - avance, 3))));
+      if (avance < 1) requestAnimationFrame(paso);
+    }
+    el.textContent = "0";
+    requestAnimationFrame(paso);
+  }
+
+  function prepararLanding() {
+    var landing = document.querySelector("[data-landing]");
+    if (!landing || reducido.matches || !("IntersectionObserver" in window)) return;
+    landing.querySelectorAll("[data-letras]").forEach(function (t) { prepararTitular(t, true); });
+    landing.querySelectorAll("[data-palabras]").forEach(function (t) { prepararTitular(t, false); });
+    landing.classList.add("landing-anima");
+
+    var observador = new IntersectionObserver(function (entradas) {
+      entradas.forEach(function (e) {
+        if (!e.isIntersecting) return;
+        e.target.classList.add("visible");
+        e.target.querySelectorAll("[data-contar]").forEach(contar);
+        observador.unobserve(e.target);
+      });
+    }, { threshold: 0.2, rootMargin: "0px 0px -8% 0px" });
+    landing.querySelectorAll("[data-palabras], [data-revelar], .landing-figura").forEach(function (el) {
+      observador.observe(el);
+    });
+
+    // Parallax: cada figura se desplaza según su distancia al centro de la ventana.
+    var figuras = Array.prototype.slice.call(landing.querySelectorAll("[data-parallax]"));
+    var pendiente = false;
+    function moverFiguras() {
+      pendiente = false;
+      var centro = window.innerHeight / 2;
+      figuras.forEach(function (f) {
+        var caja = f.getBoundingClientRect();
+        if (caja.bottom < -200 || caja.top > window.innerHeight + 200) return;
+        var factor = parseFloat(f.getAttribute("data-parallax")) || 0;
+        var desplazamiento = (caja.top + caja.height / 2 - centro) * -factor;
+        f.style.transform = "translate3d(0," + desplazamiento.toFixed(1) + "px,0)";
+        var mancha = f.querySelector(".landing-mancha");
+        if (mancha) mancha.style.translate = "0 " + (desplazamiento * -0.6).toFixed(1) + "px";
+      });
+    }
+    function alDesplazar() { if (!pendiente) { pendiente = true; requestAnimationFrame(moverFiguras); } }
+    window.addEventListener("scroll", alDesplazar, { passive: true });
+    window.addEventListener("resize", alDesplazar);
+    moverFiguras();
+  }
+
+  // «Volver al ingreso»: sube al formulario y deja el foco en el usuario.
+  document.addEventListener("click", function (e) {
+    var enlace = e.target.closest("[data-volver-ingreso]");
+    var campo = document.querySelector("#ingreso input[name='usuario']");
+    if (!enlace || !campo) return;
+    e.preventDefault();
+    porId("ingreso").scrollIntoView({ behavior: reducido.matches ? "auto" : "smooth", block: "center" });
+    campo.focus({ preventScroll: true });
+  });
+
   document.addEventListener("DOMContentLoaded", function () {
+    prepararLanding();
     prepararEntrada();
     try {
       var pendiente = sessionStorage.getItem("karin-aviso");

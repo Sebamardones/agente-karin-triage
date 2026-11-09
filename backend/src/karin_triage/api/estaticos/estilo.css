@@ -647,3 +647,238 @@ dialog[open]::backdrop { animation: aparecer 200ms var(--entrada) both; }
 /* La corrección por regla dura informa una protección, no un error: tono informativo */
 .correccion { background: var(--ice); }
 .correccion .icono-bloque { color: var(--signal-blue); }
+
+/* ==========================================================================
+   Landing de ingreso (/entrar)
+   Bandas de ancho completo con la grilla común adentro. Figuras recortadas con
+   máscara de transparencia. Las animaciones solo corren con .landing-anima,
+   que agrega interaccion.js cuando no hay movimiento reducido.
+   ========================================================================== */
+main:has(.landing) { max-width: none; padding: 0; }
+body:has(.landing) .pie { margin-top: 0; }
+.entrada-inicial main > .landing { animation-duration: 300ms; }
+.landing { overflow-x: hidden; overflow-x: clip; }
+.landing-interior { max-width: var(--ancho-max); margin: auto; padding: 0 var(--margen-pagina); }
+.landing section, .landing > section { position: relative; }
+.landing-oculto {
+  position: absolute; width: 1px; height: 1px; padding: 0; margin: -1px;
+  overflow: hidden; clip: rect(0 0 0 0); white-space: nowrap; border: 0;
+}
+.landing-titular {
+  font-size: clamp(40px, 4.6vw, 68px); line-height: 1.04; letter-spacing: -0.02em;
+  margin: var(--space-3) 0 var(--space-6);
+}
+.landing-h2 {
+  font-size: clamp(32px, 3.6vw, 52px); line-height: 1.08; letter-spacing: -0.02em;
+  margin: var(--space-2) 0 var(--space-4);
+}
+.landing-bajada { font-size: clamp(18px, 1.4vw, 20px); line-height: 1.5; color: var(--texto-secundario); margin: 0 0 var(--space-6); max-width: 38rem; }
+.landing-enfasis { position: relative; color: var(--signal-blue); white-space: nowrap; }
+.landing-trazo {
+  position: absolute; left: -2%; bottom: -0.16em; width: 104%; height: 0.32em;
+  overflow: visible; pointer-events: none;
+}
+.landing-trazo path { fill: none; stroke: var(--emblem-red); stroke-width: 5; stroke-linecap: round; vector-effect: non-scaling-stroke; }
+.landing-microcopy { display: flex; align-items: center; gap: var(--space-2); font-size: 14px; line-height: 20px; color: var(--texto-secundario); margin: var(--space-4) 0 0; }
+
+/* Figuras: JPEG + máscara PNG → fondo transparente sobre cualquier color */
+.landing-figura { position: relative; justify-self: center; will-change: transform; }
+.landing-flotar { position: relative; z-index: 1; }
+.landing-recorte {
+  display: block; width: 100%; height: auto;
+  -webkit-mask-image: var(--mascara); mask-image: var(--mascara);
+  -webkit-mask-size: 100% 100%; mask-size: 100% 100%;
+  -webkit-mask-repeat: no-repeat; mask-repeat: no-repeat;
+}
+.landing-mancha {
+  position: absolute; z-index: 0; inset: 12% 2% 6% 2%;
+  background: var(--ice); border-radius: 42% 58% 63% 37% / 41% 44% 56% 59%;
+}
+
+/* ① Hero */
+.landing-hero { background: var(--mist); padding: var(--space-12) 0 var(--space-8); }
+.landing-hero-grilla {
+  display: grid; align-items: center; gap: var(--space-8);
+  grid-template-columns: minmax(0, 1.2fr) minmax(0, 0.75fr) minmax(0, 0.9fr);
+}
+.landing-figura-hero { width: min(100%, 340px); }
+.landing-ingreso {
+  background: var(--white); border-radius: var(--radio-caja); padding: var(--space-8);
+  box-shadow: 0 24px 48px -24px rgba(37, 48, 107, 0.35); position: relative; z-index: 2;
+}
+.landing-ingreso-titulo { font-size: 26px; line-height: 32px; margin: 0 0 var(--space-2); }
+.landing-ingreso .aviso-urgencia { padding: var(--space-3) var(--space-4); border-radius: var(--radio-control); margin: var(--space-3) 0; }
+.landing-ingreso label input:not([type="checkbox"]) { max-width: none; }
+.landing-ingreso button { width: 100%; margin-top: var(--space-2); min-height: 48px; }
+.landing-cifras {
+  list-style: none; margin: var(--space-12) 0 var(--space-2); padding: var(--space-6) 0 0;
+  display: grid; grid-template-columns: repeat(3, minmax(0, 1fr)); gap: var(--space-6);
+  border-top: 2px solid var(--separador); font-weight: 700; color: var(--texto-secundario);
+}
+.landing-cifras strong {
+  display: block; font-size: clamp(40px, 4.4vw, 64px); line-height: 1; font-weight: 900;
+  color: var(--navy); letter-spacing: -0.02em; font-variant-numeric: tabular-nums; margin-bottom: var(--space-2);
+}
+.landing-fuente { font-size: 13px; line-height: 18px; color: var(--texto-secundario); margin: var(--space-4) 0 0; }
+
+/* ② Tolerancia cero */
+.landing-tolerancia { background: var(--white); padding: var(--space-12) 0 calc(var(--space-12) * 2); }
+.landing-tolerancia-grilla {
+  display: grid; align-items: center; gap: var(--space-8);
+  grid-template-columns: minmax(0, 0.42fr) minmax(0, 2fr) minmax(0, 0.42fr);
+}
+.landing-figura-alto { width: min(100%, 190px); }
+.landing-figura-alto .landing-mancha { background: var(--blush); inset: 18% -12% 10% -12%; }
+.landing-enfasis-rojo { color: inherit; }
+.landing-plazos { display: grid; grid-template-columns: repeat(3, minmax(0, 1fr)); gap: var(--space-4); }
+.landing-plazo {
+  background: var(--mist); border-radius: var(--radio-caja); padding: var(--space-6);
+  display: flex; flex-direction: column; gap: var(--space-2);
+  border-top: 4px solid var(--signal-blue);
+  transition: translate 200ms var(--entrada), box-shadow 200ms var(--entrada);
+}
+.landing-plazo:hover { translate: 0 -4px; box-shadow: 0 18px 32px -20px rgba(37, 48, 107, 0.45); }
+.landing-plazo p { margin: 0; }
+.landing-plazo-cifra { font-size: clamp(48px, 5vw, 80px); line-height: 1; font-weight: 900; letter-spacing: -0.03em; font-variant-numeric: tabular-nums; }
+.landing-plazo-unidad { display: block; font-size: 18px; line-height: 24px; letter-spacing: 0; color: var(--texto-secundario); margin-top: var(--space-1); }
+.landing-articulo { display: flex; align-items: center; gap: var(--space-2); margin-top: auto !important; padding-top: var(--space-2); font-size: 14px; font-weight: 700; color: var(--texto-secundario); }
+.landing-remate { font-size: clamp(22px, 2vw, 28px); line-height: 1.25; font-weight: 900; margin: var(--space-8) 0 0; }
+
+/* ③ Cómo funciona: banda navy, sin figuras */
+.landing-funciona { background: linear-gradient(to top right, var(--navy), var(--cobalt)); color: var(--white); padding: calc(var(--space-12) * 2) 0 calc(var(--space-12) * 4.5); }
+.landing-funciona .antetitulo { color: var(--pale-sky); }
+.landing-funciona .landing-bajada { color: rgba(255, 255, 255, 0.92); }
+.landing-funciona .landing-enfasis { color: var(--pale-sky); }
+.landing-pasos {
+  list-style: none; margin: var(--space-12) 0 0; padding: 0; position: relative;
+  display: grid; grid-template-columns: repeat(4, minmax(0, 1fr)); gap: var(--space-6);
+}
+.landing-pasos::before {
+  content: ""; position: absolute; left: 28px; right: 28px; top: 28px; height: 2px;
+  background: var(--pale-sky); opacity: 0.6; transform-origin: left center;
+}
+.landing-pasos li { position: relative; counter-increment: paso; }
+.landing-paso-icono.icono {
+  width: 56px; height: 56px; padding: 14px; border-radius: 50%; position: relative;
+  background: var(--white); color: var(--navy); stroke-width: 1.8; box-sizing: border-box;
+}
+.landing-pasos h3 { color: var(--white); font-size: 20px; line-height: 26px; font-weight: 900; margin: var(--space-4) 0 var(--space-2); }
+.landing-pasos h3::before { content: counter(paso) ". "; color: var(--pale-sky); }
+.landing-pasos p { margin: 0; color: rgba(255, 255, 255, 0.9); }
+.landing-garantias {
+  list-style: none; margin: var(--space-12) 0 0; padding: 0;
+  display: grid; grid-template-columns: repeat(3, minmax(0, 1fr)); gap: var(--space-4);
+}
+.landing-garantias li {
+  display: flex; gap: var(--space-3); align-items: flex-start;
+  background: rgba(255, 255, 255, 0.08); border: 1px solid rgba(194, 246, 255, 0.35);
+  border-radius: var(--radio-caja); padding: var(--space-6);
+}
+.landing-garantia-icono.icono { width: 28px; height: 28px; color: var(--pale-sky); }
+.landing-garantias h3 { color: var(--white); font-size: 17px; line-height: 22px; margin: 0 0 var(--space-1); }
+.landing-garantias p { margin: 0; font-size: 15px; line-height: 22px; color: rgba(255, 255, 255, 0.9); }
+
+/* ④ Acompañamiento: la figura sobresale hacia la banda navy */
+.landing-acompana { background: var(--ice); padding: 0 0 var(--space-12); }
+.landing-acompana-grilla { display: grid; align-items: end; gap: var(--space-12); grid-template-columns: minmax(0, 0.8fr) minmax(0, 1.2fr); }
+.landing-figura-acompana { width: min(100%, 360px); margin-top: calc(var(--space-12) * -2.5); z-index: 2; }
+.landing-figura-acompana .landing-mancha { background: var(--pale-sky); inset: 20% -6% 4% -6%; }
+.landing-acompana-texto { padding: var(--space-12) 0 var(--space-6); }
+.landing-volver { min-height: 52px; padding: 12px 28px; font-size: 17px; }
+
+/* Responsive */
+@media (max-width: 64rem) {
+  .landing-hero-grilla { grid-template-columns: minmax(0, 1.15fr) minmax(0, 1fr); grid-template-areas: "texto ingreso" "figura ingreso"; align-items: start; }
+  .landing-hero-texto { grid-area: texto; }
+  .landing-figura-hero { grid-area: figura; width: min(100%, 240px); }
+  .landing-ingreso { grid-area: ingreso; }
+  .landing-hero .landing-bajada { font-size: 17px; }
+  .landing-tolerancia-grilla { grid-template-columns: minmax(0, 1fr) minmax(0, 1fr); }
+  .landing-tolerancia-texto { grid-column: 1 / -1; grid-row: 2; }
+  .landing-figura-alto { width: min(100%, 150px); }
+  .landing-plazos, .landing-garantias { grid-template-columns: minmax(0, 1fr); }
+  .landing-pasos { grid-template-columns: repeat(2, minmax(0, 1fr)); row-gap: var(--space-8); }
+  .landing-pasos::before { display: none; }
+}
+@media (max-width: 40rem) {
+  .landing-interior { padding: 0 var(--space-4); }
+  .landing-hero { padding: var(--space-8) 0 var(--space-6); }
+  /* Móvil: el formulario sube justo bajo el titular y la bajada pasa después */
+  .landing-hero-grilla { display: flex; flex-direction: column; align-items: stretch; gap: 0; }
+  .landing-hero-texto { display: contents; }
+  .landing-titular { font-size: 36px; margin: var(--space-2) 0 var(--space-6); }
+  .landing-ingreso { order: 1; }
+  .landing-hero .landing-bajada { order: 2; margin: var(--space-6) 0 0; }
+  .landing-figura-hero { order: 3; width: min(75%, 240px); align-self: center; margin-top: var(--space-6); }
+  .landing-ingreso { padding: var(--space-6) var(--space-4); }
+  .landing-cifras { grid-template-columns: minmax(0, 1fr); gap: var(--space-4); margin-top: var(--space-8); }
+  .landing-figura-alto { width: min(100%, 96px); }
+  .landing-tolerancia { padding-bottom: var(--space-12); }
+  .landing-funciona { padding: var(--space-12) 0 calc(var(--space-12) * 2.5); }
+  .landing-pasos { grid-template-columns: minmax(0, 1fr); }
+  .landing-acompana-grilla { grid-template-columns: minmax(0, 1fr); gap: 0; }
+  .landing-figura-acompana { width: min(65%, 220px); margin-top: calc(var(--space-12) * -1.8); }
+  .landing-acompana-texto { padding-top: var(--space-6); }
+  .landing-volver { width: 100%; }
+}
+
+/* Animaciones de la landing (intensidad alta; todas fuera con movimiento reducido) */
+@keyframes landing-letra { from { opacity: 0; transform: translateY(0.45em) rotate(4deg); } to { opacity: 1; transform: none; } }
+@keyframes landing-palabra { from { opacity: 0; transform: translateY(0.6em); filter: blur(4px); } to { opacity: 1; transform: none; filter: none; } }
+@keyframes landing-trazo { from { stroke-dashoffset: 1; } to { stroke-dashoffset: 0; } }
+@keyframes landing-flotar { 0%, 100% { transform: translateY(0); } 50% { transform: translateY(-8px); } }
+@keyframes landing-mancha {
+  0%, 100% { border-radius: 42% 58% 63% 37% / 41% 44% 56% 59%; transform: rotate(0deg) scale(1); }
+  33% { border-radius: 58% 42% 38% 62% / 53% 36% 64% 47%; transform: rotate(6deg) scale(1.03); }
+  66% { border-radius: 37% 63% 51% 49% / 62% 55% 45% 38%; transform: rotate(-4deg) scale(0.98); }
+}
+@keyframes landing-figura { from { opacity: 0; transform: scale(0.94) translateY(16px); } to { opacity: 1; transform: none; } }
+@keyframes landing-lateral-izq { from { opacity: 0; transform: translateX(-60px) rotate(-6deg); } to { opacity: 1; transform: none; } }
+@keyframes landing-lateral-der { from { opacity: 0; transform: translateX(60px) rotate(6deg); } to { opacity: 1; transform: none; } }
+@keyframes landing-subir { from { opacity: 0; transform: translateY(24px); } to { opacity: 1; transform: none; } }
+@keyframes landing-linea { from { transform: scaleX(0); } to { transform: scaleX(1); } }
+@keyframes landing-pop { from { opacity: 0; transform: translateY(20px) scale(0.92); } to { opacity: 1; transform: none; } }
+
+.landing-palabra { display: inline-block; white-space: nowrap; }
+.landing-letra { display: inline-block; }
+.landing-anima .landing-letra { animation: landing-letra 500ms var(--entrada) both; animation-delay: calc(150ms + var(--n) * 18ms); }
+.landing-anima .landing-titular .landing-trazo path { stroke-dasharray: 1; animation: landing-trazo 600ms var(--entrada) both; animation-delay: var(--trazo, 1.2s); }
+.landing-anima .landing-mancha { animation: landing-mancha 14s ease-in-out infinite; }
+.landing-anima .landing-flotar { animation: landing-flotar 6s ease-in-out infinite; }
+.landing-anima .landing-figura-hero .landing-recorte { animation: landing-figura 800ms 300ms var(--entrada) both; }
+.landing-anima .landing-ingreso { animation: landing-subir 500ms 400ms var(--entrada) both; }
+.landing-anima .landing-hero-texto > :not(h1) { animation: landing-subir 500ms 250ms var(--entrada) both; }
+
+/* Revelado al entrar en pantalla (IntersectionObserver en interaccion.js) */
+.landing-anima [data-palabras] .landing-palabra,
+.landing-anima [data-revelar],
+.landing-anima .landing-figura-alto .landing-recorte,
+.landing-anima .landing-figura-acompana .landing-recorte { opacity: 0; }
+.landing-anima [data-palabras].visible .landing-palabra { animation: landing-palabra 450ms var(--entrada) both; animation-delay: calc(var(--n) * 60ms); }
+.landing-anima [data-palabras] .landing-trazo path { stroke-dasharray: 1; stroke-dashoffset: 1; }
+.landing-anima [data-palabras].visible .landing-trazo path { animation: landing-trazo 600ms var(--entrada) both; animation-delay: 700ms; }
+.landing-anima [data-revelar].visible { animation: landing-subir 600ms var(--entrada) both; }
+.landing-anima .landing-figura-izquierda.visible .landing-recorte { animation: landing-lateral-izq 700ms var(--entrada) both; }
+.landing-anima .landing-figura-derecha.visible .landing-recorte { animation: landing-lateral-der 700ms 120ms var(--entrada) both; }
+.landing-anima .landing-figura-acompana.visible .landing-recorte { animation: landing-figura 800ms var(--entrada) both; }
+.landing-anima .landing-plazo:nth-child(2).visible { animation-delay: 120ms; }
+.landing-anima .landing-plazo:nth-child(3).visible { animation-delay: 240ms; }
+.landing-anima .landing-pasos.visible { animation: none; opacity: 1; }
+.landing-anima .landing-pasos li { opacity: 0; }
+.landing-anima .landing-pasos.visible li { animation: landing-pop 500ms var(--entrada) both; animation-delay: calc(300ms + var(--i) * 150ms); }
+.landing-anima .landing-pasos::before { transform: scaleX(0); }
+.landing-anima .landing-pasos.visible::before { animation: landing-linea 900ms var(--entrada) both; }
+.landing-anima .landing-garantias.visible { animation: none; opacity: 1; }
+.landing-anima .landing-garantias li { opacity: 0; }
+.landing-anima .landing-garantias.visible li { animation: landing-pop 500ms var(--entrada) both; animation-delay: calc(var(--i) * 120ms); }
+.landing-volver { transition: transform 150ms var(--entrada), box-shadow 150ms var(--entrada), background-color 150ms var(--entrada); }
+.landing-volver:hover, .landing-volver:focus-visible, .landing-ingreso button:hover { transform: translateY(-2px); box-shadow: 0 10px 20px -10px rgba(0, 93, 255, 0.6); }
+
+@media (prefers-reduced-motion: reduce) {
+  .landing [data-revelar], .landing .landing-palabra, .landing .landing-letra, .landing .landing-recorte,
+  .landing .landing-pasos li, .landing .landing-garantias li { opacity: 1 !important; transform: none !important; filter: none !important; }
+  .landing .landing-trazo path { stroke-dashoffset: 0 !important; }
+  .landing .landing-pasos::before { transform: none !important; }
+  .landing-figura { transform: none !important; }
+  .landing-plazo:hover { translate: none; }
+}

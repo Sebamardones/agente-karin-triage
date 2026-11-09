@@ -1,15 +1,109 @@
 {% extends "base.html" %}
 {% from '_iconos.html' import icono %}
 {% block titulo %}Entrar{% endblock %}
-{% block contenido %}<div class="lienzo">
+{#- Landing de ingreso. Las figuras son JPEG con una máscara PNG de transparencia
+    (estaticos/landing/*-mascara.png), así se integran con cualquier fondo.
+    Las animaciones las activa interaccion.js; sin JS o con movimiento reducido
+    todo se ve en su estado final. -#}
+{% macro figura(nombre, alt, ancho, alto, parallax, clase='') -%}
+<div class="landing-figura{% if clase %} {{ clase }}{% endif %}" data-parallax="{{ parallax }}">
+<span class="landing-mancha" aria-hidden="true"></span>
+<div class="landing-flotar"><img class="landing-recorte" src="/estaticos/landing/{{ nombre }}.jpg" alt="{{ alt }}" width="{{ ancho }}" height="{{ alto }}" style="--mascara: url('/estaticos/landing/{{ nombre }}-mascara.png')"{% if clase != 'landing-figura-hero' %} loading="lazy"{% endif %} decoding="async"></div>
+</div>
+{%- endmacro %}
+{% macro trazo() -%}
+<svg class="landing-trazo" viewBox="0 0 200 16" preserveAspectRatio="none" aria-hidden="true" focusable="false"><path d="M3 11 C 45 4, 110 3, 197 8" pathLength="1"/></svg>
+{%- endmacro %}
+{% block contenido %}<div class="landing" data-landing>
+
+<section class="landing-hero" aria-labelledby="landing-titulo">
+<div class="landing-interior landing-hero-grilla">
+<div class="landing-hero-texto">
 <p class="antetitulo">Pre-clasificación asistida · Ley Karin (Ley 21.643)</p>
-<h1>Entrar</h1>
-<p class="bajada">Herramienta de apoyo para inspectores y supervisores que reciben denuncias de acoso laboral, acoso sexual y violencia en el trabajo. La IA propone una pre-clasificación con citas literales; una persona revisa y decide.</p>
+<h1 id="landing-titulo" class="landing-titular" data-letras>Detrás de cada denuncia hay una <span class="landing-enfasis">persona{{ trazo() }}</span>.</h1>
+<p class="landing-bajada">Karin Triage ayuda a inspectores y supervisores de la Dirección del Trabajo a ordenar las denuncias de acoso laboral, acoso sexual y violencia en el trabajo. La IA propone una pre-clasificación con citas literales. Tú revisas y decides.</p>
+</div>
+{{ figura('contencion', 'Ilustración de dos mujeres con ropa de oficina que se abrazan; una apoya la mano en el hombro de la otra en un gesto de contención.', 680, 1016, '0.08', 'landing-figura-hero') }}
+<div class="landing-ingreso" id="ingreso">
+<h2 class="landing-ingreso-titulo">Ingresa al sistema</h2>
 {% if error %}<p role="alert" class="aviso-urgencia">{{ error }}</p>{% endif %}
 <form method="post" action="/entrar">
 <label>Usuario <input name="usuario" autocomplete="username" required></label>
 <label>Contraseña <input name="password" type="password" autocomplete="current-password" required></label>
 <button>{{ icono('entrar') }}Entrar</button></form>
-<div class="tarjeta tarjeta-secundaria con-icono-bloque">{{ icono('info', 'icono-bloque') }}<div>
-<p><strong>Cuentas de acceso:</strong> <code>inspector_demo</code> revisa e ingresa casos; <code>supervisor_demo</code> valida descartes y excepciones. Las contraseñas se entregan en la plataforma del curso.</p>
-</div></div></div>{% endblock %}
+<p class="landing-microcopy">{{ icono('candado') }}Las credenciales se entregan en la plataforma del curso.</p>
+</div>
+</div>
+<div class="landing-interior">
+<ul class="landing-cifras" data-revelar>
+<li><strong><span class="landing-oculto">44.212</span><span aria-hidden="true" data-contar="44212">44.212</span></strong> denuncias en 11 meses</li>
+<li><strong><span class="landing-oculto">4.019</span><span aria-hidden="true" data-contar="4019">4.019</span></strong> al mes, en promedio</li>
+<li><strong><span class="landing-oculto">42 %</span><span aria-hidden="true"><span data-contar="42">42</span> %</span></strong> pre-clasificadas como Ley Karin</li>
+</ul>
+<p class="landing-fuente">Fuente: Dirección del Trabajo, informe de denuncias Ley 21.643, 1 de agosto de 2024 al 30 de junio de 2025.</p>
+</div>
+</section>
+
+<section class="landing-tolerancia" aria-labelledby="landing-tolerancia-titulo">
+<div class="landing-interior landing-tolerancia-grilla">
+{{ figura('alto-a', 'Ilustración de un trabajador con polera roja que levanta la mano abierta en señal de alto.', 405, 1164, '0.14', 'landing-figura-alto landing-figura-izquierda') }}
+<div class="landing-tolerancia-texto">
+<p class="antetitulo">Tolerancia cero</p>
+<h2 id="landing-tolerancia-titulo" class="landing-h2" data-palabras>Tolerancia <span class="landing-enfasis landing-enfasis-rojo">cero{{ trazo() }}</span> no es un eslogan: es un <span class="landing-enfasis">plazo</span>.</h2>
+<p class="landing-bajada">La ley fija tiempos que no esperan a que la bandeja se despeje. Cada día que una denuncia espera su clasificación es un día menos para proteger a quien denunció.</p>
+<div class="landing-plazos">
+<article class="landing-plazo" data-revelar>
+<p class="landing-plazo-cifra"><span class="landing-oculto">2</span><span aria-hidden="true" data-contar="2">2</span> <span class="landing-plazo-unidad">días hábiles</span></p>
+<p>para que la Inspección solicite al empleador medidas de resguardo.</p>
+<p class="landing-articulo">{{ icono('balanza') }}Art. 211-B bis CT</p>
+</article>
+<article class="landing-plazo" data-revelar>
+<p class="landing-plazo-cifra"><span class="landing-oculto">30</span><span aria-hidden="true" data-contar="30">30</span> <span class="landing-plazo-unidad">días</span></p>
+<p>para concluir la investigación.</p>
+<p class="landing-articulo">{{ icono('balanza') }}Art. 211-C CT</p>
+</article>
+<article class="landing-plazo" data-revelar>
+<p class="landing-plazo-cifra"><span class="landing-oculto">30</span><span aria-hidden="true" data-contar="30">30</span> <span class="landing-plazo-unidad">días</span></p>
+<p>para pronunciarse sobre un informe interno. Si la DT no lo hace, valen las conclusiones del empleador.</p>
+<p class="landing-articulo">{{ icono('balanza') }}Art. 211-C CT</p>
+</article>
+</div>
+<p class="landing-remate" data-revelar>El atraso administrativo no es neutro.</p>
+</div>
+{{ figura('alto-b', 'Ilustración de una trabajadora con polera roja que levanta la mano abierta en señal de alto.', 381, 1110, '0.1', 'landing-figura-alto landing-figura-derecha') }}
+</div>
+</section>
+
+<section class="landing-funciona" aria-labelledby="landing-funciona-titulo">
+<div class="landing-interior">
+<p class="antetitulo">Cómo funciona</p>
+<h2 id="landing-funciona-titulo" class="landing-h2" data-palabras>El agente propone. Una persona <span class="landing-enfasis">decide</span>.</h2>
+<p class="landing-bajada">Karin Triage ordena el trabajo previo para que tu criterio llegue antes a lo importante. No resuelve, no notifica, no sanciona y no cierra casos.</p>
+<ol class="landing-pasos" data-revelar>
+<li style="--i: 0">{{ icono('documento', 'landing-paso-icono') }}<h3>Ingresa la denuncia</h3><p>Registras el caso con los datos del relato. Este prototipo opera solo con casos sintéticos.</p></li>
+<li style="--i: 1">{{ icono('candado', 'landing-paso-icono') }}<h3>Se protege la identidad</h3><p>Los nombres y datos identificatorios se seudonimizan antes de que el modelo lea el texto.</p></li>
+<li style="--i: 2">{{ icono('balanza', 'landing-paso-icono') }}<h3>Reglas y propuesta</h3><p>Reglas deterministas revisan competencia, plazos y riesgos. El modelo sugiere una pre-clasificación con citas literales de la denuncia y de la norma.</p></li>
+<li style="--i: 3">{{ icono('validar', 'landing-paso-icono') }}<h3>Una persona decide</h3><p>Revisas, corriges o validas. Los descartes y las excepciones pasan por supervisión.</p></li>
+</ol>
+<ul class="landing-garantias" data-revelar>
+<li style="--i: 0">{{ icono('cita', 'landing-garantia-icono') }}<div><h3>Citas literales o nada</h3><p>Una cita que no aparece tal cual invalida la propuesta.</p></div></li>
+<li style="--i: 1">{{ icono('alerta', 'landing-garantia-icono') }}<div><h3>La urgencia solo sube</h3><p>Las reglas pueden elevarla, nunca bajarla.</p></div></li>
+<li style="--i: 2">{{ icono('escudo', 'landing-garantia-icono') }}<div><h3>Nadie se descarta por falta de prueba</h3><p>Un descarte exige un motivo del catálogo y una cita que lo respalde.</p></div></li>
+</ul>
+</div>
+</section>
+
+<section class="landing-acompana" aria-labelledby="landing-acompana-titulo">
+<div class="landing-interior landing-acompana-grilla">
+{{ figura('acompanamiento', 'Ilustración de un funcionario y una funcionaria de la Dirección del Trabajo, de pie y con los brazos cruzados, con chaquetas azules que llevan la bandera institucional.', 640, 1100, '0.12', 'landing-figura-acompana') }}
+<div class="landing-acompana-texto">
+<p class="antetitulo">Acompañamiento</p>
+<h2 id="landing-acompana-titulo" class="landing-h2" data-palabras>Tú decides. El agente te ayuda a llegar <span class="landing-enfasis">antes</span>.</h2>
+<p class="landing-bajada">Quien denuncia necesita contención y una respuesta a tiempo. Karin Triage no reemplaza tu criterio: te entrega una propuesta ordenada, con su fundamento a la vista, para que dediques tu tiempo a acompañar y decidir.</p>
+<p data-revelar><a class="boton landing-volver" href="#ingreso" data-volver-ingreso>{{ icono('entrar') }}Volver al ingreso</a></p>
+<p class="landing-microcopy">Prototipo académico UAI · Grupo 7 · Solo datos sintéticos</p>
+</div>
+</div>
+</section>
+
+</div>{% endblock %}
