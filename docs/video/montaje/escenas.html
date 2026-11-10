@@ -140,13 +140,11 @@
   #flash { position: absolute; inset: 0; background: #fff; opacity: 0; z-index: 45; pointer-events: none; }
   .anillo { position: absolute; width: 200px; height: 200px; margin: -100px 0 0 -100px; border-radius: 50%; border: 6px solid var(--azul-claro); opacity: 0; z-index: 30; pointer-events: none; }
   .chispa { position: absolute; width: 14px; height: 14px; margin: -7px 0 0 -7px; border-radius: 50%; opacity: 0; z-index: 30; pointer-events: none; }
-  /* Gráfica: íconos, formas geométricas, balanza y órbitas */
-  #formas { position: absolute; inset: 0; pointer-events: none; }
-  .forma { position: absolute; left: 0; top: 0; }
+  /* Gráfica: íconos, balanza y órbitas */
   #e1 .mosaico { position: absolute; right: 110px; top: 200px; width: 540px; display: grid; grid-template-columns: repeat(8, 1fr); gap: 12px; }
   .doc { width: 56px; height: 68px; opacity: 0; }
   .doc svg { width: 100%; height: 100%; display: block; }
-  #e1b .balanza { position: absolute; left: 50%; top: 640px; width: 820px; height: 420px; margin-left: -410px; }
+  #e1b .balanza { position: absolute; left: 50%; top: 600px; width: 900px; height: 470px; margin-left: -450px; overflow: visible; }
   .orbitas { position: absolute; left: 50%; width: 0; height: 0; }
   .orbita { position: absolute; border-radius: 50%; border: 2px solid rgba(0,93,255,.22); }
   .orbita i { position: absolute; left: 50%; top: -9px; width: 18px; height: 18px; margin-left: -9px; border-radius: 50%; background: var(--azul); }
@@ -164,7 +162,6 @@
   <div id="manchas"></div>
   <div id="rejilla"></div>
   <div id="particulas"></div>
-  <div id="formas"></div>
 
   <!-- 1 · El problema -->
   <section class="escena oscura" id="e1"><div class="camara">
@@ -175,7 +172,7 @@
     <div class="mosaico"></div>
     <svg class="reloj" viewBox="0 0 200 200">
       <circle cx="100" cy="100" r="86" stroke="rgba(255,255,255,.12)"/>
-      <circle class="arco" cx="100" cy="100" r="86" stroke="#ff1d3d" stroke-linecap="round" transform="rotate(-90 100 100)" pathLength="1" stroke-dasharray="1" stroke-dashoffset="1"/>
+      <circle class="arco" cx="100" cy="100" r="86" stroke="#ff1d3d" stroke-linecap="round" transform="rotate(-90 100 100)" stroke-dasharray="540.354" stroke-dashoffset="540.354"/>
       <line class="aguja" x1="100" y1="100" x2="100" y2="34" stroke="#fff" stroke-width="7" stroke-linecap="round"/>
       <circle cx="100" cy="100" r="9" fill="#fff"/>
     </svg>
@@ -184,13 +181,45 @@
 
   <section class="escena oscura" id="e1b"><div class="camara">
     <div class="sub partir">Si la Inspección no se pronuncia a tiempo sobre un informe interno, valen las conclusiones del empleador.</div>
-    <svg class="balanza" viewBox="0 0 820 420">
-      <rect x="400" y="70" width="20" height="300" rx="10" fill="#9fb2ff"/>
-      <rect x="300" y="360" width="220" height="22" rx="11" fill="#9fb2ff"/>
-      <g class="plato izq"><path d="M110 70 L60 210 M110 70 L160 210" stroke="#c9d4ff" stroke-width="3"/><path d="M40 210 h140 a70 30 0 0 1 -140 0z" fill="#4d8dff"/><text x="110" y="290" text-anchor="middle" fill="#c9d4ff" font-family="Inter" font-weight="700" font-size="28">Persona</text></g>
-      <g class="plato der"><path d="M710 70 L660 210 M710 70 L760 210" stroke="#c9d4ff" stroke-width="3"/><path d="M640 210 h140 a70 30 0 0 1 -140 0z" fill="#ff1d3d"/><text x="710" y="290" text-anchor="middle" fill="#c9d4ff" font-family="Inter" font-weight="700" font-size="28">Empleador</text></g>
-      <g class="brazo"><rect x="90" y="60" width="640" height="18" rx="9" fill="#fff"/><circle cx="410" cy="69" r="22" fill="#fff"/></g>
+    <svg class="balanza" viewBox="0 0 900 470">
+      <defs>
+        <linearGradient id="g-metal" x1="0" x2="1"><stop offset="0" stop-color="#7f93e6"/><stop offset=".45" stop-color="#eef2ff"/><stop offset="1" stop-color="#8ea2e8"/></linearGradient>
+        <linearGradient id="g-brazo" x1="0" y1="0" x2="0" y2="1"><stop offset="0" stop-color="#ffffff"/><stop offset="1" stop-color="#a9b8f2"/></linearGradient>
+        <linearGradient id="g-azul" x1="0" y1="0" x2="0" y2="1"><stop offset="0" stop-color="#6aa0ff"/><stop offset="1" stop-color="#1f4bff"/></linearGradient>
+        <linearGradient id="g-rojo" x1="0" y1="0" x2="0" y2="1"><stop offset="0" stop-color="#ff6b80"/><stop offset="1" stop-color="#c9102c"/></linearGradient>
+        <radialGradient id="g-brillo"><stop offset="0" stop-color="#ff1d3d" stop-opacity=".7"/><stop offset="1" stop-color="#ff1d3d" stop-opacity="0"/></radialGradient>
+        <filter id="f-sombra" x="-20%" y="-20%" width="140%" height="160%"><feDropShadow dx="0" dy="10" stdDeviation="10" flood-color="#000" flood-opacity=".35"/></filter>
+      </defs>
+      <ellipse cx="450" cy="452" rx="230" ry="14" fill="#000" opacity=".3"/>
+      <g class="pie" filter="url(#f-sombra)">
+        <path d="M330 446 L360 404 H540 L570 446 Z" fill="url(#g-metal)"/>
+        <rect x="380" y="392" width="140" height="16" rx="8" fill="url(#g-metal)"/>
+        <rect x="438" y="96" width="24" height="300" rx="12" fill="url(#g-metal)"/>
+      </g>
+      <g class="plato izq" filter="url(#f-sombra)">
+        <path d="M130 96 L62 236 M130 96 L198 236" stroke="#dfe6ff" stroke-width="3" stroke-dasharray="7 5"/>
+        <circle cx="130" cy="96" r="7" fill="#fff"/>
+        <path d="M44 236 H216 A86 38 0 0 1 44 236 Z" fill="url(#g-azul)"/>
+        <ellipse cx="130" cy="236" rx="86" ry="9" fill="#9cc0ff"/>
+        <g transform="translate(106 176)" fill="none" stroke="#fff" stroke-width="5" stroke-linecap="round"><circle cx="24" cy="14" r="12"/><path d="M2 54c2-16 11-24 22-24s20 8 22 24"/></g>
+        <g transform="translate(130 316)"><rect x="-78" y="-22" width="156" height="44" rx="22" fill="rgba(255,255,255,.1)" stroke="rgba(255,255,255,.3)"/><text y="9" text-anchor="middle" fill="#e6ecff" font-family="Inter" font-weight="700" font-size="24">Persona</text></g>
+      </g>
+      <g class="plato der" filter="url(#f-sombra)">
+        <path d="M770 96 L702 236 M770 96 L838 236" stroke="#dfe6ff" stroke-width="3" stroke-dasharray="7 5"/>
+        <circle cx="770" cy="96" r="7" fill="#fff"/>
+        <ellipse class="brillo" cx="770" cy="250" rx="150" ry="70" fill="url(#g-brillo)" opacity="0"/>
+        <path d="M684 236 H856 A86 38 0 0 1 684 236 Z" fill="url(#g-rojo)"/>
+        <ellipse cx="770" cy="236" rx="86" ry="9" fill="#ff9aa8"/>
+        <g class="pesa"><rect x="700" y="166" width="140" height="62" rx="14" fill="#fff"/><g transform="translate(712 182)" fill="none" stroke="#ff1d3d" stroke-width="4" stroke-linecap="round"><circle cx="14" cy="15" r="12"/><path d="M14 8v8l5 3"/></g><text x="792" y="194" text-anchor="middle" fill="#ff1d3d" font-family="Inter" font-weight="800" font-size="18">PLAZO</text><text x="792" y="216" text-anchor="middle" fill="#ff1d3d" font-family="Inter" font-weight="800" font-size="18">VENCIDO</text></g>
+        <g transform="translate(770 316)"><rect x="-88" y="-22" width="176" height="44" rx="22" fill="rgba(255,255,255,.1)" stroke="rgba(255,255,255,.3)"/><text y="9" text-anchor="middle" fill="#e6ecff" font-family="Inter" font-weight="700" font-size="24">Empleador</text></g>
+      </g>
+      <g class="brazo" filter="url(#f-sombra)">
+        <path d="M120 88 Q450 72 780 88 L780 104 Q450 92 120 104 Z" fill="url(#g-brazo)"/>
+        <circle cx="125" cy="96" r="12" fill="#fff"/><circle cx="775" cy="96" r="12" fill="#fff"/>
+        <circle cx="450" cy="92" r="30" fill="url(#g-metal)"/><circle cx="450" cy="92" r="14" fill="#25306b"/><circle cx="450" cy="92" r="6" fill="#ff1d3d"/>
+      </g>
     </svg>
+
     <div class="titular frase"><span class="p">El</span> <span class="p">atraso</span> <span class="p rojo">NO</span> <span class="p">es</span> <span class="p rojo neutro">neutro.<svg class="trazo" viewBox="0 0 400 22" preserveAspectRatio="none"><path d="M4 14 C 120 4, 280 4, 396 12" pathLength="1" stroke-dasharray="1" stroke-dashoffset="1"/></svg></span></div>
   </div></section>
 
@@ -452,8 +481,9 @@ function orbitas(sel, t, hasta) {
   tl.fromTo("#e1 .reloj", { opacity: 0, scale: 0.4, rotation: -90 }, { opacity: 1, scale: 1, rotation: 0, duration: 0.8, ease: "back.out(1.8)" }, tR - 0.15);
   sfx("pop", tR - 0.15, 0.8);
   const dReloj = fin(k) - tR - 0.6;
-  tl.to("#e1 .arco", { strokeDashoffset: 0, duration: dReloj, ease: "none" }, tR);
-  tl.to("#e1 .aguja", { rotation: 720, svgOrigin: "100 100", duration: dReloj, ease: "none" }, tR);
+  // el arco avanza junto con la aguja: una vuelta completa = plazo cumplido
+  tl.fromTo("#e1 .arco", { attr: { "stroke-dashoffset": 540.354 } }, { attr: { "stroke-dashoffset": 0 }, duration: dReloj, ease: "none" }, tR);
+  tl.fromTo("#e1 .aguja", { rotation: 0, svgOrigin: "100 100" }, { rotation: 360, svgOrigin: "100 100", duration: dReloj, ease: "none" }, tR);
   for (let i = 0; i < Math.floor(dReloj / 0.5); i++) sfx("tick", tR + i * 0.5, 0.3);
   const cs = EE("#e1 .capsula");
   pop(cs[0], en(k, "dos días") - 0.1);
@@ -467,14 +497,31 @@ function orbitas(sel, t, hasta) {
   const tF = en(k, "El atraso");
   tl.to("#e1b .sub", { y: -40, opacity: 0.45, scale: 0.92, duration: 0.6, ease: "power3.out" }, tF - 0.4);
   sfx("succion", tF - 0.8, 0.7);
-  tl.fromTo("#e1b .balanza", { y: 260, opacity: 0 }, { y: 0, opacity: 1, duration: 0.8, ease: "expo.out" }, a + 0.9);
-  sfx("swoosh", a + 0.9, 0.5);
-  // la balanza oscila en equilibrio y se inclina hacia el empleador en «NO es neutro»
-  const tNo0 = en(k, "NO es");
-  tl.fromTo("#e1b .brazo", { rotation: -3, svgOrigin: "410 69" }, { rotation: 3, svgOrigin: "410 69", duration: 1.2, ease: "sine.inOut", yoyo: true, repeat: 3 }, a + 1.0);
-  tl.to("#e1b .brazo", { rotation: 13, svgOrigin: "410 69", duration: 0.9, ease: "elastic.out(1, 0.45)" }, tNo0);
-  tl.to("#e1b .plato.der", { y: 72, duration: 0.9, ease: "elastic.out(1, 0.45)" }, tNo0);
-  tl.to("#e1b .plato.izq", { y: -72, duration: 0.9, ease: "elastic.out(1, 0.45)" }, tNo0);
+  // balanza: entra por partes, oscila en equilibrio, cae la pesa del plazo vencido y se inclina
+  const bz = { th: 0 }, L = 325;
+  const brazo = E("#e1b .brazo"), pIzq = E("#e1b .plato.izq"), pDer = E("#e1b .plato.der");
+  const aplicar = () => {
+    const r = bz.th * Math.PI / 180, dy = L * Math.sin(r), dx = L * (1 - Math.cos(r));
+    brazo.setAttribute("transform", `rotate(${bz.th} 450 96)`);
+    pIzq.setAttribute("transform", `translate(${dx} ${-dy})`);
+    pDer.setAttribute("transform", `translate(${-dx} ${dy})`);
+  };
+  tl.fromTo("#e1b .balanza", { opacity: 0 }, { opacity: 1, duration: 0.3 }, a + 0.8);
+  tl.fromTo("#e1b .pie", { scaleY: 0, transformOrigin: "50% 100%" }, { scaleY: 1, duration: 0.6, ease: "expo.out" }, a + 0.8);
+  tl.fromTo("#e1b .balanza .brazo path, #e1b .balanza .brazo circle", { opacity: 0 }, { opacity: 1, duration: 0.4, stagger: 0.03 }, a + 1.1);
+  tl.fromTo(["#e1b .plato.izq", "#e1b .plato.der"], { opacity: 0 }, { opacity: 1, duration: 0.4, stagger: 0.1 }, a + 1.4);
+  tl.fromTo("#e1b .pesa", { y: -420, opacity: 0 }, { y: -420, opacity: 0, duration: 0.01 }, a);
+  sfx("swoosh", a + 0.8, 0.5);
+  const tV = en(k, "valen"), tNo0 = en(k, "NO es");
+  const osc = (tV - 0.2) - (a + 1.5);
+  tl.fromTo(bz, { th: 0 }, { th: -3, duration: osc / 4, ease: "sine.inOut", onUpdate: aplicar }, a + 1.5);
+  tl.to(bz, { th: 3, duration: osc / 2, ease: "sine.inOut", onUpdate: aplicar }, a + 1.5 + osc / 4);
+  tl.to(bz, { th: 0, duration: osc / 4, ease: "sine.inOut", onUpdate: aplicar }, a + 1.5 + osc * 3 / 4);
+  tl.to("#e1b .pesa", { y: 0, opacity: 1, duration: 0.45, ease: "power2.in" }, tV - 0.2);
+  sfx("succion", tV - 0.6, 0.4); sfx("impacto", tV + 0.25, 0.45);
+  tl.to(bz, { th: 7, duration: 1.0, ease: "elastic.out(1, 0.5)", onUpdate: aplicar }, tV + 0.25);
+  tl.to(bz, { th: 14, duration: 1.1, ease: "elastic.out(1, 0.4)", onUpdate: aplicar }, tNo0);
+  tl.to("#e1b .brillo", { opacity: 1, duration: 0.4 }, tNo0);
   const ps = EE("#e1b .frase .p");
   tl.fromTo(ps.slice(0, 2), { scale: 2.4, opacity: 0, filter: "blur(16px)" }, { scale: 1, opacity: 1, filter: "blur(0px)", duration: 0.35, ease: "power4.out", stagger: 0.12 }, tF);
   const tNo = en(k, "NO es");
@@ -622,22 +669,6 @@ const parts = [...Array(46)].map((_, i) => {
   const d = document.createElement("div"); d.className = "particula"; E("#particulas").appendChild(d);
   return { d, x: (i * 397) % 1920, y: (i * 233) % 1080, v: 18 + (i % 7) * 9, s: 0.5 + (i % 5) * 0.3 };
 });
-const FORMAS = [
-  ["anillo", 160, 140, 120], ["mas", 1720, 180, 54], ["cuadro", 1540, 900, 90], ["triangulo", 260, 880, 90],
-  ["punto", 980, 120, 26], ["anillo", 1820, 620, 70], ["mas", 120, 520, 40], ["cuadro", 720, 980, 56],
-  ["triangulo", 1300, 90, 60], ["punto", 1880, 1000, 20], ["anillo", 560, 60, 50], ["mas", 1080, 1020, 44],
-].map(([tipo, x, y, s], i) => {
-  const d = document.createElement("div"); d.className = "forma"; E("#formas").appendChild(d);
-  const svg = {
-    anillo: `<circle cx="50" cy="50" r="40" fill="none" stroke-width="7"/>`,
-    mas: `<path d="M50 12v76M12 50h76" stroke-width="12" stroke-linecap="round"/>`,
-    cuadro: `<rect x="14" y="14" width="72" height="72" rx="16" fill="none" stroke-width="7"/>`,
-    triangulo: `<path d="M50 12 L90 84 H10 Z" fill="none" stroke-width="7" stroke-linejoin="round"/>`,
-    punto: `<circle cx="50" cy="50" r="40"/>`,
-  }[tipo];
-  d.innerHTML = `<svg viewBox="0 0 100 100" width="${s}" height="${s}">${svg}</svg>`;
-  return { d, x, y, i, svg: d.querySelector("svg") };
-});
 function fondo(t) {
   const claro = +getComputedStyle(E("#cielo-claro")).opacity;
   manchas.forEach(({ d, x, y, v }, i) => {
@@ -648,12 +679,6 @@ function fondo(t) {
     const y = ((p.y - t * p.v) % 1180 + 1180) % 1180 - 50;
     p.d.style.transform = `translate(${p.x + Math.sin(t * 0.6 + p.x) * 30}px, ${y}px) scale(${p.s})`;
     p.d.style.background = claro > 0.5 ? "rgba(0,93,255,.35)" : "rgba(170,190,255,.7)";
-  });
-  FORMAS.forEach(({ d, x, y, i, svg }) => {
-    const col = i % 3 === 1 ? "#ff1d3d" : claro > 0.5 ? "#005dff" : "#7ea4ff";
-    svg.style.stroke = col; svg.style.fill = svg.innerHTML.includes('fill="none"') ? "none" : col;
-    d.style.opacity = claro > 0.5 ? 0.22 : 0.3;
-    d.style.transform = `translate(${x + Math.sin(t * 0.35 + i) * 40}px, ${y + Math.cos(t * 0.3 + i * 1.7) * 34}px) rotate(${t * (i % 2 ? 14 : -10) + i * 30}deg)`;
   });
   E("#rejilla").style.backgroundPosition = `0 ${t * 40}px`;
   E("#rejilla").style.opacity = 0.16 * (1 - claro);
