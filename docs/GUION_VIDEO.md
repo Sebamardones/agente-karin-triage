@@ -1,180 +1,107 @@
-# Guion del video · 3 minutos máximo
+# Guion del video · versión final
 
 Estructura que pide la pauta: **problema → demo en vivo → cómo lo construyeron.**
-Revisado el 9 de noviembre de 2026 contra la release v26 (landing `/entrar`,
-puesto de trabajo con bandejas, «Ingreso de caso» y panel de decisión).
+Versión aprobada el 9 de noviembre de 2026: **2:32**, 1920×1080, 30 cuadros
+por segundo.
 
-| Bloque | Duración | Acumulado |
-|---|---|---|
-| 1 · El problema | 0:30 | 0:30 |
-| 2 · La demo en vivo | 1:35 | 2:05 |
-| 3 · Cómo lo construimos | 0:40 | 2:45 |
-| Cierre | 0:10 | 2:55 |
+| Escena | Inicio | Duración | Bloque de la pauta |
+|---|---:|---:|---|
+| 1 · Las cifras y el plazo | 0:00 | 20,8 s | Problema |
+| 1b · «El atraso NO es neutro» | 0:21 | 9,7 s | Problema |
+| 2 · Presentación de Karin Triage | 0:30 | 6,9 s | Transición |
+| 3 · Caso nuevo procesado en vivo | 0:37 | 24,4 s | Demo en vivo |
+| 4 · El caso difícil (SINT-0002) | 1:02 | 23,9 s | Demo en vivo |
+| 5 · La persona decide | 1:26 | 19,1 s | Demo en vivo |
+| 6 · Cómo lo construimos | 1:45 | 27,7 s | Cómo lo construyeron |
+| 6b · Metas que no se negocian | 2:12 | 8,9 s | Cómo lo construyeron |
+| 7 · Cierre | 2:21 | 10,4 s | Cierre |
 
-La narración tiene unas 420 palabras: a ritmo normal (unas 155 por minuto) son
-2:40 de voz. Si el ensayo pasa de 2:55, recortar primero el bloque 3.
+## Narración
 
-La meta es **2:55**: cinco segundos de margen bajo el máximo. La demo se lleva
-más de la mitad del tiempo porque la pauta exige ver la IA generativa activa en
-la URL publicada, y eso solo se demuestra mostrándola funcionar.
+Voz «Catalina - Español Chileno» de ElevenLabs, modelo `eleven_v4`, con
+dirección de voz: etiquetas entre corchetes (no se pronuncian), MAYÚSCULAS
+para el énfasis y puntos suspensivos para las pausas. El texto con sus
+etiquetas está en [`video/narracion.json`](video/narracion.json).
 
-## Antes de grabar
+1. En veintitrés meses de Ley Karin, la Dirección del Trabajo recibió…
+   noventa y dos mil seiscientos cuarenta y tres ingresos. Más de cuatro mil
+   trescientos… al mes. Y cada uno se clasifica a mano, contra el reloj: dos
+   días hábiles para pedir medidas de resguardo. Treinta… para investigar.
+2. Si la Inspección no se pronuncia a tiempo sobre un informe interno, valen
+   las conclusiones del empleador. El atraso no es neutro.
+3. Presentamos… Karin Triage. El agente propone. Una persona decide.
+4. Llega una denuncia que el sistema nunca ha visto. Karin Triage seudonimiza
+   el relato, aplica las reglas de la ley y le pide a Claude una propuesta. En
+   segundos: procede investigar, por acoso laboral. Cada afirmación se apoya
+   en una cita literal, verificada carácter por carácter contra el texto. Y
+   como hubo contacto físico y una amenaza, el caso sube a urgencia de
+   resguardo.
+5. Ahora, el caso difícil: acoso sexual, y la persona pide conversar y llegar
+   a un acuerdo. Pero la ley es clara: el acoso sexual no va a mediación. El
+   agente propone investigar. Y si se equivocara, una regla escrita en código
+   corrige la decisión y deja constancia. Lo que no se puede equivocar, no se
+   le pregunta al modelo.
+6. La última palabra es siempre humana: confirmar, corregir o descartar. Un
+   descarte exige motivo, cita y la firma de un supervisor. Y lo que la ley
+   resuelve sola, como la denuncia de un funcionario municipal, ni siquiera
+   llega al modelo. Costo… cero.
+7. ¿Cómo lo construimos? Tres capas, en este orden. Trece reglas duras en
+   código, cada una con su prueba. Seudonimización antes de cualquier
+   llamada. Y dos llamadas a Claude, con salida validada y la ley citada al
+   pie de la letra. Medimos cada versión del prompt: de la versión dos a la
+   tres, las citas verificadas pasaron de ochenta y seis… a cien por ciento,
+   y el costo bajó un veinticinco por ciento.
+8. Y dos metas que no se negocian: cero casos de acoso sexual a mediación.
+   Cero falsos descartes.
+9. Karin Triage. Ningún caso se resuelve solo. El agente propone… una persona
+   decide.
 
-1. **Límite de gasto configurado** (`docs/LIMITE_GASTO.md`). La tanda nueva y el
-   caso en vivo gastan unos USD 0,25 en total.
-2. Abrir la URL en **incógnito**, entrar como `inspector_demo` y usar
-   «Más acciones → Crear tanda nueva». Esperar a que la bandeja muestre los
-   once casos de la tanda (pulsar «Actualizar bandeja»). Así la cola parte
-   limpia, con casos sin revisar.
-3. Revisar en esa tanda el caso **SINT-0002** (acoso sexual con pedido de
-   mediación) y anotar si aparece el aviso rojo «Una regla dura corrigió al
-   modelo». El modelo no es determinista: el texto del bloque 2.3 tiene dos
-   variantes según lo que muestre.
-4. Copiar el relato del bloque 2.2 en un editor aparte, listo para pegar.
-5. Cerrar sesión. La grabación parte en `/entrar`.
-6. Ventana a 1440×900 o 1920×1080 y zoom del navegador en 125 %: las citas
-   tienen que leerse en el video.
-7. Grabar la voz aparte si es posible, en un lugar silencioso.
+Todas las cifras salen del informe DT con corte al 30 de junio de 2026 y de
+[`MEJORA_PROMPTS.md`](MEJORA_PROMPTS.md). El ahorro de tiempo no se afirma:
+se mide en el piloto.
 
-No mostrar Config Vars, contraseñas ni la consola de Anthropic con la clave
-visible.
+## Demo en vivo
 
----
+Las tomas de la app se grabaron el 9 de noviembre de 2026 en la URL
+publicada, con una tanda nueva y un caso ingresado en ese momento. La
+propuesta que se ve es la respuesta real del modelo:
 
-## Bloque 1 · El problema (0:30)
+- **Caso nuevo:** «Procede investigación por acoso laboral», urgencia de
+  resguardo y 3 de 3 citas verificadas.
+- **SINT-0002:** el modelo propuso investigar; RD-12 elevó la urgencia. RD-10
+  no tuvo que corregir, y la narración lo dice así.
+- **Decisión:** «Confirmar propuesta» y aviso «pasó a Revisados». SINT-0004
+  (municipal) aparece sin IA.
 
-**En pantalla:** la landing `/entrar`, con las cifras animadas (92.643 · 4.305 ·
-35 %). Bajar despacio hasta la fuente.
+El relato del caso nuevo es ficticio y no contiene datos de personas. La
+sesión la inició una persona del equipo; el script de grabación nunca escribe
+contraseñas.
 
-> La Dirección del Trabajo registró 92.643 ingresos por Ley Karin en sus
-> primeros veintitrés meses: más de cuatro mil trescientos al mes en 2026.
->
-> Cada uno pasa por una pre-clasificación que hoy se hace a mano y contra el
-> reloj: dos días hábiles para pedir medidas de resguardo y treinta para
-> investigar. Si la Inspección no se pronuncia a tiempo sobre un informe
-> interno, valen las conclusiones del empleador. El atraso no es neutro.
+## Sonido
 
-**Por qué funciona:** abre con una cifra oficial y una consecuencia jurídica
-concreta, no con la tecnología.
+- **Música:** pista electrónica generada con ElevenLabs Music, con el primer
+  drop alineado a «El atraso NO es neutro». Baja bajo la voz.
+- **Efectos:** unos 115, generados con ElevenLabs (whoosh, pop, impacto, ding,
+  ticks, tecleo y clics), cada uno en el instante en que aparece o desaparece
+  un elemento. También bajan bajo la voz.
+- **Mezcla:** −15 LUFS integrados, pico real −1,3 dBTP, sin recortes.
 
----
+## Cómo reproducirlo
 
-## Bloque 2 · La demo en vivo (1:35)
+Desde la raíz del repositorio. Las claves se leen de `~/.config` y la sesión
+de `~/.cache`, fuera del repositorio. Las salidas quedan en
+`docs/video/salida/`, que no se versiona.
 
-### 2.1 · Entrar (0:10)
+```bash
+uv run --no-project --with playwright python docs/video/grabar_demo.py sesion
+uv run --no-project --with playwright python docs/video/grabar_demo.py preparar
+uv run --no-project --with playwright python docs/video/grabar_demo.py grabar ingreso sint0002 decidir
+uv run --no-project python docs/video/montaje/construir.py
+uv run --no-project --with playwright python docs/video/montaje/render.py docs/video/salida/montaje.json docs/video/salida/video-sin-audio.mp4
+uv run --no-project --with numpy python docs/video/montaje/construir.py --audio
+```
 
-**Acción:** entrar como `inspector_demo`. Cerrar la guía de bienvenida.
-
-> Somos un inspector de la DT. A la izquierda está la cola, ordenada por
-> urgencia. Todos los datos son sintéticos.
-
-### 2.2 · Un caso nuevo, procesado en vivo (0:35)
-
-**Acción:** «Ingreso de caso». Tipo «Denuncia directa», empleador
-«Comercial Los Aromos Limitada», sector privado. Pegar el relato, marcar la
-declaración y pulsar «Registrar ingreso». **Cortar la espera** en la edición
-(dejar ver un segundo de «Procesando el ingreso»). Abrir el caso cuando esté
-listo.
-
-Relato para pegar (ficticio, sin datos de personas):
-
-> Trabajo como administrativa en la oficina de una empresa ficticia desde
-> marzo. Desde hace dos meses, mi jefatura me excluye de las reuniones del
-> equipo, revisa en voz alta mis errores frente a todos y me dijo que si sigo
-> reclamando me va a dejar sin contrato en diciembre. Ayer me tomó del brazo
-> con fuerza en el pasillo para que no me fuera de la oficina. Tengo miedo de
-> volver mañana.
-
-> Ingreso un caso que el sistema no ha visto nunca. Lo seudonimiza, aplica las
-> reglas y llama al modelo dos veces: una para extraer los hechos y otra para
-> proponer.
->
-> La propuesta no viene sola: viene con **citas literales**, resaltadas en el
-> relato. El sistema verificó cada una carácter por carácter contra el texto;
-> si una no calzara, la propuesta se anula.
-
-*Solo si aparece el chip «Resguardo»:*
-
-> Y como hubo contacto físico y una amenaza, el caso sube a urgencia de
-> resguardo: es el plazo de dos días hábiles.
-
-### 2.3 · El caso difícil: SINT-0002 (0:30)
-
-**Acción:** abrir **SINT-0002** en la cola. Señalar la frase del relato donde se
-pide conversar y llegar a un acuerdo, y luego el recorrido del caso.
-
-> Este caso pone a prueba el diseño. Hay acoso sexual, y la persona pide que la
-> citen a conversar y lleguen a un acuerdo. Lo intuitivo sería mediación, y la
-> ley lo prohíbe: el artículo 211-D excluye el acoso sexual de la mediación.
-
-*Si aparece el aviso rojo «Una regla dura corrigió al modelo»:*
-
-> Y aquí el modelo se equivocó: propuso mediación. Una regla en código, RD-10,
-> lo corrigió y dejó constancia. **La parte que no se puede equivocar no se la
-> preguntamos al modelo.**
-
-*Si no aparece:*
-
-> El modelo propone investigar. Si hubiera propuesto mediación, una regla en
-> código, RD-10, lo habría corregido y dejado constancia. **La parte que no se
-> puede equivocar no se la preguntamos al modelo.**
-
-### 2.4 · La persona decide (0:20)
-
-**Acción:** en el caso del bloque 2.2, pulsar «Confirmar propuesta» y mostrar
-el aviso de la bandeja de destino. Después señalar en la cola la tarjeta de
-**SINT-0004**, con el chip «Sin IA» y la regla que lo derivó.
-
-> Yo decido: confirmo, corrijo o descarto. Un descarte exige motivo, comentario
-> y una cita, y lo valida un supervisor distinto. Nunca se descarta por falta
-> de prueba.
->
-> Y este caso es de un funcionario municipal: una regla lo deriva antes de
-> llamar al modelo. Costó cero.
-
----
-
-## Bloque 3 · Cómo lo construimos (0:40)
-
-**En pantalla:** el diagrama del flujo en el README; luego `prompts/` y la tabla
-«Mejora medida de los prompts» del README.
-
-> Tres capas, en este orden. Primero, trece reglas duras en código, cada una
-> con su test: lo que no admite interpretación no se le pregunta al modelo.
-> Segundo, seudonimización antes de cualquier llamada: si queda un dato
-> personal, el flujo se corta. Tercero, dos llamadas a Claude con salida
-> validada y el texto literal de la ley en un prefijo cacheado.
->
-> Los prompts están versionados y medidos con once casos. De la versión 2 a la
-> 3, las citas verificadas subieron de 86 a 100 por ciento y el costo bajó 25
-> por ciento. Y dos metas no se compensan: cero acoso sexual a mediación y cero
-> falsos descartes.
-
----
-
-## Cierre (0:10)
-
-**En pantalla:** la URL pública y el repositorio.
-
-> Ningún caso se resuelve solo. El agente propone; una persona decide.
-
----
-
-## Qué no decir
-
-- No prometer que reemplaza al funcionario. El argumento es el contrario.
-- No dar cifras que no estén en `docs/MEJORA_PROMPTS.md` o en la ficha. El
-  ahorro de tiempo no está medido: se mide en el piloto.
-- No mostrar GKE, ClaveÚnica ni Langfuse como si funcionaran. Si se mencionan,
-  es como hoja de ruta.
-- No leer la pantalla en voz alta. Decir lo que la pantalla **no** muestra.
-- No simular la IA con respuestas escritas a mano ni editar la propuesta.
-- No pedir disculpas por lo que falta.
-
-## Comprobación antes de subir
-
-- Duración ≤ 3:00 (meta 2:55).
-- Se ve la URL pública y la IA procesando un caso nuevo.
-- No aparece ninguna contraseña, clave ni Config Var.
-- El enlace del video es público o accesible para el profesor y queda en la
-  tabla de entregables del README.
+La narración, la música y los efectos se generan aparte con la API de
+ElevenLabs y quedan en `docs/video/salida/voz/`, `musica-electronica.mp3` y
+`sfx/`. Las tomas pasan a fotogramas clave en `salida/intra/` antes de
+renderizar.
