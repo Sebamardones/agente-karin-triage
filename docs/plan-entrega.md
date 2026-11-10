@@ -130,7 +130,7 @@ al 30 de junio de 2026. Después, en el mismo día:
 
 | # | Ítem | Estado | Evidencia |
 |---|---|---|---|
-| 1 | Video | Pendiente (fase 3) | — |
+| 1 | Video | Producido y aprobado (2:32); falta publicarlo y enlazarlo | `docs/GUION_VIDEO.md`, `docs/video/` |
 | 2 | Límite de gasto en la consola | Hecho (límite de organización, USD 20) | `docs/evidencia/limite-gasto-consola.png`. La clave de Heroku es de esa organización (confirmado por el responsable) |
 | 5 | Refuerzo de la ficha | Hecho | Plazos legales (arts. 211-B bis y 211-C) y margen del piloto por inspección (CLP 68.000–150.000 al mes, 23–50 %) en `FICHA_NEGOCIO.md`, la ficha ampliada y el PDF. El PDF se regenera con `uv run --with reportlab python docs/generar_ficha_pdf.py`, que falla si no cabe en una página |
 | 6 | Reordenar el README | Hecho | Título y URL primero; tabla de entregables (video marcado pendiente); tabla v1 → v2 → v3; diagramas bajo «Arquitectura»; correcciones movidas a `docs/CORRECCIONES_EVALUACION.md` |
