@@ -655,6 +655,9 @@ for (const k of ["e3", "e4", "e5"]) {
   const nV = { v: 5 };
   tl.fromTo(nV, { v: 5 }, { v: 9, duration: 1.0, ease: "steps(4)", onUpdate: () => { E("#m-validas").textContent = Math.round(nV.v) + "/9"; } }, tC - 0.6);
   const tCo = en(k, "el costo");
+  // la cifra del costo no se muestra hasta que empieza a contar (antes parecía un dato real de 0 %)
+  tl.set("#m-costo", { opacity: 0 }, a);
+  tl.fromTo("#m-costo", { opacity: 0, scale: 0.6 }, { opacity: 1, scale: 1, duration: 0.3, ease: "back.out(2)", immediateRender: false }, tCo);
   contar(E("#m-costo"), 0, -25.3, tCo, 1.3, v => (v < -0.05 ? "−" : "") + Math.abs(v).toFixed(1).replace(".", ",") + "%", 8);
   sfx("impacto", tCo + 1.35, 0.5); sacudir("#e6 .camara", tCo + 1.35, 8); remate("#m-costo", tCo + 1.35);
 }
