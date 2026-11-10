@@ -14,7 +14,7 @@ presentación:
 - «Ingreso de caso» (`/ingresos/nuevo`) con los campos que procesa el pipeline;
 - perfil «inspector» (usuario `inspector_demo`).
 
-La suite tiene **283 pruebas aprobadas**. El detalle de despliegues y
+La suite tiene **290 pruebas aprobadas**. El detalle de despliegues y
 verificaciones está en [VERIFICACION_PUBLICA.md](VERIFICACION_PUBLICA.md).
 
 ---

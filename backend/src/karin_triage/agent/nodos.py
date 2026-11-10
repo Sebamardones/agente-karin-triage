@@ -89,7 +89,7 @@ def fabricar_nodos(contexto: Contexto) -> dict[str, Callable[[EstadoTriage], dic
         fila = Denuncia(
             id_externo_dt=e.get("id_externo_dt") or str(uuid4()),
             tipo_ingreso=e["tipo_ingreso"], fecha_denuncia=e["fecha_denuncia"],
-            empleador=seudonimizar_texto(e["empleador"], [e["empleador"]]).texto,
+            empleador=seudonimizar_texto(e["empleador"], empresas_conocidas=[e["empleador"]]).texto,
             sector_empleador=e["sector_empleador"], texto_seudonimizado="",
             hash_contenido=e["hash_contenido"], estado="PENDIENTE_REVISION_HUMANA",
         )
@@ -119,7 +119,7 @@ def fabricar_nodos(contexto: Contexto) -> dict[str, Callable[[EstadoTriage], dic
 
     def seudonimizar(estado):
         e = estado["entrada"]
-        resultado = seudonimizar_texto(e["relato"], nombres_conocidos=[e["empleador"]])
+        resultado = seudonimizar_texto(e["relato"], empresas_conocidas=[e["empleador"]])
         sesion.get(Denuncia, estado["denuncia_id"]).texto_seudonimizado = resultado.texto
         return {"texto_seudonimizado": resultado.texto, "mapa_seudonimos": resultado.mapa}
 
@@ -162,9 +162,18 @@ def fabricar_nodos(contexto: Contexto) -> dict[str, Callable[[EstadoTriage], dic
     def contenido_denuncia(estado):
         return f"<denuncia>\n{estado['texto_seudonimizado']}\n</denuncia>"
 
+    def campos_ingreso(estado):
+        # Solo valores de catálogo (enums), nunca texto libre: no pueden traer
+        # instrucciones ni datos personales. Sin este bloque el modelo no veía el
+        # sector declarado en el formulario y lo daba por NO_DETERMINADO.
+        e = estado["entrada"]
+        return (f"<campos_ingreso>\ntipo_ingreso: {TipoIngreso(e['tipo_ingreso']).value}\n"
+                f"sector_empleador: {SectorEmpleador(e['sector_empleador']).value}\n"
+                "</campos_ingreso>")
+
     def extraer_hechos(estado):
         return ejecutar_llm(estado, "extraer_hechos_v1.md", HechosExtraidos, "low",
-                            contenido_denuncia(estado), "hechos")
+                            contenido_denuncia(estado) + "\n" + campos_ingreso(estado), "hechos")
 
     def tipificar_y_proponer(estado):
         contenido = (contenido_denuncia(estado) + "\n<hechos>\n"

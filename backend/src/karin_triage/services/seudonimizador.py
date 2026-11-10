@@ -134,8 +134,13 @@ def _categoria_nombre(valor: str) -> str:
 
 def seudonimizar(
     texto: str, nombres_conocidos: list[str] | None = None,
+    empresas_conocidas: list[str] | None = None,
 ) -> ResultadoSeudonimizacion:
     """Aplica nombres conocidos, patrones y heurística, en ese orden.
+
+    `empresas_conocidas` son nombres que vienen del campo estructurado del
+    empleador: se tokenizan siempre como EMPRESA, aunque no lleven giro ni
+    tipo societario («Municipalidad de …» no los lleva).
 
     Las variantes de mayúsculas comparten token y conservan en el mapa la
     primera grafía encontrada. Su capitalización individual no es reversible.
@@ -161,15 +166,20 @@ def seudonimizar(
                 hallazgos.append(categoria)
         return indices[clave]
 
+    empresas = {n.strip().casefold() for n in empresas_conocidas or [] if n.strip()}
+
+    def categoria_conocida(valor: str) -> str:
+        return "EMPRESA" if valor.strip().casefold() in empresas else _categoria_nombre(valor)
+
     conocidos = sorted(
-        {n for n in nombres_conocidos or [] if n.strip()},
+        {n for n in [*(nombres_conocidos or []), *(empresas_conocidas or [])] if n.strip()},
         key=lambda n: (-len(n), n.casefold(), n),
     )
     if conocidos:
         patron = re.compile(
             r"(?<!\w)(?:" + "|".join(re.escape(n) for n in conocidos) + r")(?!\w)", re.IGNORECASE
         )
-        texto = _sustituir(texto, patron, lambda m: token(_categoria_nombre(m.group()), m.group()))
+        texto = _sustituir(texto, patron, lambda m: token(categoria_conocida(m.group()), m.group()))
     for categoria, patron in _PATRONES:
         texto = _sustituir(texto, patron, lambda m, cat=categoria: token(cat, m.group()))
     # Descubre primero las grafías capitalizadas; sustituye también sus otras

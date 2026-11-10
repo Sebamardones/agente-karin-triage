@@ -58,6 +58,20 @@ def lista_reglas(reglas_aplicadas):
     return [r.strip() for r in valores if r and r.strip()]
 
 
+def regla_determinante(reglas):
+    """Regla previa que detuvo el caso, para la etiqueta «Sin IA» de la tarjeta.
+
+    RD-04 (posible duplicado) se audita siempre y queda primera en la lista,
+    pero no detiene el flujo: si otra regla previa cortó, esa es la que se
+    muestra. `aplicar_reglas_previas` corta en la primera aplicable, así que
+    la determinante es la última previa registrada.
+    """
+    previas = [r for r in reglas if r in PREVIAS and r != "RD-04"]
+    if previas:
+        return previas[-1]
+    return reglas[0] if reglas else None
+
+
 def categoria(historial, estado_revision):
     """Bandeja en la que está el caso, derivada de sus revisiones humanas."""
     if not historial:

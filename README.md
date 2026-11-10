@@ -284,7 +284,7 @@ distinto invalida el caché, y se nota en `usage.cache_read_input_tokens`.
 La interfaz es HTML renderizado en el servidor con Jinja2 y htmx, sin
 frameworks de frontend ([ADR-016](docs/adr/ADR-016-bandeja-servidor.md)). Las
 decisiones del puesto de trabajo y del perfil «inspector» están en
-[ADR-021](docs/adr/ADR-021-puesto-de-trabajo.md). Suite actual: **283 pruebas**
+[ADR-021](docs/adr/ADR-021-puesto-de-trabajo.md). Suite actual: **290 pruebas**
 (`uv run --extra dev pytest -q` en `backend/`).
 
 ## Seguridad y datos

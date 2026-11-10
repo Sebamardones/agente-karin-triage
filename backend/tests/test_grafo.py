@@ -224,3 +224,17 @@ def test_12_sin_correccion_la_decision_del_modelo_coincide(sesion):
     _, fila, _ = ejecutar(sesion)
     bloque = fila.justificacion_y_citas[0]
     assert bloque["decision_modelo"] == fila.decision == "PROCEDE_INVESTIGACION"
+
+
+def test_empleador_municipal_se_guarda_como_empresa(sesion):
+    _, fila, _ = ejecutar(sesion, "G-04")
+    assert sesion.get(Denuncia, fila.denuncia_id).empleador == "[EMPRESA_1]"
+
+
+def test_extraccion_recibe_sector_y_tipo_de_ingreso(sesion):
+    estado, _, modelo = ejecutar(sesion, "G-01")
+    extraccion = modelo.llamadas[0]["contenido_usuario"]
+    assert "<campos_ingreso>\ntipo_ingreso: DIRECTA\nsector_empleador: PRIVADO\n" in extraccion
+    # El bloque va fuera de <denuncia>: el relato que se cita no cambia.
+    denuncia = extraccion.split("<denuncia>\n")[1].split("\n</denuncia>")[0]
+    assert denuncia == estado["texto_seudonimizado"]

@@ -2,7 +2,7 @@
 <li class="tarjeta-caso{% if fila.p.urgencia_resguardo %} es-urgente{% endif %}" id="fila-{{ fila.denuncia.id }}" data-id="{{ fila.denuncia.id }}">
 <a class="tarjeta-enlace" href="/casos/{{ fila.denuncia.id }}?bandeja={{ bandeja }}" data-caso="{{ fila.denuncia.id }}" data-bandeja="{{ bandeja }}">
 <span class="tarjeta-fila"><strong class="tarjeta-id">{{ fila.denuncia.id_externo_dt }}</strong><span class="tarjeta-tiempo">{{ icono('reloj') }}{{ fila.tiempo }}</span></span>
-<span class="tarjeta-chips">{% if fila.p.urgencia_resguardo %}<span class="chip chip-urgente">{{ icono('alerta') }}Resguardo</span>{% endif %}<span class="chip {{ fila.chip[1] }}">{{ fila.chip[0] }}</span>{% if not fila.uso_ia %}<span class="chip chip-neutro">{{ icono('escudo') }}Sin IA{% if fila.reglas %} · {{ fila.reglas[0] }}{% endif %}</span>{% endif %}<span class="etiqueta etiqueta-nueva">Nuevo</span></span>
+<span class="tarjeta-chips">{% if fila.p.urgencia_resguardo %}<span class="chip chip-urgente">{{ icono('alerta') }}Resguardo</span>{% endif %}<span class="chip {{ fila.chip[1] }}">{{ fila.chip[0] }}</span>{% if not fila.uso_ia %}<span class="chip chip-neutro">{{ icono('escudo') }}Sin IA{% if fila.regla_determinante %} · {{ fila.regla_determinante }}{% endif %}</span>{% endif %}<span class="etiqueta etiqueta-nueva">Nuevo</span></span>
 <span class="tarjeta-conducta">{{ fila.p.tipo_conducta|etiqueta if fila.p.tipo_conducta else 'Sin conducta tipificada' }}</span>
 {% if fila.extracto %}<span class="tarjeta-extracto">«{{ fila.extracto }}»</span>{% endif %}
 <span class="tarjeta-estado">{{ fila.estado_revision }}</span>

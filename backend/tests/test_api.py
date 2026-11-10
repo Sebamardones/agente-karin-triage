@@ -691,3 +691,34 @@ def test_bandeja_abre_sin_caso_preseleccionado(entorno):
     html = entorno[0].get("/").text
     assert 'id="panel-caso"' not in html and "Elige un caso de la cola" in html
     assert "seleccionada" not in html
+
+
+def test_tarjeta_sin_ia_muestra_la_regla_que_detuvo_el_caso_y_no_rd04():
+    from karin_triage.api.presentacion import regla_determinante
+    assert regla_determinante(["RD-04", "RD-02"]) == "RD-02"
+    assert regla_determinante(["DET-INY", "RD-04", "RD-01"]) == "RD-01"
+    assert regla_determinante(["RD-04"]) == "RD-04"
+    assert regla_determinante([]) is None
+
+
+def test_bandeja_duplicado_publico_etiqueta_rd02(entorno):
+    identificador = caso(entorno, decision=None)
+    with Session(entorno[1]) as sesion:
+        p = sesion.scalar(select(Preclasificacion))
+        p.justificacion_y_citas, p.reglas_aplicadas = [], "RD-04,RD-02"
+        p.estado_auxiliar, p.marcas_pipeline = "DERIVAR_OTRA_INSTITUCION", ""
+        sesion.commit()
+    login(entorno[0])
+    html = entorno[0].get(f"/casos/{identificador}").text
+    assert "Sin IA · RD-02" in html and "Sin IA · RD-04" not in html
+
+
+def test_metrica_de_coincidencia_en_cifras_absolutas(entorno):
+    cliente, _ = entorno
+    login(cliente)
+    a = caso(entorno, externo="CORRECCION")
+    b = caso(entorno, externo="CONFIRMACION")
+    revision(cliente, a)
+    revision(cliente, b, decision="PROCEDE_INVESTIGACION")
+    html = cliente.get("/bandeja/contenido?bandeja=revisados").text
+    assert "1 de 2</strong> propuestas confirmadas sin cambios" in html

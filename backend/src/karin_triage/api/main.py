@@ -102,6 +102,8 @@ def datos_fila(sesion, denuncia, propuesta):
             "chip": presentacion.CHIP_DECISION.get(clave, ("Sin propuesta", "chip-neutro")),
             "uso_ia": presentacion.uso_ia(propuesta),
             "reglas": presentacion.lista_reglas(propuesta.reglas_aplicadas),
+            "regla_determinante": presentacion.regla_determinante(
+                presentacion.lista_reglas(propuesta.reglas_aplicadas)),
             "extracto": presentacion.extracto(propuesta),
             "tiempo": presentacion.tiempo_relativo(denuncia.fecha_ingesta)}
 
@@ -287,6 +289,7 @@ def crear_app(ajustes=None, motor=None):
                 RevisionHumana.creado_en >= hoy)) or 0,
             "coincidencia": round(100 * coinciden / len(primeras)) if primeras else None,
             "primeras": len(primeras),
+            "coinciden": coinciden,
             "sin_ia": sum(1 for f in vigentes if not f["uso_ia"]),
         }
 

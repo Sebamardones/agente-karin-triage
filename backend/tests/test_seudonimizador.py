@@ -218,3 +218,25 @@ def test_limitacion_aceptada_nombre_solo_en_mayusculas():
     con_capa_uno = seudonimizar(texto, nombres_conocidos=["Marcela Oyarzun"])
     assert "MARCELA OYARZUN" not in con_capa_uno.texto
     assert "[PERSONA_1]" in con_capa_uno.texto
+
+
+# --- Empleador del campo estructurado ---------------------------------------
+# El nombre del empleador llega en un campo propio y siempre es una entidad,
+# aunque no lleve giro ni tipo societario. Antes se clasificaba por heurística
+# y «Municipalidad de Villa Sintetica» terminaba como [PERSONA_1].
+
+def test_empleador_conocido_se_tokeniza_como_empresa_sin_tipo_societario():
+    resultado = seudonimizar("Municipalidad de Villa Sintetica",
+                             empresas_conocidas=["Municipalidad de Villa Sintetica"])
+    assert resultado.texto == "[EMPRESA_1]"
+    assert resultado.mapa == {"[EMPRESA_1]": "Municipalidad de Villa Sintetica"}
+
+
+def test_empleador_conocido_en_el_relato_es_empresa_y_la_persona_sigue_siendo_persona():
+    resultado = seudonimizar(
+        "Trabajo en Hospital Sintetico Norte y mi jefa Ana Sintetica me grita.",
+        empresas_conocidas=["Hospital Sintetico Norte"],
+    )
+    assert "[EMPRESA_1]" in resultado.texto
+    assert "[PERSONA_1]" in resultado.texto
+    assert resultado.mapa["[EMPRESA_1]"] == "Hospital Sintetico Norte"
