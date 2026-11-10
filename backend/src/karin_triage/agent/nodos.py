@@ -172,8 +172,17 @@ def fabricar_nodos(contexto: Contexto) -> dict[str, Callable[[EstadoTriage], dic
                 "</campos_ingreso>")
 
     def extraer_hechos(estado):
-        return ejecutar_llm(estado, "extraer_hechos_v1.md", HechosExtraidos, "low",
-                            contenido_denuncia(estado) + "\n" + campos_ingreso(estado), "hechos")
+        cambios = ejecutar_llm(estado, "extraer_hechos_v1.md", HechosExtraidos, "low",
+                               contenido_denuncia(estado) + "\n" + campos_ingreso(estado),
+                               "hechos")
+        # El sector declarado en el ingreso es un dato, no una hipótesis: si es
+        # PRIVADO o PUBLICO, prevalece sobre lo que el modelo infiera del relato
+        # (p. ej., «apoderados» no hace público a un colegio particular). El
+        # modelo solo infiere el sector cuando el ingreso lo dejó NO_DETERMINADO.
+        declarado = SectorEmpleador(estado["entrada"]["sector_empleador"])
+        if cambios.get("hechos") and declarado != SectorEmpleador.NO_DETERMINADO:
+            cambios["hechos"]["empleador_sector"] = declarado.value
+        return cambios
 
     def tipificar_y_proponer(estado):
         contenido = (contenido_denuncia(estado) + "\n<hechos>\n"

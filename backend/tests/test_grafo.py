@@ -238,3 +238,20 @@ def test_extraccion_recibe_sector_y_tipo_de_ingreso(sesion):
     # El bloque va fuera de <denuncia>: el relato que se cita no cambia.
     denuncia = extraccion.split("<denuncia>\n")[1].split("\n</denuncia>")[0]
     assert denuncia == estado["texto_seudonimizado"]
+
+
+class ModeloQueInfierePublico(ModeloFalso):
+    """Simula al modelo que deduce PUBLICO del relato pese al ingreso PRIVADO."""
+
+    def __call__(self, **kw):
+        respuesta = super().__call__(**kw)
+        if kw["formato"] is HechosExtraidos:
+            from dataclasses import replace
+            return replace(respuesta, datos=respuesta.datos.model_copy(
+                update={"empleador_sector": "PUBLICO"}))
+        return respuesta
+
+
+def test_sector_declarado_prevalece_sobre_la_inferencia_del_modelo(sesion):
+    estado, _, _ = ejecutar(sesion, "G-01", ModeloQueInfierePublico())
+    assert estado["hechos"]["empleador_sector"] == "PRIVADO"

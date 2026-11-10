@@ -41,7 +41,8 @@ relación laboral declarada: eso es un supuesto, no un hecho del texto.
 empleador como un órgano de la Administración del Estado, una municipalidad, un
 servicio público o un establecimiento municipal. `PRIVADO` si lo identifican
 como empresa, sociedad, comercio o establecimiento particular.
-`NO_DETERMINADO` si no hay elementos. Un nombre seudonimizado como
+`NO_DETERMINADO` si no hay elementos. Si `<campos_ingreso>` declara
+`PRIVADO` o `PUBLICO`, usa ese valor: el código lo fija de todos modos. Un nombre seudonimizado como
 `[EMPRESA_1]` no te dice el sector por sí solo: busca la descripción.
 
 **`conductas_descritas`** — Una entrada por cada conducta concreta que el relato
