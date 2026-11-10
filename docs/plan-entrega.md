@@ -136,7 +136,7 @@ al 30 de junio de 2026. Después, en el mismo día:
 | 6 | Reordenar el README | Hecho | Título y URL primero; tabla de entregables (video marcado pendiente); tabla v1 → v2 → v3; diagramas bajo «Arquitectura»; correcciones movidas a `docs/CORRECCIONES_EVALUACION.md` |
 | 7 | Consistencia de documentos | Parcial | El README decía que `tipificar_v2.md` estaba en uso; el código usa `tipificar_v3.md` (`agent/nodos.py:49`). Corregido |
 | 8 | Escaneo de secretos con herramienta dedicada | Pendiente (requiere aprobar una dependencia) | — |
-| 9 | Verificación final en incógnito | Pendiente (13 nov) | — |
+| 9 | Verificación en incógnito | Hecha por el responsable el 9 de noviembre, sobre la release v27 | Si se despliega algo antes del 13 nov, repetirla |
 | 10 | Tildes del golden set | No iniciado (gasta API) | — |
 
 Las referencias `README.md:N` de la auditoría de arriba corresponden al README
