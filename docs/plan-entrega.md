@@ -130,12 +130,12 @@ al 30 de junio de 2026. Después, en el mismo día:
 
 | # | Ítem | Estado | Evidencia |
 |---|---|---|---|
-| 1 | Video | Producido y aprobado (2:32); falta publicarlo y enlazarlo | `docs/GUION_VIDEO.md`, `docs/video/` |
+| 1 | Video | Hecho: aprobado (2:32) y publicado en Google Drive; el enlace abre sin sesión (HTTP 200) | [video](https://drive.google.com/file/d/1Jx_mQYaCTQnniF7c6qNfBF4t7PFV-HgJ/view?usp=share_link), `docs/GUION_VIDEO.md` |
 | 2 | Límite de gasto en la consola | Hecho (límite de organización, USD 20) | `docs/evidencia/limite-gasto-consola.png`. La clave de Heroku es de esa organización (confirmado por el responsable) |
 | 5 | Refuerzo de la ficha | Hecho | Plazos legales (arts. 211-B bis y 211-C) y margen del piloto por inspección (CLP 68.000–150.000 al mes, 23–50 %) en `FICHA_NEGOCIO.md`, la ficha ampliada y el PDF. El PDF se regenera con `uv run --with reportlab python docs/generar_ficha_pdf.py`, que falla si no cabe en una página |
 | 6 | Reordenar el README | Hecho | Título y URL primero; tabla de entregables (video marcado pendiente); tabla v1 → v2 → v3; diagramas bajo «Arquitectura»; correcciones movidas a `docs/CORRECCIONES_EVALUACION.md` |
 | 7 | Consistencia de documentos | Parcial | El README decía que `tipificar_v2.md` estaba en uso; el código usa `tipificar_v3.md` (`agent/nodos.py:49`). Corregido |
-| 8 | Escaneo de secretos con herramienta dedicada | Pendiente (requiere aprobar una dependencia) | — |
+| 8 | Escaneo de secretos con herramienta dedicada | Hecho: gitleaks 8.30.1 (instalado en el equipo, no en el proyecto), sin hallazgos | `gitleaks git . --log-opts="--all"`: 43 commits; `gitleaks dir .`: árbol de trabajo completo, 1,5 GB |
 | 9 | Verificación en incógnito | Hecha por el responsable el 9 de noviembre, sobre la release v27 | Si se despliega algo antes del 13 nov, repetirla |
 | 10 | Tildes del golden set | No iniciado (gasta API) | — |
 

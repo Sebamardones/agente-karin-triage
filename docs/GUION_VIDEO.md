@@ -4,6 +4,8 @@ Estructura que pide la pauta: **problema → demo en vivo → cómo lo construye
 Versión aprobada el 9 de noviembre de 2026: **2:32**, 1920×1080, 30 cuadros
 por segundo.
 
+**Video publicado:** [Google Drive](https://drive.google.com/file/d/1Jx_mQYaCTQnniF7c6qNfBF4t7PFV-HgJ/view?usp=share_link).
+
 | Escena | Inicio | Duración | Bloque de la pauta |
 |---|---:|---:|---|
 | 1 · Las cifras y el plazo | 0:00 | 20,8 s | Problema |

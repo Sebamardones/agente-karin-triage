@@ -16,7 +16,7 @@ la plataforma del curso; no están en este repositorio. Solo casos sintéticos.
 |---|---|
 | Software funcionando | [URL pública](https://karin-triage-grupo7-c7c6a3fb2988.herokuapp.com/) · [cómo usarlo](#cómo-usar-la-aplicación) |
 | Ficha de negocio (1 página) | [`docs/FICHA_NEGOCIO.pdf`](docs/FICHA_NEGOCIO.pdf) · [versión extendida](docs/FICHA_NEGOCIO.md) · [caso ampliado](https://karin-triage-grupo7-c7c6a3fb2988.herokuapp.com/estaticos/ficha-negocio.html) |
-| Video demo (≤ 3 min) | Producido y aprobado (2:32). **Enlace pendiente de publicación.** Guion y montaje: [`docs/GUION_VIDEO.md`](docs/GUION_VIDEO.md) |
+| Video demo (≤ 3 min) | [Ver el video en Google Drive](https://drive.google.com/file/d/1Jx_mQYaCTQnniF7c6qNfBF4t7PFV-HgJ/view?usp=share_link) (2:32) · guion y montaje: [`docs/GUION_VIDEO.md`](docs/GUION_VIDEO.md) |
 | Prompt maestro | [`PROMPT_MAESTRO.md`](PROMPT_MAESTRO.md) |
 | Prompts versionados | [`prompts/`](prompts/) · [mejora medida v1 → v3](#mejora-medida-de-los-prompts) |
 | Golden set | [`golden_set/denuncias.jsonl`](golden_set/denuncias.jsonl), 11 casos sintéticos |
