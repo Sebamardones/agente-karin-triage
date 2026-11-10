@@ -1,0 +1,391 @@
+<!doctype html>
+<html lang="es">
+<head>
+<meta charset="utf-8">
+<title>Karin Triage · video</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800;900&family=JetBrains+Mono:wght@500;700&display=swap">
+<script src="https://cdnjs.cloudflare.com/ajax/libs/gsap/3.12.5/gsap.min.js"></script>
+<style>
+  /* Paleta de la app (estilo.css) */
+  :root {
+    --navy: #25306b; --cobalt: #193a97; --azul: #005dff; --azul-emblema: #006bb9;
+    --rojo: #ff1d3d; --niebla: #edf0f5; --hielo: #cfe2ff; --rubor: #fdd1d5;
+    --noche: #0b1024; --tinta: #0f1733; --blanco: #fff;
+    --sans: Inter, system-ui, sans-serif; --mono: "JetBrains Mono", ui-monospace, monospace;
+  }
+  * { box-sizing: border-box; margin: 0; padding: 0; }
+  html, body { width: 1920px; height: 1080px; overflow: hidden; background: var(--noche); }
+  body { font-family: var(--sans); -webkit-font-smoothing: antialiased; }
+  #lienzo { position: relative; width: 1920px; height: 1080px; overflow: hidden; }
+
+  .escena { position: absolute; inset: 0; opacity: 0; visibility: hidden; }
+  .oscura { background: radial-gradient(1200px 700px at 30% 20%, #18245a 0%, var(--noche) 60%); color: var(--blanco); }
+  .clara { background: radial-gradient(1400px 900px at 70% 10%, #ffffff 0%, var(--niebla) 70%); color: var(--navy); }
+  .grano::after { content: ""; position: absolute; inset: 0; pointer-events: none; opacity: .06;
+    background-image: radial-gradient(rgba(255,255,255,.7) 1px, transparent 1px); background-size: 3px 3px; }
+
+  .ceja { position: absolute; left: 140px; top: 110px; font: 700 20px/1 var(--mono); letter-spacing: .14em;
+          text-transform: uppercase; display: flex; align-items: center; gap: 14px; }
+  .ceja::before { content: ""; width: 10px; height: 10px; border-radius: 50%; background: var(--azul); box-shadow: 0 0 0 6px rgba(0,93,255,.18); }
+  .oscura .ceja { color: #9fb2ff; }
+  .clara .ceja { color: var(--cobalt); }
+
+  .titular { font-weight: 850; letter-spacing: -0.035em; line-height: 1.02; }
+  .acento { color: var(--azul); }
+  .oscura .acento { color: #4d8dff; }
+  .rojo { color: var(--rojo); }
+  .linea { display: block; overflow: hidden; padding-bottom: .08em; }
+  .linea > span { display: inline-block; }
+
+  /* --- Escena 1: el problema ---------------------------------------------- */
+  #e1 .cifra { position: absolute; left: 140px; top: 220px; font: 900 260px/1 var(--sans); letter-spacing: -0.05em;
+               font-variant-numeric: tabular-nums; background: linear-gradient(180deg, #fff 30%, #9fb2ff); -webkit-background-clip: text; color: transparent; }
+  #e1 .rotulo { position: absolute; left: 150px; top: 500px; font: 600 44px/1.2 var(--sans); color: #c9d4ff; }
+  #e1 .mes { position: absolute; left: 140px; top: 620px; font-size: 96px; }
+  #e1 .mano { position: absolute; left: 140px; top: 760px; font-size: 96px; color: #c9d4ff; }
+  #e1 .reloj { position: absolute; right: 180px; top: 230px; width: 520px; height: 520px; }
+  #e1 .reloj circle { fill: none; stroke-width: 18; }
+  #e1 .plazos { position: absolute; right: 180px; top: 800px; display: flex; flex-direction: column; align-items: flex-end; gap: 18px; }
+  .capsula { font: 700 34px/1 var(--sans); padding: 20px 30px; border-radius: 999px; background: rgba(255,255,255,.08);
+             border: 2px solid rgba(255,255,255,.18); color: #fff; backdrop-filter: blur(6px); white-space: nowrap; }
+  .capsula b { color: #ff6b80; }
+  #e1b .frase { position: absolute; left: 0; right: 0; top: 380px; text-align: center; font-size: 132px; }
+  #e1b .sub { position: absolute; left: 0; right: 0; top: 640px; text-align: center; font: 500 40px/1.35 var(--sans); color: #c9d4ff; }
+  .neutro { position: relative; display: inline-block; }
+  .trazo { position: absolute; left: 0; width: 100%; bottom: -0.12em; height: 0.17em; overflow: visible; }
+  .trazo path { fill: none; stroke: var(--rojo); stroke-width: 7; stroke-linecap: round; }
+
+  /* --- Escena 2: marca ------------------------------------------------------ */
+  #e2 .marca { position: absolute; left: 0; right: 0; top: 330px; display: flex; justify-content: center; align-items: center; gap: 36px; }
+  #e2 .marca img { width: 150px; height: 150px; }
+  #e2 .marca h1 { font-size: 168px; }
+  #e2 .lema { position: absolute; left: 0; right: 0; top: 600px; text-align: center; font-size: 74px; }
+  .pildora { display: inline-block; padding: 0 .28em; border-radius: .3em; background: var(--azul); color: #fff; }
+
+  /* --- Ventanas con tomas de la app --------------------------------------- */
+  .ventana { position: absolute; border-radius: 22px; overflow: hidden; background: #fff;
+             box-shadow: 0 60px 120px -30px rgba(15,23,51,.45), 0 0 0 1px rgba(15,23,51,.08); transform-style: preserve-3d; }
+  .ventana .barra { height: 46px; background: #f3f5f9; display: flex; align-items: center; gap: 9px; padding: 0 18px; border-bottom: 1px solid #e3e7ef; }
+  .ventana .barra i { width: 13px; height: 13px; border-radius: 50%; background: #d7dce6; }
+  .ventana .barra i:nth-child(1) { background: #ff5f57; } .ventana .barra i:nth-child(2) { background: #febc2e; } .ventana .barra i:nth-child(3) { background: #28c840; }
+  .ventana .url { margin-left: 16px; flex: 1; height: 28px; border-radius: 8px; background: #fff; border: 1px solid #e3e7ef;
+                  font: 500 15px/28px var(--mono); color: #5a6577; padding: 0 12px; }
+  .ventana .vista { position: relative; overflow: hidden; }
+  .ventana video { position: absolute; left: 0; top: 0; width: 100%; height: 100%; object-fit: cover; transform-origin: 0 0; }
+
+  .lado { position: absolute; left: 120px; width: 560px; }
+  .lado .titular { font-size: 76px; }
+  .lado p { margin-top: 28px; font: 500 30px/1.4 var(--sans); color: var(--cobalt); }
+  .globo { position: absolute; padding: 20px 26px; border-radius: 18px; background: #fff; color: var(--navy);
+           font: 700 28px/1.25 var(--sans); box-shadow: 0 30px 60px -20px rgba(15,23,51,.35), 0 0 0 1px rgba(15,23,51,.06);
+           display: flex; align-items: center; gap: 14px; white-space: nowrap; }
+  .globo .ico { width: 40px; height: 40px; border-radius: 50%; display: grid; place-items: center; color: #fff; font-size: 24px; background: var(--azul); flex: none; }
+  .globo.alerta .ico { background: var(--rojo); }
+  .globo.ok .ico { background: #13a35b; }
+  .progreso { position: absolute; height: 6px; border-radius: 3px; background: rgba(0,93,255,.15); overflow: hidden; }
+  .progreso b { display: block; height: 100%; width: 100%; background: var(--azul); transform-origin: 0 50%; }
+
+  /* --- Escena 6: cómo se construyó ---------------------------------------- */
+  #e6 .capas { position: absolute; left: 140px; top: 300px; width: 760px; }
+  .capa { display: flex; align-items: center; gap: 26px; padding: 30px 34px; border-radius: 22px; margin-bottom: 22px;
+          background: rgba(255,255,255,.06); border: 1px solid rgba(255,255,255,.14); }
+  .capa .n { font: 900 64px/1 var(--sans); color: #4d8dff; min-width: 110px; }
+  .capa h3 { font: 800 38px/1.1 var(--sans); }
+  .capa p { font: 500 24px/1.35 var(--sans); color: #b7c3f0; margin-top: 6px; }
+  #e6 .metricas { position: absolute; right: 140px; top: 300px; width: 820px; display: grid; gap: 22px; }
+  .metrica { padding: 28px 34px; border-radius: 22px; background: rgba(255,255,255,.06); border: 1px solid rgba(255,255,255,.14); }
+  .metrica .v { font: 900 92px/1 var(--sans); letter-spacing: -0.03em; font-variant-numeric: tabular-nums; }
+  .metrica .v small { font-size: 54px; color: #8ea2e8; margin: 0 14px; }
+  .metrica .l { font: 600 26px/1.3 var(--sans); color: #b7c3f0; margin-top: 10px; }
+  #e6b .ceros { position: absolute; left: 0; right: 0; top: 280px; display: flex; justify-content: center; gap: 120px; }
+  #e6b .cero { text-align: center; width: 640px; }
+  #e6b .cero .v { font: 900 300px/1 var(--sans); background: linear-gradient(180deg, #fff 40%, #7ea4ff); -webkit-background-clip: text; color: transparent; }
+  #e6b .cero .l { font: 700 40px/1.25 var(--sans); color: #c9d4ff; margin-top: 10px; }
+  #e6b .pie { position: absolute; left: 0; right: 0; top: 860px; text-align: center; font: 600 34px/1 var(--sans); color: #8ea2e8; }
+
+  /* --- Escena 7: cierre ----------------------------------------------------- */
+  #e7 .marca { position: absolute; left: 0; right: 0; top: 250px; display: flex; justify-content: center; align-items: center; gap: 30px; }
+  #e7 .marca img { width: 120px; height: 120px; }
+  #e7 .marca h1 { font-size: 140px; }
+  #e7 .lema { position: absolute; left: 0; right: 0; top: 470px; text-align: center; font: 600 46px/1.3 var(--sans); color: var(--cobalt); }
+  #e7 .boton { position: absolute; left: 50%; top: 610px; transform: translateX(-50%); padding: 28px 54px; border-radius: 999px;
+               background: var(--azul); color: #fff; font: 700 36px/1 var(--sans); box-shadow: 0 20px 60px -10px rgba(0,93,255,.6); white-space: nowrap; }
+  #e7 .url { position: absolute; left: 0; right: 0; top: 740px; text-align: center; font: 600 28px/1 var(--mono); color: var(--navy); }
+  #e7 .repo { position: absolute; left: 0; right: 0; top: 790px; text-align: center; font: 500 24px/1 var(--mono); color: #5a6577; }
+  #e7 .equipo { position: absolute; left: 0; right: 0; bottom: 70px; text-align: center; font: 500 22px/1 var(--sans); color: #5a6577; }
+  #cursor { position: absolute; left: 0; top: 0; width: 44px; height: 44px; z-index: 50; opacity: 0; }
+
+  .franja-sintetico { position: absolute; left: 50%; bottom: 34px; transform: translateX(-50%); z-index: 40;
+                      font: 600 18px/1 var(--mono); letter-spacing: .08em; text-transform: uppercase; color: rgba(255,255,255,.55); }
+  .clara ~ .franja-sintetico { color: rgba(37,48,107,.5); }
+</style>
+</head>
+<body>
+<div id="lienzo">
+
+  <!-- 1 · El problema -->
+  <section class="escena oscura grano" id="e1">
+    <div class="ceja">Ley Karin · agosto 2024 – junio 2026</div>
+    <div class="cifra" data-contar="92643">0</div>
+    <div class="rotulo">ingresos en 23 meses · Dirección del Trabajo</div>
+    <div class="titular mes"><span class="linea"><span><span class="acento">4.305</span> al mes.</span></span></div>
+    <div class="titular mano"><span class="linea"><span>Clasificados a mano.</span></span></div>
+    <svg class="reloj" viewBox="0 0 200 200">
+      <circle cx="100" cy="100" r="86" stroke="rgba(255,255,255,.1)"/>
+      <circle class="arco" cx="100" cy="100" r="86" stroke="#ff1d3d" stroke-linecap="round" transform="rotate(-90 100 100)" pathLength="1" stroke-dasharray="1" stroke-dashoffset="1"/>
+      <line class="aguja" x1="100" y1="100" x2="100" y2="34" stroke="#fff" stroke-width="7" stroke-linecap="round"/>
+      <circle cx="100" cy="100" r="9" fill="#fff"/>
+    </svg>
+    <div class="plazos"><span class="capsula"><b>2</b> días hábiles · resguardo</span><span class="capsula"><b>30</b> días · investigación</span></div>
+  </section>
+
+  <section class="escena oscura grano" id="e1b">
+    <div class="titular frase"><span class="linea" style="padding-bottom:.3em"><span>El atraso no es <span class="rojo neutro">neutro.<svg class="trazo" viewBox="0 0 400 22" preserveAspectRatio="none"><path d="M4 14 C 120 4, 280 4, 396 12" pathLength="1" stroke-dasharray="1" stroke-dashoffset="1"/></svg></span></span></span></div>
+    <div class="sub">Si la Inspección no se pronuncia a tiempo sobre un informe interno,<br>valen las conclusiones del empleador.</div>
+  </section>
+
+  <!-- 2 · Marca -->
+  <section class="escena clara" id="e2">
+    <div class="marca"><img src="logo-dt.svg" alt=""><h1 class="titular">Karin <span class="acento">Triage</span></h1></div>
+    <div class="titular lema"><span class="linea"><span>El agente propone. Una persona <span class="pildora">decide.</span></span></span></div>
+  </section>
+
+  <!-- 3 · Caso nuevo en vivo -->
+  <section class="escena clara" id="e3">
+    <div class="ceja">IA en vivo · caso que el sistema nunca vio</div>
+    <div class="lado" style="top: 300px">
+      <div class="titular"><span class="linea"><span>Una denuncia nueva.</span></span><span class="linea"><span class="acento">Una propuesta</span></span><span class="linea"><span class="acento">con pruebas.</span></span></div>
+      <p class="texto">Seudonimiza, aplica las reglas de la ley y pide a Claude una propuesta con citas literales.</p>
+    </div>
+    <div class="ventana" data-clip="ingreso" style="left: 760px; top: 225px; width: 1060px; height: 642px">
+      <div class="barra"><i></i><i></i><i></i><div class="url">karin-triage-grupo7.herokuapp.com/ingresos/nuevo</div></div>
+      <div class="vista" style="height: 596px"><video muted playsinline preload="auto"></video></div>
+    </div>
+    <div class="globo ok" id="g-citas" style="left: 640px; top: 820px"><span class="ico">✓</span>Cada cita, verificada carácter por carácter</div>
+    <div class="globo alerta" id="g-urgencia" style="left: 1240px; top: 110px"><span class="ico">!</span>Urgencia de resguardo</div>
+  </section>
+
+  <!-- 4 · El caso difícil -->
+  <section class="escena clara" id="e4">
+    <div class="ceja">El caso difícil · SINT-0002</div>
+    <div class="lado" style="top: 300px">
+      <div class="titular"><span class="linea"><span>Acoso sexual</span></span><span class="linea"><span><span class="rojo">no</span> va a</span></span><span class="linea"><span>mediación.</span></span></div>
+      <p class="texto">Art. 211-D: mediar sería sentar a la víctima a negociar con quien la acosó.</p>
+    </div>
+    <div class="ventana" data-clip="sint0002" style="left: 760px; top: 225px; width: 1060px; height: 642px">
+      <div class="barra"><i></i><i></i><i></i><div class="url">karin-triage-grupo7.herokuapp.com/casos/SINT-0002</div></div>
+      <div class="vista" style="height: 596px"><video muted playsinline preload="auto"></video></div>
+    </div>
+    <div class="globo" id="g-rd10" style="left: 600px; top: 840px"><span class="ico">⚖</span>RD-10: una regla en código, no en el prompt</div>
+  </section>
+
+  <!-- 5 · La persona decide -->
+  <section class="escena clara" id="e5">
+    <div class="ceja">Revisión humana</div>
+    <div class="lado" style="top: 300px">
+      <div class="titular"><span class="linea"><span>La última</span></span><span class="linea"><span>palabra es</span></span><span class="linea"><span class="acento">humana.</span></span></div>
+      <p class="texto">Confirmar, corregir o descartar. Un descarte exige motivo, cita y la firma de un supervisor.</p>
+    </div>
+    <div class="ventana" data-clip="decidir" style="left: 760px; top: 225px; width: 1060px; height: 642px">
+      <div class="barra"><i></i><i></i><i></i><div class="url">karin-triage-grupo7.herokuapp.com</div></div>
+      <div class="vista" style="height: 596px"><video muted playsinline preload="auto"></video></div>
+    </div>
+    <div class="globo ok" id="g-cero" style="left: 1120px; top: 880px"><span class="ico">$</span>Funcionario municipal · sin IA · costo cero</div>
+  </section>
+
+  <!-- 6 · Cómo lo construimos -->
+  <section class="escena oscura grano" id="e6">
+    <div class="ceja">Cómo lo construimos</div>
+    <div class="capas">
+      <div class="capa"><span class="n">13</span><div><h3>Reglas duras en código</h3><p>Cada una con su prueba. Lo que no admite interpretación no se le pregunta al modelo.</p></div></div>
+      <div class="capa"><span class="n">1º</span><div><h3>Seudonimizar antes de llamar</h3><p>Si queda un dato personal en el relato, el flujo se corta y el caso no sale.</p></div></div>
+      <div class="capa"><span class="n">2</span><div><h3>Llamadas a Claude</h3><p>Salida validada y la ley citada al pie de la letra, en un prefijo cacheado.</p></div></div>
+    </div>
+    <div class="metricas">
+      <div class="metrica"><div class="v">86%<small>→</small><span class="acento" data-contar="100" data-sufijo="%">0%</span></div><div class="l">citas verificadas · prompt v2 → v3</div></div>
+      <div class="metrica"><div class="v">5/9<small>→</small><span class="acento">9/9</span></div><div class="l">respuestas válidas sin reintento</div></div>
+      <div class="metrica"><div class="v"><span class="acento" data-contar="-25" data-sufijo="%">0%</span></div><div class="l">costo por corrida del golden set (11 casos)</div></div>
+    </div>
+  </section>
+
+  <section class="escena oscura grano" id="e6b">
+    <div class="ceja">Metas que no se negocian</div>
+    <div class="ceros">
+      <div class="cero"><div class="v">0</div><div class="l">casos de acoso sexual<br>enviados a mediación</div></div>
+      <div class="cero"><div class="v">0</div><div class="l">falsos descartes</div></div>
+    </div>
+    <div class="pie">Si una versión del prompt falla aquí, no se publica.</div>
+  </section>
+
+  <!-- 7 · Cierre -->
+  <section class="escena clara" id="e7">
+    <div class="marca"><img src="logo-dt.svg" alt=""><h1 class="titular">Karin <span class="acento">Triage</span></h1></div>
+    <div class="lema">Ningún caso se resuelve solo.<br>El agente propone; una persona decide.</div>
+    <div class="boton">Probar la demo</div>
+    <div class="url">karin-triage-grupo7-c7c6a3fb2988.herokuapp.com</div>
+    <div class="repo">github.com/Sebamardones/agente-karin-triage</div>
+    <div class="equipo">Grupo 7 · Edith Seguel · Nicolás Mores · Sebastián Mardones · UAI · Prototipo académico con datos sintéticos</div>
+  </section>
+
+  <svg id="cursor" viewBox="0 0 24 24"><path d="M3 2l7.5 19 2.6-7.6L21 10.9z" fill="#111" stroke="#fff" stroke-width="1.6" stroke-linejoin="round"/></svg>
+  <div class="franja-sintetico">Datos sintéticos · prototipo académico UAI</div>
+</div>
+
+<script>
+/* Montaje: un timeline GSAP en pausa que el renderizador mueve cuadro a cuadro
+   con window.__ir(t). La configuración (duración de cada escena, tramos de las
+   tomas y zooms) llega en window.MONTAJE antes de cargar la página. */
+const M = window.MONTAJE;
+const tl = gsap.timeline({ paused: true });
+const E = s => document.querySelector(s);
+const facil = "power3.out";
+
+function mostrar(id, t0, dur, entrada = 0.5) {
+  const el = E("#" + id);
+  tl.set(el, { visibility: "visible" }, t0);
+  tl.fromTo(el, { opacity: 0 }, { opacity: 1, duration: entrada, ease: "power2.out" }, t0);
+  tl.to(el, { opacity: 0, duration: 0.45, ease: "power2.in" }, t0 + dur - 0.45);
+  tl.set(el, { visibility: "hidden" }, t0 + dur);
+}
+function lineas(sel, t, stagger = 0.12) {
+  tl.from(sel + " .linea > span", { yPercent: 110, opacity: 0, duration: 0.8, ease: "power4.out", stagger }, t);
+}
+function contar(el, desde, hasta, t, dur, fmt) {
+  const o = { v: desde };
+  tl.to(o, { v: hasta, duration: dur, ease: "power2.out", onUpdate: () => { el.textContent = fmt(o.v); } }, t);
+}
+const miles = v => Math.round(v).toLocaleString("es-CL");
+function ventanaEntra(sel, t) {
+  tl.from(sel, { y: 160, rotateX: 18, rotateY: -14, scale: 0.86, opacity: 0, duration: 1.1, ease: "power4.out", transformPerspective: 1600 }, t);
+}
+function globo(sel, t, salida) {
+  tl.from(sel, { scale: 0.6, y: 30, opacity: 0, duration: 0.6, ease: "back.out(2)" }, t);
+  if (salida) tl.to(sel, { opacity: 0, y: -10, duration: 0.4 }, salida);
+}
+/* Zoom dentro de una ventana: escala y punto de foco en coordenadas de la toma (0..1). */
+function zooms(clip, lista, t0) {
+  const v = document.querySelector(`[data-clip="${clip}"] video`);
+  const vista = v.parentElement;
+  const W = vista.clientWidth, H = vista.clientHeight;
+  const pos = (z) => ({ scale: z.escala, x: -(z.x * W * z.escala - W / 2), y: -(z.y * H * z.escala - H / 2) });
+  tl.set(v, pos(lista[0]), t0);
+  for (const z of lista.slice(1)) tl.to(v, { ...pos(z), duration: z.dur || 1.2, ease: "power3.inOut" }, t0 + z.t);
+}
+
+const T = Object.fromEntries(M.escenas.map(e => [e.id, e]));
+const k = (id, f) => T[id].inicio + T[id].dur * f;   // instante relativo dentro de una escena
+
+// 1 · Problema
+if (T.e1) {
+  const { inicio: a, dur: d } = T.e1;
+  mostrar("e1", a, d, 0.2);
+  tl.from("#e1 .ceja", { opacity: 0, x: -30, duration: 0.6 }, a + 0.2);
+  tl.from("#e1 .cifra", { opacity: 0, y: 40, filter: "blur(12px)", duration: 0.9, ease: facil }, a + 0.3);
+  contar(E("#e1 .cifra"), 0, 92643, a + 0.3, Math.min(3.2, d * 0.25), miles);
+  tl.from("#e1 .rotulo", { opacity: 0, y: 20, duration: 0.6 }, a + 1.2);
+  lineas("#e1 .mes", k("e1", M.marcas?.e1_mes ?? 0.22));
+  lineas("#e1 .mano", k("e1", M.marcas?.e1_mano ?? 0.34));
+  tl.from("#e1 .reloj", { opacity: 0, scale: 0.7, rotate: -40, duration: 1, ease: facil }, k("e1", 0.45));
+  tl.to("#e1 .arco", { strokeDashoffset: 0, duration: d * 0.45, ease: "none" }, k("e1", 0.48));
+  tl.to("#e1 .aguja", { rotation: 360, svgOrigin: "100 100", duration: d * 0.45, ease: "none" }, k("e1", 0.48));
+  tl.from("#e1 .plazos .capsula", { opacity: 0, y: 40, duration: 0.6, ease: "back.out(1.8)", stagger: 0.5 }, k("e1", M.marcas?.e1_plazos ?? 0.55));
+}
+if (T.e1b) {
+  const { inicio: a, dur: d } = T.e1b;
+  mostrar("e1b", a, d, 0.3);
+  lineas("#e1b .frase", a + 0.2);
+  tl.to("#e1b .trazo path", { strokeDashoffset: 0, duration: 0.7, ease: "power2.out" }, a + 1.0);
+  tl.from("#e1b .sub", { opacity: 0, y: 20, duration: 0.8 }, a + 1.6);
+}
+// 2 · Marca
+if (T.e2) {
+  const { inicio: a, dur: d } = T.e2;
+  mostrar("e2", a, d, 0.35);
+  tl.from("#e2 .marca img", { scale: 0, rotate: -120, duration: 0.9, ease: "back.out(1.6)" }, a + 0.15);
+  tl.from("#e2 .marca h1", { opacity: 0, x: -40, filter: "blur(10px)", duration: 0.9, ease: facil }, a + 0.35);
+  lineas("#e2 .lema", a + 1.3);
+  tl.from("#e2 .pildora", { backgroundColor: "rgba(0,93,255,0)", color: "#25306b", duration: 0.5 }, a + 2.4);
+}
+// 3, 4, 5 · Tomas de la app
+for (const id of ["e3", "e4", "e5"]) {
+  if (!T[id]) continue;
+  const { inicio: a, dur: d } = T[id];
+  mostrar(id, a, d, 0.4);
+  tl.from(`#${id} .ceja`, { opacity: 0, x: -30, duration: 0.6 }, a + 0.2);
+  lineas(`#${id} .lado`, a + 0.3);
+  tl.from(`#${id} .lado .texto`, { opacity: 0, y: 20, duration: 0.7 }, a + 1.2);
+  ventanaEntra(`#${id} .ventana`, a + 0.15);
+  const clip = E(`#${id} .ventana`).dataset.clip;
+  if (M.zooms?.[clip]) zooms(clip, M.zooms[clip], a);
+}
+for (const [sel, g] of Object.entries(M.globos || {})) {
+  if (g === null) { E(sel).style.display = "none"; continue; }
+  globo(sel, g.t, g.salida);
+}
+// 6 · Cómo se construyó
+if (T.e6) {
+  const { inicio: a, dur: d } = T.e6;
+  mostrar("e6", a, d, 0.4);
+  tl.from("#e6 .ceja", { opacity: 0, x: -30, duration: 0.6 }, a + 0.2);
+  tl.from("#e6 .capa", { opacity: 0, x: -80, duration: 0.8, ease: facil, stagger: d * 0.12 }, a + 0.5);
+  tl.from("#e6 .metrica", { opacity: 0, y: 60, scale: 0.94, duration: 0.8, ease: facil, stagger: d * 0.08 }, k("e6", 0.5));
+  const [m1, m3] = [E("#e6 .metrica:nth-child(1) [data-contar]"), E("#e6 .metrica:nth-child(3) [data-contar]")];
+  contar(m1, 86, 100, k("e6", 0.52), 1.4, v => Math.round(v) + "%");
+  contar(m3, 0, -25.3, k("e6", 0.68), 1.4, v => (v < 0 ? "−" : "") + Math.abs(v).toFixed(1).replace(".", ",") + "%");
+}
+if (T.e6b) {
+  const { inicio: a, dur: d } = T.e6b;
+  mostrar("e6b", a, d, 0.3);
+  tl.from("#e6b .ceja", { opacity: 0, duration: 0.5 }, a + 0.1);
+  tl.from("#e6b .cero", { opacity: 0, scale: 1.6, filter: "blur(20px)", duration: 0.9, ease: "power4.out", stagger: d * 0.3 }, a + 0.3);
+  tl.from("#e6b .pie", { opacity: 0, y: 20, duration: 0.6 }, k("e6b", 0.7));
+}
+// 7 · Cierre
+if (T.e7) {
+  const { inicio: a, dur: d } = T.e7;
+  mostrar("e7", a, d + 0.45, 0.4);
+  tl.from("#e7 .marca img", { scale: 0, rotate: -120, duration: 0.9, ease: "back.out(1.6)" }, a + 0.1);
+  tl.from("#e7 .marca h1", { opacity: 0, y: 30, duration: 0.8, ease: facil }, a + 0.3);
+  tl.from("#e7 .lema", { opacity: 0, y: 20, duration: 0.8 }, a + 0.9);
+  tl.from("#e7 .boton", { opacity: 0, scale: 0.8, duration: 0.6, ease: "back.out(2)" }, a + 1.6);
+  tl.from(["#e7 .url", "#e7 .repo", "#e7 .equipo"], { opacity: 0, y: 14, duration: 0.6, stagger: 0.2 }, a + 2.0);
+  tl.fromTo("#cursor", { x: 1400, y: 980, opacity: 0 }, { x: 1010, y: 650, opacity: 1, duration: 1.2, ease: "power3.inOut" }, a + 2.6);
+  tl.to("#cursor", { scale: 0.8, duration: 0.12, yoyo: true, repeat: 1 }, a + 3.9);
+  tl.to("#e7 .boton", { scale: 0.96, duration: 0.12, yoyo: true, repeat: 1 }, a + 3.9);
+  tl.to("#e7 .boton", { boxShadow: "0 0 0 26px rgba(0,93,255,0)", duration: 0.8 }, a + 4.0);
+}
+// Fundido final a negro
+tl.to("#lienzo", { opacity: 0, duration: 0.6 }, M.total - 0.6);
+
+/* Tomas: tramos [t0, t1, c0, c1] en segundos del montaje y de la toma. */
+const videos = {};
+document.querySelectorAll("[data-clip]").forEach(w => {
+  const c = M.clips[w.dataset.clip];
+  if (!c) return;
+  const v = w.querySelector("video"); v.src = c.src; videos[w.dataset.clip] = { v, tramos: c.tramos };
+});
+function tiempoToma(tramos, t) {
+  for (const [t0, t1, c0, c1] of tramos) if (t >= t0 && t <= t1) return c0 + (t - t0) * (c1 - c0) / (t1 - t0);
+  if (t < tramos[0][0]) return tramos[0][2];
+  return tramos[tramos.length - 1][3];
+}
+const esperar = (v, ct) => new Promise(ok => {
+  if (Math.abs(v.currentTime - ct) < 0.001 && v.readyState >= 2) return ok();
+  const fin = () => { v.removeEventListener("seeked", fin); ok(); };
+  v.addEventListener("seeked", fin); v.currentTime = ct; setTimeout(fin, 3000);
+});
+window.__ir = async (t) => {
+  tl.seek(t, false);
+  await Promise.all(Object.values(videos).map(({ v, tramos }) => esperar(v, Math.max(0, tiempoToma(tramos, t)))));
+  await new Promise(r => requestAnimationFrame(() => requestAnimationFrame(r)));
+};
+window.__listo = (async () => {
+  await document.fonts.ready;
+  await Promise.all(Object.values(videos).map(({ v }) => new Promise(ok => { if (v.readyState >= 2) ok(); else { v.onloadeddata = ok; setTimeout(ok, 10000); } })));
+  return true;
+})();
+</script>
+</body>
+</html>
