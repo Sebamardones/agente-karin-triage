@@ -103,16 +103,23 @@
   /* Escena 5 */
 
   /* Escena 6 */
-  #e6 .capas { position: absolute; left: 140px; top: 280px; width: 780px; }
-  .capa { display: flex; align-items: center; gap: 26px; padding: 30px 34px; border-radius: 22px; margin-bottom: 22px;
+  #e6 .capas { position: absolute; left: 110px; top: 250px; width: 840px; }
+  .capa { display: flex; align-items: center; gap: 22px; padding: 22px 34px 22px 14px; border-radius: 22px; margin-bottom: 22px;
           background: rgba(255,255,255,.07); border: 1px solid rgba(255,255,255,.16); opacity: 0; }
-  .capa .n { font: 900 66px/1 var(--sans); color: var(--azul-claro); min-width: 110px; display: inline-block; }
+  .capa .n { position: relative; min-width: 200px; text-align: center; display: inline-block; }
+  .capa .num, .metrica .acento { display: inline-block; padding: 0 .06em;
+    background: linear-gradient(105deg, #4d8dff 0%, #4d8dff 38%, #ffffff 50%, #4d8dff 62%, #4d8dff 100%);
+    background-size: 260% 100%; background-position: 100% 0; -webkit-background-clip: text; background-clip: text; color: transparent;
+    filter: drop-shadow(0 0 0 rgba(77,141,255,0)); }
+  .capa .num { font: 900 128px/1 var(--sans); letter-spacing: -0.04em; }
+  .capa .onda { position: absolute; left: 50%; top: 50%; width: 150px; height: 150px; margin: -75px 0 0 -75px; border-radius: 50%;
+    border: 4px solid #4d8dff; opacity: 0; }
   .capa h3 { font: 800 40px/1.1 var(--sans); }
   .capa p { font: 500 24px/1.35 var(--sans); color: #b7c3f0; margin-top: 6px; }
   #e6 .metricas { position: absolute; right: 140px; top: 280px; width: 820px; display: grid; gap: 22px; }
   .metrica { padding: 28px 34px; border-radius: 22px; background: rgba(255,255,255,.07); border: 1px solid rgba(255,255,255,.16); opacity: 0; }
-  .metrica .v { font: 900 96px/1 var(--sans); letter-spacing: -0.03em; font-variant-numeric: tabular-nums; }
-  .metrica .v small { font-size: 56px; color: #8ea2e8; margin: 0 14px; }
+  .metrica .v { font: 900 118px/1 var(--sans); letter-spacing: -0.03em; font-variant-numeric: tabular-nums; }
+  .metrica .v small { font-size: 64px; color: #8ea2e8; margin: 0 14px; }
   .metrica .l { font: 600 26px/1.3 var(--sans); color: #b7c3f0; margin-top: 10px; }
 
   /* Escena 6b */
@@ -283,9 +290,9 @@
   <section class="escena oscura" id="e6"><div class="camara">
     <div class="titular gran-palabra partir" id="pregunta">¿Cómo lo <span class="acento">construimos?</span></div>
     <div class="capas">
-      <div class="capa"><span class="n">13</span><div><h3>Reglas duras en código</h3><p>Cada una con su prueba. Lo que no admite interpretación no se le pregunta al modelo.</p></div></div>
-      <div class="capa"><span class="n">1º</span><div><h3>Seudonimizar antes de llamar</h3><p>Si queda un dato personal en el relato, el flujo se corta y el caso no sale.</p></div></div>
-      <div class="capa"><span class="n">2</span><div><h3>Llamadas a Claude</h3><p>Salida validada y la ley citada al pie de la letra, en un prefijo cacheado.</p></div></div>
+      <div class="capa"><span class="n"><span class="onda"></span><span class="num">13</span></span><div><h3>Reglas duras en código</h3><p>Cada una con su prueba. Lo que no admite interpretación no se le pregunta al modelo.</p></div></div>
+      <div class="capa"><span class="n"><span class="onda"></span><span class="num">1º</span></span><div><h3>Seudonimizar antes de llamar</h3><p>Si queda un dato personal en el relato, el flujo se corta y el caso no sale.</p></div></div>
+      <div class="capa"><span class="n"><span class="onda"></span><span class="num">2</span></span><div><h3>Llamadas a Claude</h3><p>Salida validada y la ley citada al pie de la letra, en un prefijo cacheado.</p></div></div>
     </div>
     <div class="metricas">
       <div class="metrica"><div class="v">86%<small>→</small><span class="acento" id="m-citas">86%</span></div><div class="l">citas verificadas · prompt v2 → v3</div></div>
@@ -616,8 +623,20 @@ for (const k of ["e3", "e4", "e5"]) {
     const t = en(k, f) - 0.15;
     tl.fromTo(capas[i], { x: -260, rotateY: 50, opacity: 0, transformPerspective: 1200 }, { x: 0, rotateY: 0, opacity: 1, duration: 0.8, ease: "expo.out" }, t);
     sfx("swoosh", t, 0.7);
-    tl.fromTo(capas[i].querySelector(".n"), { scale: 2.2 }, { scale: 1, duration: 0.6, ease: "back.out(3)" }, t + 0.1);
+    // número: cae desde grande con giro 3D, cuenta hasta su valor, brilla y deja una onda
+    const num = capas[i].querySelector(".num"), onda = capas[i].querySelector(".onda");
+    tl.fromTo(num, { scale: 3, rotateX: -90, opacity: 0, transformPerspective: 800 }, { scale: 1, rotateX: 0, opacity: 1, duration: 0.7, ease: "back.out(2.2)" }, t + 0.1);
+    if (i !== 1) {
+      const meta = i === 0 ? 13 : 2;
+      contar(num, 0, meta, t + 0.1, 0.9, v => String(Math.round(v)), i === 0 ? 6 : 0);
+    }
+    tl.fromTo(num, { backgroundPosition: "100% 0" }, { backgroundPosition: "0% 0", duration: 0.9, ease: "power2.inOut" }, t + 0.8);
+    tl.fromTo(num, { filter: "drop-shadow(0 0 0px rgba(77,141,255,0))" }, { filter: "drop-shadow(0 0 28px rgba(77,141,255,.9))", duration: 0.3, yoyo: true, repeat: 1, immediateRender: false }, t + 0.8);
+    tl.fromTo(onda, { scale: 0.4, opacity: 0.9 }, { scale: 2.6, opacity: 0, duration: 0.9, ease: "power2.out" }, t + 0.75);
+    sfx("impacto", t + 0.75, 0.3);
   });
+  // brillo suave que recorre los tres números mientras se mantienen en pantalla
+  EE("#e6 .num").forEach((n, i) => tl.fromTo(n, { backgroundPosition: "100% 0" }, { backgroundPosition: "0% 0", duration: 1.1, ease: "power2.inOut", repeat: 1, repeatDelay: 2.2, immediateRender: false }, en(k, "dos llamadas") + 1.5 + i * 0.25));
   const tMed = en(k, "Medimos");
   tl.to("#e6 .capas", { x: -40, opacity: 0.55, duration: 1.0, ease: "power3.inOut" }, tMed - 0.4);
   const ms = EE("#e6 .metrica");
@@ -625,11 +644,19 @@ for (const k of ["e3", "e4", "e5"]) {
   const tC = en(k, "a CIEN");
   contar(E("#m-citas"), 86, 100, tC - 1.2, 1.4, v => Math.round(v) + "%", 8);
   sfx("ding", tC + 0.2, 0.7);
+  // cada métrica, al terminar de contar: golpe de escala, destello del texto y resplandor
+  const remate = (sel, t) => {
+    tl.fromTo(sel, { scale: 1.25 }, { scale: 1, duration: 0.6, ease: "back.out(3)", immediateRender: false }, t);
+    tl.fromTo(sel, { backgroundPosition: "100% 0" }, { backgroundPosition: "0% 0", duration: 0.8, ease: "power2.inOut", immediateRender: false }, t);
+    tl.fromTo(sel, { filter: "drop-shadow(0 0 0px rgba(77,141,255,0))" }, { filter: "drop-shadow(0 0 30px rgba(77,141,255,.9))", duration: 0.3, yoyo: true, repeat: 1, immediateRender: false }, t);
+  };
+  remate("#m-citas", tC + 0.2);
+  remate("#m-validas", tC + 0.45);
   const nV = { v: 5 };
   tl.fromTo(nV, { v: 5 }, { v: 9, duration: 1.0, ease: "steps(4)", onUpdate: () => { E("#m-validas").textContent = Math.round(nV.v) + "/9"; } }, tC - 0.6);
   const tCo = en(k, "el costo");
   contar(E("#m-costo"), 0, -25.3, tCo, 1.3, v => (v < -0.05 ? "−" : "") + Math.abs(v).toFixed(1).replace(".", ",") + "%", 8);
-  sfx("impacto", tCo + 1.35, 0.5); sacudir("#e6 .camara", tCo + 1.35, 8);
+  sfx("impacto", tCo + 1.35, 0.5); sacudir("#e6 .camara", tCo + 1.35, 8); remate("#m-costo", tCo + 1.35);
 }
 {
   const k = "e6b", a = ini(k);
