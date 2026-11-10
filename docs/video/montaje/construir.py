@@ -41,6 +41,7 @@ GANANCIA_SFX = {
     "ding": 0.45, "glitch": 0.45, "tick": 0.35, "teclas": 0.5, "succion": 0.55,
 }  # fmt: skip
 SR = 48000
+REFUERZO_VOZ = {"e2": 1.4, "e7": 1.4}  # frases de marca, más destacadas (+3 dB)
 NIVEL_EFECTOS = 0.22  # el bus de efectos medía 13 dB sobre la voz
 
 
@@ -190,7 +191,14 @@ def bus_efectos(config: dict) -> Path:
                 check=True, capture_output=True,
             ).stdout  # fmt: skip
             cache[tipo] = np.frombuffer(crudo, dtype=np.float32).reshape(-1, 2)
-        s = cache[tipo] * GANANCIA_SFX.get(tipo, 0.5) * ev.get("vol", 1)
+        vol = ev.get("vol", 1)
+        # Un impacto que cae justo antes de que empiece una frase la tapa: se atenúa.
+        if tipo == "impacto" and any(0 <= v0 - ev["t"] <= 1.2 for v0 in config["voz"].values()):
+            vol *= 0.35
+        # En el cierre manda la frase de marca: efectos a la mitad.
+        if ev["t"] >= config["escenas"][-1]["inicio"]:
+            vol *= 0.5
+        s = cache[tipo] * GANANCIA_SFX.get(tipo, 0.5) * vol
         i = int(ev["t"] * SR)
         if i >= largo:
             continue
@@ -213,7 +221,7 @@ def mezclar(config: dict) -> Path:
         entradas += ["-i", str(VOZ / f"{k}.mp3")]
         ms = int(config["voz"][k] * 1000)
         filtros.append(
-            f"[{i}:a]aresample={SR},aformat=channel_layouts=stereo,adelay={ms}|{ms}[v{i}]"
+            f"[{i}:a]aresample={SR},aformat=channel_layouts=stereo,volume={REFUERZO_VOZ.get(k, 1.0)},adelay={ms}|{ms}[v{i}]"
         )
         etiquetas.append(f"[v{i}]")
     filtros.append(
@@ -229,15 +237,17 @@ def mezclar(config: dict) -> Path:
     else:
         base = f"[{n}:a]aresample={SR},aformat=channel_layouts=stereo,atrim=start={-corrimiento},asetpts=PTS-STARTPTS"
     filtros.append(
-        f"{base},apad,atrim=0:{total},volume=0.065,afade=t=out:st={total - 2.5}:d=2.5[mus]"
+        f"{base},apad,atrim=0:{total},volume='0.065*(1+1.5*max(0\\,min(1\\,(13-t)/4)))*(1-0.45*max(0\\,min(1\\,(t-{config['escenas'][-1]['inicio'] - 0.5})/0.8)))':eval=frame,afade=t=out:st={total - 2.5}:d=2.5[mus]"
     )
     entradas += ["-i", str(bus_efectos(config))]
     filtros.append(f"[{n + 1}:a]aresample={SR},apad,atrim=0:{total}[sfx]")
-    filtros.append("[voz]asplit=2[voz1][voz2]")
+    # La voz manda: música y efectos bajan cuando habla, para que nada tape la narración.
+    filtros.append("[voz]asplit=3[voz1][voz2][voz3]")
     filtros.append(
         "[mus][voz2]sidechaincompress=threshold=0.015:ratio=8:attack=10:release=400[musd]"
     )
-    filtros.append("[voz1][musd][sfx]amix=inputs=3:normalize=0[out]")
+    filtros.append("[sfx][voz3]sidechaincompress=threshold=0.02:ratio=5:attack=5:release=250[sfxd]")
+    filtros.append("[voz1][musd][sfxd]amix=inputs=3:normalize=0[out]")
     cruda = SALIDA / "mezcla-cruda.wav"
     ffmpeg(
         *entradas,

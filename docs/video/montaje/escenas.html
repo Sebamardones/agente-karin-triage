@@ -33,10 +33,6 @@
   .oscura { color: var(--blanco); }
   .clara { color: var(--navy); }
 
-  .ceja { position: absolute; left: 140px; top: 110px; font: 700 20px/1 var(--mono); letter-spacing: .16em;
-          text-transform: uppercase; display: flex; align-items: center; gap: 14px; }
-  .ceja::before { content: ""; width: 10px; height: 10px; border-radius: 50%; background: var(--azul); box-shadow: 0 0 0 6px rgba(0,93,255,.2); }
-  .oscura .ceja { color: #9fb2ff; } .clara .ceja { color: var(--cobalt); }
 
   .titular { font-weight: 850; letter-spacing: -0.035em; line-height: 1.04; }
   .p { display: inline-block; white-space: pre; }
@@ -45,12 +41,11 @@
 
   /* Escena 1 */
   #e1 .cifra { position: absolute; left: 140px; top: 210px; font: 900 270px/1 var(--sans); letter-spacing: -0.05em;
-               font-variant-numeric: tabular-nums; background: linear-gradient(180deg, #fff 30%, #8fa6ff); -webkit-background-clip: text; color: transparent; transform-origin: 0% 60%; }
-  #e1 .rotulo { position: absolute; left: 150px; top: 500px; font: 600 44px/1.2 var(--sans); color: #c9d4ff; }
+               font-variant-numeric: tabular-nums; padding: 0 0.14em 0.04em 0.04em; margin-left: -0.04em; background: linear-gradient(180deg, #fff 30%, #8fa6ff); -webkit-background-clip: text; color: transparent; transform-origin: 0% 60%; }
+  #e1 .rotulo { position: absolute; left: 150px; top: 500px; font: 600 38px/1.2 var(--sans); color: #c9d4ff; }
   #e1 .mes { position: absolute; left: 140px; top: 615px; font-size: 100px; }
   #e1 .mano { position: absolute; left: 140px; top: 760px; font-size: 100px; color: #dfe6ff; }
-  #e1 .figura { position: absolute; right: 120px; top: 120px; height: 900px; }
-  #e1 .reloj { position: absolute; right: 200px; top: 200px; width: 520px; height: 520px; }
+  #e1 .reloj { position: absolute; right: 170px; top: 220px; width: 460px; height: 460px; }
   #e1 .reloj circle { fill: none; stroke-width: 18; }
   #e1 .plazos { position: absolute; right: 180px; top: 790px; display: flex; flex-direction: column; align-items: flex-end; gap: 18px; }
   .capsula { font: 700 36px/1 var(--sans); padding: 22px 32px; border-radius: 999px; background: rgba(255,255,255,.08);
@@ -63,15 +58,12 @@
   #e1b .neutro { position: relative; display: inline-block; }
   #e1b .trazo { position: absolute; left: 0; width: 100%; bottom: -0.1em; height: 0.17em; overflow: visible; }
   #e1b .trazo path { fill: none; stroke: var(--rojo); stroke-width: 7; stroke-linecap: round; }
-  #e1b .fig-a { position: absolute; left: 20px; bottom: -60px; height: 600px; }
-  #e1b .fig-b { position: absolute; right: 20px; bottom: -60px; height: 600px; }
 
   /* Escena 2 */
   #e2 .marca { position: absolute; left: 0; right: 0; top: 190px; display: flex; justify-content: center; align-items: center; gap: 36px; }
   #e2 .marca img { width: 150px; height: 150px; }
   #e2 .marca h1 { font-size: 170px; }
   #e2 .lema { position: absolute; left: 0; right: 0; top: 420px; text-align: center; font-size: 78px; }
-  #e2 .figura { position: absolute; left: 50%; bottom: -60px; height: 560px; margin-left: -230px; }
   .gran-palabra { position: absolute; left: 0; right: 0; top: 400px; text-align: center; font-size: 190px; }
   .pildora { display: inline-block; padding: 0 .28em; border-radius: .3em; background: var(--azul); color: #fff; }
 
@@ -109,7 +101,6 @@
   #e4 .tachado { position: absolute; left: -24px; right: -24px; top: 46%; height: 14px; background: var(--rojo); transform: rotate(-5deg) scaleX(0); transform-origin: 0 50%; }
 
   /* Escena 5 */
-  #e5 .figura { position: absolute; left: 110px; bottom: -40px; height: 400px; }
 
   /* Escena 6 */
   #e6 .capas { position: absolute; left: 140px; top: 280px; width: 780px; }
@@ -127,7 +118,7 @@
   /* Escena 6b */
   #e6b .ceros { position: absolute; left: 0; right: 0; top: 270px; display: flex; justify-content: center; gap: 140px; }
   #e6b .cero { text-align: center; width: 640px; opacity: 0; }
-  #e6b .cero .v { font: 900 340px/1 var(--sans); background: linear-gradient(180deg, #fff 40%, #7ea4ff); -webkit-background-clip: text; color: transparent; display: inline-block; }
+  #e6b .cero .v { padding: 0 0.1em; font: 900 340px/1 var(--sans); background: linear-gradient(180deg, #fff 40%, #7ea4ff); -webkit-background-clip: text; color: transparent; display: inline-block; }
   #e6b .cero .l { font: 700 42px/1.25 var(--sans); color: #c9d4ff; margin-top: 10px; }
 
   /* Escena 7 */
@@ -140,8 +131,6 @@
   #e7 .url { position: absolute; left: 0; right: 0; top: 730px; text-align: center; font: 600 28px/1 var(--mono); color: var(--navy); }
   #e7 .repo { position: absolute; left: 0; right: 0; top: 780px; text-align: center; font: 500 24px/1 var(--mono); color: #5a6577; }
   #e7 .equipo { position: absolute; left: 0; right: 0; bottom: 60px; text-align: center; font: 500 22px/1 var(--sans); color: #5a6577; }
-  #e7 .fig-izq { position: absolute; left: 30px; bottom: -50px; height: 600px; }
-  #e7 .fig-der { position: absolute; right: 20px; bottom: -50px; height: 540px; }
 
   /* Capa de efectos */
   #cursor { position: absolute; left: 0; top: 0; width: 44px; height: 44px; z-index: 50; opacity: 0; }
@@ -151,6 +140,21 @@
   #flash { position: absolute; inset: 0; background: #fff; opacity: 0; z-index: 45; pointer-events: none; }
   .anillo { position: absolute; width: 200px; height: 200px; margin: -100px 0 0 -100px; border-radius: 50%; border: 6px solid var(--azul-claro); opacity: 0; z-index: 30; pointer-events: none; }
   .chispa { position: absolute; width: 14px; height: 14px; margin: -7px 0 0 -7px; border-radius: 50%; opacity: 0; z-index: 30; pointer-events: none; }
+  /* Gráfica: íconos, formas geométricas, balanza y órbitas */
+  #formas { position: absolute; inset: 0; pointer-events: none; }
+  .forma { position: absolute; left: 0; top: 0; }
+  #e1 .mosaico { position: absolute; right: 110px; top: 200px; width: 540px; display: grid; grid-template-columns: repeat(8, 1fr); gap: 12px; }
+  .doc { width: 56px; height: 68px; opacity: 0; }
+  .doc svg { width: 100%; height: 100%; display: block; }
+  #e1b .balanza { position: absolute; left: 50%; top: 640px; width: 820px; height: 420px; margin-left: -410px; }
+  .orbitas { position: absolute; left: 50%; width: 0; height: 0; }
+  .orbita { position: absolute; border-radius: 50%; border: 2px solid rgba(0,93,255,.22); }
+  .orbita i { position: absolute; left: 50%; top: -9px; width: 18px; height: 18px; margin-left: -9px; border-radius: 50%; background: var(--azul); }
+  .orbita:nth-child(2) i { background: var(--rojo); } .orbita:nth-child(3) i { background: var(--azul-claro); width: 12px; height: 12px; top: -6px; margin-left: -6px; }
+  .insignia { position: absolute; left: 120px; top: 770px; display: flex; align-items: center; gap: 24px; }
+  .insignia .circulo { width: 124px; height: 124px; border-radius: 50%; background: var(--azul); display: grid; place-items: center; box-shadow: 0 24px 50px -16px rgba(0,93,255,.6); }
+  .insignia svg { width: 68px; height: 68px; }
+  .insignia span { font: 800 34px/1.15 var(--sans); color: var(--navy); }
 </style>
 </head>
 <body>
@@ -160,15 +164,15 @@
   <div id="manchas"></div>
   <div id="rejilla"></div>
   <div id="particulas"></div>
+  <div id="formas"></div>
 
   <!-- 1 · El problema -->
   <section class="escena oscura" id="e1"><div class="camara">
-    <div class="ceja">Ley Karin · agosto 2024 – junio 2026</div>
     <div class="cifra">0</div>
-    <div class="rotulo">ingresos en 23 meses · Dirección del Trabajo</div>
+    <div class="rotulo">ingresos por Ley Karin en 23 meses · Dirección del Trabajo</div>
     <div class="titular mes partir"><span class="acento">4.305</span> al mes.</div>
     <div class="titular mano partir">Clasificados a mano.</div>
-    <img class="figura" src="img/1.png" alt="">
+    <div class="mosaico"></div>
     <svg class="reloj" viewBox="0 0 200 200">
       <circle cx="100" cy="100" r="86" stroke="rgba(255,255,255,.12)"/>
       <circle class="arco" cx="100" cy="100" r="86" stroke="#ff1d3d" stroke-linecap="round" transform="rotate(-90 100 100)" pathLength="1" stroke-dasharray="1" stroke-dashoffset="1"/>
@@ -180,22 +184,26 @@
 
   <section class="escena oscura" id="e1b"><div class="camara">
     <div class="sub partir">Si la Inspección no se pronuncia a tiempo sobre un informe interno, valen las conclusiones del empleador.</div>
-    <img class="fig-a" src="img/2a.png" alt="">
-    <img class="fig-b" src="img/2b.png" alt="">
+    <svg class="balanza" viewBox="0 0 820 420">
+      <rect x="400" y="70" width="20" height="300" rx="10" fill="#9fb2ff"/>
+      <rect x="300" y="360" width="220" height="22" rx="11" fill="#9fb2ff"/>
+      <g class="plato izq"><path d="M110 70 L60 210 M110 70 L160 210" stroke="#c9d4ff" stroke-width="3"/><path d="M40 210 h140 a70 30 0 0 1 -140 0z" fill="#4d8dff"/><text x="110" y="290" text-anchor="middle" fill="#c9d4ff" font-family="Inter" font-weight="700" font-size="28">Persona</text></g>
+      <g class="plato der"><path d="M710 70 L660 210 M710 70 L760 210" stroke="#c9d4ff" stroke-width="3"/><path d="M640 210 h140 a70 30 0 0 1 -140 0z" fill="#ff1d3d"/><text x="710" y="290" text-anchor="middle" fill="#c9d4ff" font-family="Inter" font-weight="700" font-size="28">Empleador</text></g>
+      <g class="brazo"><rect x="90" y="60" width="640" height="18" rx="9" fill="#fff"/><circle cx="410" cy="69" r="22" fill="#fff"/></g>
+    </svg>
     <div class="titular frase"><span class="p">El</span> <span class="p">atraso</span> <span class="p rojo">NO</span> <span class="p">es</span> <span class="p rojo neutro">neutro.<svg class="trazo" viewBox="0 0 400 22" preserveAspectRatio="none"><path d="M4 14 C 120 4, 280 4, 396 12" pathLength="1" stroke-dasharray="1" stroke-dashoffset="1"/></svg></span></div>
   </div></section>
 
   <!-- 2 · Marca -->
   <section class="escena clara" id="e2"><div class="camara">
+    <div class="orbitas" style="top: 380px"><div class="orbita" style="width:620px;height:620px;left:-310px;top:-310px"><i></i></div><div class="orbita" style="width:900px;height:900px;left:-450px;top:-450px"><i></i></div><div class="orbita" style="width:1180px;height:1180px;left:-590px;top:-590px"><i></i></div></div>
     <div class="titular gran-palabra letras" id="presentamos">Presentamos</div>
     <div class="marca"><img src="logo-dt.svg" alt=""><h1 class="titular letras">Karin <span class="acento">Triage</span></h1></div>
     <div class="titular lema partir">El agente propone. Una persona <span class="pildora">decide.</span></div>
-    <img class="figura" src="img/3.png" alt="">
   </div></section>
 
   <!-- 3 · Caso nuevo en vivo -->
   <section class="escena clara" id="e3"><div class="camara">
-    <div class="ceja">IA en vivo · caso que el sistema nunca vio</div>
     <div class="lado">
       <div class="titular partir">Una denuncia nueva. <span class="acento">Una propuesta con pruebas.</span></div>
       <div class="pasos">
@@ -216,7 +224,6 @@
 
   <!-- 4 · El caso difícil -->
   <section class="escena clara" id="e4"><div class="camara">
-    <div class="ceja">El caso difícil · SINT-0002</div>
     <div class="lado">
       <div class="titular"><span class="p">Acoso</span> <span class="p">sexual</span><br><span class="p rojo no">NO</span> <span class="p">va</span> <span class="p">a</span><br><span class="p">mediación.</span></div>
       <p class="texto partir">Art. 211-D: mediar sería sentar a la víctima a negociar con quien la acosó.</p>
@@ -231,12 +238,11 @@
 
   <!-- 5 · La persona decide -->
   <section class="escena clara" id="e5"><div class="camara">
-    <div class="ceja">Revisión humana</div>
     <div class="lado">
       <div class="titular partir">La última palabra es <span class="acento">humana.</span></div>
       <p class="texto partir">Confirmar, corregir o descartar. Un descarte exige motivo, cita y la firma de un supervisor.</p>
     </div>
-    <img class="figura" src="img/3.png" alt="">
+    <div class="insignia"><div class="circulo"><svg viewBox="0 0 48 48" fill="none" stroke="#fff" stroke-width="3.5" stroke-linecap="round" stroke-linejoin="round"><circle cx="19" cy="15" r="8"/><path d="M5 41c1-9 7-14 14-14s9 2 11 5"/><path class="visto" d="M29 36l5 5 10-11" pathLength="1" stroke-dasharray="1" stroke-dashoffset="1"/></svg></div><span>Una firma humana<br>en cada caso</span></div>
     <div class="ventana" data-clip="decidir">
       <div class="barra"><i></i><i></i><i></i><div class="url">karin-triage-grupo7.herokuapp.com</div></div>
       <div class="vista"><video muted playsinline preload="auto"></video></div>
@@ -247,7 +253,6 @@
   <!-- 6 · Cómo lo construimos -->
   <section class="escena oscura" id="e6"><div class="camara">
     <div class="titular gran-palabra partir" id="pregunta">¿Cómo lo <span class="acento">construimos?</span></div>
-    <div class="ceja">Cómo lo construimos</div>
     <div class="capas">
       <div class="capa"><span class="n">13</span><div><h3>Reglas duras en código</h3><p>Cada una con su prueba. Lo que no admite interpretación no se le pregunta al modelo.</p></div></div>
       <div class="capa"><span class="n">1º</span><div><h3>Seudonimizar antes de llamar</h3><p>Si queda un dato personal en el relato, el flujo se corta y el caso no sale.</p></div></div>
@@ -261,7 +266,6 @@
   </div></section>
 
   <section class="escena oscura" id="e6b"><div class="camara">
-    <div class="ceja">Metas que no se negocian</div>
     <div class="ceros">
       <div class="cero" id="cero-1"><div class="v">0</div><div class="l">casos de acoso sexual<br>enviados a mediación</div></div>
       <div class="cero" id="cero-2"><div class="v">0</div><div class="l">falsos descartes</div></div>
@@ -270,8 +274,7 @@
 
   <!-- 7 · Cierre -->
   <section class="escena clara" id="e7"><div class="camara">
-    <img class="fig-izq" src="img/1.png" alt="">
-    <img class="fig-der" src="img/3.png" alt="">
+    <div class="orbitas" style="top: 430px"><div class="orbita" style="width:700px;height:700px;left:-350px;top:-350px"><i></i></div><div class="orbita" style="width:1000px;height:1000px;left:-500px;top:-500px"><i></i></div><div class="orbita" style="width:1300px;height:1300px;left:-650px;top:-650px"><i></i></div></div>
     <div class="marca"><img src="logo-dt.svg" alt=""><h1 class="titular letras">Karin <span class="acento">Triage</span></h1></div>
     <div class="lema">Ningún caso se resuelve solo.<br>El agente propone; una persona decide.</div>
     <div class="boton">Probar la demo</div>
@@ -409,28 +412,42 @@ function zooms(clip, lista, t0) {
   for (const z of lista.slice(1)) tl.to(v, { ...pos(z), duration: z.dur || 1.0, ease: "expo.inOut" }, t0 + z.t);
 }
 
+const DOC = '<svg viewBox="0 0 40 48"><path d="M4 3h22l10 10v32H4z" fill="rgba(255,255,255,.08)" stroke="#9fb2ff" stroke-width="2.5" stroke-linejoin="round"/><path d="M26 3v10h10" fill="none" stroke="#9fb2ff" stroke-width="2.5" stroke-linejoin="round"/><path d="M11 24h18M11 31h18M11 38h11" stroke="#9fb2ff" stroke-width="2.5" stroke-linecap="round"/></svg>';
+function orbitas(sel, t, hasta) {
+  const os = EE(sel + " .orbita");
+  tl.fromTo(os, { scale: 0, opacity: 0 }, { scale: 1, opacity: 1, duration: 1.0, ease: "expo.out", stagger: 0.12 }, t);
+  os.forEach((o, i) => tl.fromTo(o, { rotation: i * 60 }, { rotation: i * 60 + (i % 2 ? -1 : 1) * 70, duration: hasta - t, ease: "none", immediateRender: false }, t));
+  sfx("swoosh", t, 0.5);
+}
+
 /* ---- Escenas ---------------------------------------------------------------- */
 // 1 · Problema
 {
   const k = "e1", a = ini(k);
   escena(k, { tema: "oscuro", entrada: "fundido" });
   sfx("riser", a, 0.5);
-  tl.from("#e1 .ceja", { opacity: 0, x: -40, duration: 0.6 }, a + 0.3); sfx("tick", a + 0.3, 0.4);
+
   const tN = en(k, "NOVENTA");
   tl.from("#e1 .cifra", { opacity: 0, y: 60, filter: "blur(14px)", duration: 0.8, ease: "power3.out" }, a + 0.4);
   contar(E("#e1 .cifra"), 0, 92643, a + 0.4, tN + 0.3 - (a + 0.4), miles, 14);
   tl.fromTo("#e1 .cifra", { scale: 1.18 }, { scale: 1, duration: 0.6, ease: "back.out(3)", immediateRender: false }, tN + 0.3);
   sfx("impacto", tN + 0.3, 0.9); sacudir("#e1 .camara", tN + 0.3, 16); anillo(500, 340, tN + 0.3);
   tl.from("#e1 .rotulo", { opacity: 0, y: 24, duration: 0.6 }, tN + 0.5);
-  tl.fromTo("#e1 .figura", { x: 400, opacity: 0, rotation: 8 }, { x: 0, opacity: 1, rotation: 0, duration: 1.0, ease: "expo.out" }, a + 1.4);
-  sfx("swoosh", a + 1.4, 0.6);
+  // mosaico de denuncias que se llena mientras sube la cifra
+  const mos = E("#e1 .mosaico");
+  for (let i = 0; i < 64; i++) { const d = document.createElement("div"); d.className = "doc"; d.innerHTML = DOC; mos.appendChild(d); }
+  const orden = [...Array(64).keys()].sort((x, y) => ((x * 37) % 64) - ((y * 37) % 64));
+  const docs = EE("#e1 .doc");
+  orden.forEach((idx, n) => tl.fromTo(docs[idx], { opacity: 0, scale: 0.2, y: 30 }, { opacity: 1, scale: 1, y: 0, duration: 0.35, ease: "back.out(2.5)" }, a + 1.2 + n * ((tN - a - 1.4) / 64)));
+  sfx("swoosh", a + 1.2, 0.5);
+  tl.to(docs, { borderColor: "#fff", duration: 0.2 }, tN + 0.3);
+  tl.fromTo(mos, { scale: 1 }, { scale: 1.06, duration: 0.15, yoyo: true, repeat: 1, immediateRender: false }, tN + 0.3);
   palabras("#e1 .mes", en(k, "Más de cuatro") - 0.1, { sonido: "pop" });
   const tM = en(k, "a mano");
   palabras("#e1 .mano", tM - 0.5, { sonido: null });
   glitch("#e1 .mano", tM);
   const tR = en(k, "contra el reloj");
-  tl.to("#e1 .figura", { y: -18, duration: (tR - a - 3) / 2, ease: "sine.inOut", yoyo: true, repeat: 1 }, a + 2.4);
-  tl.to("#e1 .figura", { x: 500, opacity: 0, filter: "blur(12px)", duration: 0.45, ease: "power3.in" }, tR - 0.6);
+  tl.to(docs, { x: (i) => 300 - (i % 8) * 80, y: (i) => 300 - Math.floor(i / 8) * 90, scale: 0, opacity: 0, duration: 0.5, ease: "power3.in", stagger: 0.004 }, tR - 0.7);
   sfx("whoosh", tR - 0.6, 0.6);
   tl.fromTo("#e1 .reloj", { opacity: 0, scale: 0.4, rotation: -90 }, { opacity: 1, scale: 1, rotation: 0, duration: 0.8, ease: "back.out(1.8)" }, tR - 0.15);
   sfx("pop", tR - 0.15, 0.8);
@@ -450,7 +467,14 @@ function zooms(clip, lista, t0) {
   const tF = en(k, "El atraso");
   tl.to("#e1b .sub", { y: -40, opacity: 0.45, scale: 0.92, duration: 0.6, ease: "power3.out" }, tF - 0.4);
   sfx("succion", tF - 0.8, 0.7);
-  tl.fromTo(["#e1b .fig-a", "#e1b .fig-b"], { y: 700 }, { y: 0, duration: 0.7, ease: "back.out(1.4)", stagger: 0.12 }, tF - 0.5);
+  tl.fromTo("#e1b .balanza", { y: 260, opacity: 0 }, { y: 0, opacity: 1, duration: 0.8, ease: "expo.out" }, a + 0.9);
+  sfx("swoosh", a + 0.9, 0.5);
+  // la balanza oscila en equilibrio y se inclina hacia el empleador en «NO es neutro»
+  const tNo0 = en(k, "NO es");
+  tl.fromTo("#e1b .brazo", { rotation: -3, svgOrigin: "410 69" }, { rotation: 3, svgOrigin: "410 69", duration: 1.2, ease: "sine.inOut", yoyo: true, repeat: 3 }, a + 1.0);
+  tl.to("#e1b .brazo", { rotation: 13, svgOrigin: "410 69", duration: 0.9, ease: "elastic.out(1, 0.45)" }, tNo0);
+  tl.to("#e1b .plato.der", { y: 72, duration: 0.9, ease: "elastic.out(1, 0.45)" }, tNo0);
+  tl.to("#e1b .plato.izq", { y: -72, duration: 0.9, ease: "elastic.out(1, 0.45)" }, tNo0);
   const ps = EE("#e1b .frase .p");
   tl.fromTo(ps.slice(0, 2), { scale: 2.4, opacity: 0, filter: "blur(16px)" }, { scale: 1, opacity: 1, filter: "blur(0px)", duration: 0.35, ease: "power4.out", stagger: 0.12 }, tF);
   const tNo = en(k, "NO es");
@@ -472,7 +496,7 @@ function zooms(clip, lista, t0) {
   sfx("succion", tK - 0.7, 0.6); sfx("impacto", tK, 0.8); chispas(960, 270, tK, 24); anillo(960, 270, tK);
   tl.fromTo("#e2 .marca .p", { y: 80, opacity: 0, rotation: i => [-24, 18, -12, 22, -16, 10, -20, 14, -8, 16, -22, 12][i % 12] },
     { y: 0, opacity: 1, rotation: 0, duration: 0.6, ease: "back.out(2)", stagger: 0.04 }, tK - 0.1);
-  tl.fromTo("#e2 .figura", { y: 600 }, { y: 0, duration: 1.0, ease: "expo.out" }, tK + 0.3);
+  orbitas("#e2", a + 0.2, fin(k));
   sfx("swoosh", tK + 0.3, 0.6);
   palabras("#e2 .lema", en(k, "El agente") - 0.1, { sonido: "swoosh" });
   const tD = en(k, "DECIDE");
@@ -483,7 +507,6 @@ function zooms(clip, lista, t0) {
 // 3, 4, 5 · Tomas de la app
 for (const k of ["e3", "e4", "e5"]) {
   escena(k, { tema: "claro", salida: k === "e5" ? "barrido" : "latigo" });
-  tl.from(`#${k} .ceja`, { opacity: 0, x: -40, duration: 0.5 }, ini(k) + 0.25);
   ventana(k, ini(k) + 0.1);
   const clip = E(`#${k} .ventana`).dataset.clip;
   if (M.zooms?.[clip]) zooms(clip, M.zooms[clip], ini(k));
@@ -526,8 +549,10 @@ for (const k of ["e3", "e4", "e5"]) {
 {
   const k = "e5", a = ini(k);
   palabras("#e5 .lado .titular", a + 0.35);
-  tl.fromTo("#e5 .figura", { y: 500 }, { y: 0, duration: 1.0, ease: "expo.out" }, a + 1.2);
-  sfx("swoosh", a + 1.2, 0.5);
+  tl.fromTo("#e5 .insignia .circulo", { scale: 0, rotation: -120 }, { scale: 1, rotation: 0, duration: 0.7, ease: "back.out(2)" }, a + 1.3);
+  tl.from("#e5 .insignia span", { opacity: 0, x: -30, duration: 0.6, ease: "power3.out" }, a + 1.5);
+  tl.to("#e5 .visto", { strokeDashoffset: 0, duration: 0.4, ease: "power2.out" }, a + 1.8);
+  sfx("pop", a + 1.3, 0.6); sfx("ding", a + 1.8, 0.4);
   palabras("#e5 .lado .texto", en(k, "Un descarte") - 0.2, { stagger: 0.03, sonido: null });
   pop("#g-cero", en(k, "Costo") - 0.5);
   for (const c of M.sfx_extra.e5 || []) sfx(c.tipo, c.t, c.vol);
@@ -536,7 +561,6 @@ for (const k of ["e3", "e4", "e5"]) {
 {
   const k = "e6", a = ini(k);
   escena(k, { tema: "oscuro" });
-  tl.from("#e6 .ceja", { opacity: 0, x: -40, duration: 0.5 }, a + 0.25);
   palabras("#pregunta", a + 0.4, { stagger: 0.08 });
   tl.to("#pregunta", { y: -380, scale: 0.4, opacity: 0, filter: "blur(10px)", duration: 0.5, ease: "power3.in" }, en(k, "Trece") - 0.7);
   sfx("whoosh", en(k, "Trece") - 0.7, 0.5);
@@ -563,7 +587,6 @@ for (const k of ["e3", "e4", "e5"]) {
 {
   const k = "e6b", a = ini(k);
   escena(k, { tema: "oscuro", entrada: "zoom", salida: "barrido" });
-  tl.from("#e6b .ceja", { opacity: 0, x: -40, duration: 0.5 }, a + 0.2);
   const t1 = en(k, "CERO casos"), t2 = en(k, "CERO falsos");
   for (const [sel, t, x] of [["#cero-1", t1, 640], ["#cero-2", t2, 1280]]) {
     tl.fromTo(sel, { opacity: 0, scale: 2.4, filter: "blur(24px)" }, { opacity: 1, scale: 1, filter: "blur(0px)", duration: 0.32, ease: "power4.in" }, t - 0.3);
@@ -577,8 +600,7 @@ for (const k of ["e3", "e4", "e5"]) {
   tl.fromTo("#e7 .marca img", { scale: 0, rotation: -260 }, { scale: 1, rotation: 0, duration: 0.8, ease: "back.out(1.8)" }, a + 0.1);
   sfx("impacto", a + 0.5, 0.8); chispas(960, 290, a + 0.5, 24); anillo(960, 290, a + 0.5);
   tl.fromTo("#e7 .marca .p", { y: 80, opacity: 0 }, { y: 0, opacity: 1, duration: 0.5, ease: "back.out(2)", stagger: 0.035 }, a + 0.3);
-  tl.fromTo("#e7 .fig-izq", { x: -500 }, { x: 0, duration: 1.0, ease: "expo.out" }, a + 0.8);
-  tl.fromTo("#e7 .fig-der", { x: 500 }, { x: 0, duration: 1.0, ease: "expo.out" }, a + 0.95);
+  orbitas("#e7", a + 0.6, fin(k));
   sfx("swoosh", a + 0.8, 0.6);
   tl.from("#e7 .lema", { opacity: 0, y: 30, duration: 0.7, ease: "power3.out" }, en(k, "Ningún") - 0.2);
   pop("#e7 .boton", en(k, "El agente"), "pop", 0.7);
@@ -600,6 +622,22 @@ const parts = [...Array(46)].map((_, i) => {
   const d = document.createElement("div"); d.className = "particula"; E("#particulas").appendChild(d);
   return { d, x: (i * 397) % 1920, y: (i * 233) % 1080, v: 18 + (i % 7) * 9, s: 0.5 + (i % 5) * 0.3 };
 });
+const FORMAS = [
+  ["anillo", 160, 140, 120], ["mas", 1720, 180, 54], ["cuadro", 1540, 900, 90], ["triangulo", 260, 880, 90],
+  ["punto", 980, 120, 26], ["anillo", 1820, 620, 70], ["mas", 120, 520, 40], ["cuadro", 720, 980, 56],
+  ["triangulo", 1300, 90, 60], ["punto", 1880, 1000, 20], ["anillo", 560, 60, 50], ["mas", 1080, 1020, 44],
+].map(([tipo, x, y, s], i) => {
+  const d = document.createElement("div"); d.className = "forma"; E("#formas").appendChild(d);
+  const svg = {
+    anillo: `<circle cx="50" cy="50" r="40" fill="none" stroke-width="7"/>`,
+    mas: `<path d="M50 12v76M12 50h76" stroke-width="12" stroke-linecap="round"/>`,
+    cuadro: `<rect x="14" y="14" width="72" height="72" rx="16" fill="none" stroke-width="7"/>`,
+    triangulo: `<path d="M50 12 L90 84 H10 Z" fill="none" stroke-width="7" stroke-linejoin="round"/>`,
+    punto: `<circle cx="50" cy="50" r="40"/>`,
+  }[tipo];
+  d.innerHTML = `<svg viewBox="0 0 100 100" width="${s}" height="${s}">${svg}</svg>`;
+  return { d, x, y, i, svg: d.querySelector("svg") };
+});
 function fondo(t) {
   const claro = +getComputedStyle(E("#cielo-claro")).opacity;
   manchas.forEach(({ d, x, y, v }, i) => {
@@ -610,6 +648,12 @@ function fondo(t) {
     const y = ((p.y - t * p.v) % 1180 + 1180) % 1180 - 50;
     p.d.style.transform = `translate(${p.x + Math.sin(t * 0.6 + p.x) * 30}px, ${y}px) scale(${p.s})`;
     p.d.style.background = claro > 0.5 ? "rgba(0,93,255,.35)" : "rgba(170,190,255,.7)";
+  });
+  FORMAS.forEach(({ d, x, y, i, svg }) => {
+    const col = i % 3 === 1 ? "#ff1d3d" : claro > 0.5 ? "#005dff" : "#7ea4ff";
+    svg.style.stroke = col; svg.style.fill = svg.innerHTML.includes('fill="none"') ? "none" : col;
+    d.style.opacity = claro > 0.5 ? 0.22 : 0.3;
+    d.style.transform = `translate(${x + Math.sin(t * 0.35 + i) * 40}px, ${y + Math.cos(t * 0.3 + i * 1.7) * 34}px) rotate(${t * (i % 2 ? 14 : -10) + i * 30}deg)`;
   });
   E("#rejilla").style.backgroundPosition = `0 ${t * 40}px`;
   E("#rejilla").style.opacity = 0.16 * (1 - claro);
