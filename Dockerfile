@@ -5,7 +5,8 @@
 # ---------- Etapa 1: dependencias ----------
 FROM python:3.12-slim AS dependencias
 
-COPY --from=ghcr.io/astral-sh/uv:latest /uv /usr/local/bin/uv
+# Versión fija de uv: el build no cambia si sale una versión nueva.
+COPY --from=ghcr.io/astral-sh/uv:0.13.7 /uv /usr/local/bin/uv
 
 ENV UV_COMPILE_BYTECODE=1 \
     UV_LINK_MODE=copy \

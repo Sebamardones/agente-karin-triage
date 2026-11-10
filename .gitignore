@@ -33,3 +33,11 @@ backend/.tmp-*/
 
 # Tomas y montaje del video: archivos pesados, se entregan por enlace.
 docs/video/salida/
+
+# Archivos del sistema operativo.
+.DS_Store
+
+# Material del curso y originales de las ilustraciones: no son parte del
+# entregable. La app usa las copias de backend/src/karin_triage/api/estaticos/landing/.
+pauta.pdf
+img/

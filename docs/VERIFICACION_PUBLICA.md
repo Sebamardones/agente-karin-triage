@@ -94,7 +94,7 @@ prompt maestro, ADR-020, trazabilidad, ficha MD/PDF y guion. Nuevo prompt v3,
 golden set ampliado y evidencia JSON versionada.
 
 Riesgos y pendientes: los descritos en CORRECCIONES_EVALUACION.md y ADR-020.
-El precio de CLP 3.600.000 + IVA anual es una hipótesis comercial, no una venta
+El precio de CLP 5.400.000 + IVA anual por unidad de recepción es una hipótesis comercial, no una venta
 validada. La ficha identifica costos observados y presupuesto por separado.
 
 ---

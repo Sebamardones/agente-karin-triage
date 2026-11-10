@@ -76,36 +76,37 @@ SECCIONES = [
     (
         "INGRESOS Y PRECIO PROPUESTO",
         (
-            "Piloto B2G anual por inspección: <b>CLP 3.600.000 + IVA</b> (CLP 300.000/mes), hasta 1.000 casos mensuales. "
-            "Incluye operación y soporte básico. Excedentes, desarrollo e integraciones se cotizan aparte. Es una "
-            "hipótesis comercial pendiente de validación. Entrada por Compra Ágil si el total cumple el límite de "
-            "100 UTM; no garantiza adjudicación. El despliegue nacional requiere cotización y procedimiento de compra "
-            "propios."
+            "Piloto B2G anual por unidad de recepción (10 analistas y 5 supervisores): <b>CLP 5.400.000 + IVA</b> "
+            "(CLP 450.000/mes), hasta 1.600 casos mensuales, unos CLP 285 por caso; cada caso adicional, CLP 150. "
+            "Volumen de referencia: 1.581 casos/mes, cerca del 37% del ritmo nacional. Incluye operación, 10 h de "
+            "soporte y seguimiento de calidad. Es una hipótesis comercial pendiente de validación. Entrada por Compra "
+            "Ágil si el total con IVA cumple el límite de 100 UTM; no garantiza adjudicación."
         ),
     ),
     (
-        "MARGEN ESTIMADO DEL PILOTO POR INSPECCIÓN",
+        "MARGEN ESTIMADO DEL PILOTO (1.581 CASOS/MES)",
         (
-            "Ingreso CLP 300.000/mes menos inferencia de 1.000 casos (CLP 100.000 con la reserva de USD 0,10/caso), "
-            "infraestructura CLP 12.000 y soporte de 8 h a CLP 15.000 (CLP 120.000): <b>margen bruto CLP 68.000 (23%)</b>. "
-            "A la tasa observada en v3 (USD 0,0178/caso), la inferencia baja a CLP 18.000 y el margen sube a "
-            "<b>CLP 150.000 (50%)</b>. CLP 1.000 por USD como supuesto; antes de desarrollo, adquisición e impuestos."
+            "Ingreso CLP 450.000/mes menos inferencia (CLP 158.100 con la reserva de USD 0,10/caso), infraestructura "
+            "CLP 12.000, soporte 10 h a CLP 15.000 (CLP 150.000) y calidad CLP 40.000: <b>margen bruto CLP 89.900 "
+            "(20%)</b>. A la tasa observada en v3 (USD 0,0178/caso), la inferencia baja a CLP 28.110 y el margen sube "
+            "a <b>CLP 219.890 (49%)</b>. CLP 1.000 por USD como supuesto; antes de desarrollo, adquisición e impuestos."
         ),
     ),
     (
-        "COSTO MENSUAL DE LA DEMOSTRACIÓN",
+        "VALOR PARA LA DT",
         (
-            "Heroku Basic USD 7 + Postgres Essential-0 USD 5 + presupuesto de inferencia USD 3 = <b>USD 15/mes</b> "
-            "referenciales, según uso y sin desarrollo ni soporte. Los costos de IA son estimaciones del código y deben "
-            "conciliarse con la factura vigente."
+            "A CLP 9.000 por hora de funcionario (supuesto), el precio más la adopción equivale a unos <b>2 minutos "
+            "por caso</b>. Si el sistema libera más tiempo neto por caso, el piloto se paga en capacidad. Es la "
+            "hipótesis que mide el piloto; no está demostrada."
         ),
     ),
     (
-        "COSTO POR CASO Y PILOTO",
+        "COSTO MENSUAL: DEMOSTRACIÓN Y PILOTO",
         (
-            "La corrida v3 estima USD 0,1600 para nueve casos con LLM: USD 0,0178/caso. Para planificar se reserva "
-            "USD 0,10/caso por variación de longitud y reintentos; no es el costo medido. Piloto de 1.000 casos/mes: "
-            "USD 100 de inferencia + USD 12 de infraestructura, antes de soporte."
+            "Demo: Heroku Basic USD 7 + Postgres Essential-0 USD 5 + inferencia USD 3 = <b>USD 15/mes</b>. "
+            "Piloto: la corrida v3 estima USD 0,0178/caso; para planificar se reservan USD 0,10/caso (unas cinco "
+            "veces lo observado). A 1.581 casos/mes: <b>USD 40 observado y USD 170 presupuestado</b>, con USD 12 de "
+            "infraestructura, antes de soporte. Las tarifas deben conciliarse con la factura vigente."
         ),
     ),
     (

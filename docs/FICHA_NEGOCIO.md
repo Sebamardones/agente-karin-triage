@@ -45,33 +45,52 @@ de que venza el plazo.
 
 ## Precio y modelo de ingresos propuestos
 
-**Servicio anual por inspección: CLP 3.600.000 + IVA** (equivalente a CLP 300.000
-mensuales), para un piloto de hasta 1.000 casos al mes. Incluye operación,
-soporte básico y seguimiento de calidad. Volumen adicional: cotización separada
-y costo de inferencia según consumo. Es una **hipótesis comercial del proyecto**,
-no una tarifa contratada ni validada con la DT. Desarrollo institucional,
-integraciones y asesoría jurídica se cotizan aparte.
+**Unidad del piloto: un equipo de recepción de 10 analistas y 5 supervisores**
+(15 usuarios), con un volumen de referencia de **1.581 casos al mes**, unos 75
+por día hábil (supuesto: 21 días hábiles). Es cerca del 37 % del ritmo nacional
+de 4.305 ingresos mensuales del primer semestre de 2026. El volumen es un
+supuesto del equipo: qué oficina o dirección regional concentra ese volumen
+queda `PENDIENTE_VERIFICAR` con la DT.
 
-**Margen estimado del piloto por inspección** (CLP 1.000 por USD como supuesto):
+**Servicio anual por unidad de recepción: CLP 5.400.000 + IVA** (CLP 450.000
+mensuales netos), con **hasta 1.600 casos al mes**. Equivale a unos CLP 285 por
+caso. Incluye operación, diez horas de soporte al mes y seguimiento de calidad.
+Sobre 1.600 casos, cada caso adicional cuesta CLP 150. Es una **hipótesis
+comercial del proyecto**, no una tarifa contratada ni validada con la DT.
+Desarrollo institucional, integraciones y asesoría jurídica se cotizan aparte.
+
+**Margen estimado del piloto** a 1.581 casos al mes (CLP 1.000 por USD como
+supuesto):
 
 | Concepto | Presupuesto conservador | Tasa observada v3 |
 |---|---:|---:|
-| Ingreso mensual (neto de IVA) | CLP 300.000 | CLP 300.000 |
-| Inferencia, 1.000 casos | CLP 100.000 (USD 0,10/caso) | CLP 18.000 (USD 0,0178/caso) |
+| Ingreso mensual (neto de IVA) | CLP 450.000 | CLP 450.000 |
+| Inferencia, 1.581 casos | CLP 158.100 (USD 0,10/caso) | CLP 28.110 (USD 0,0178/caso) |
 | Infraestructura (Heroku Basic + Postgres) | CLP 12.000 | CLP 12.000 |
-| Soporte básico, 8 h × CLP 15.000 | CLP 120.000 | CLP 120.000 |
-| **Margen bruto mensual** | **CLP 68.000 (23 %)** | **CLP 150.000 (50 %)** |
+| Soporte, 10 h × CLP 15.000 | CLP 150.000 | CLP 150.000 |
+| Seguimiento de calidad | CLP 40.000 | CLP 40.000 |
+| **Margen bruto mensual** | **CLP 89.900 (20 %)** | **CLP 219.890 (49 %)** |
 
-Con menos de 1.000 casos al mes el margen sube, porque la inferencia es el
-único costo variable. No incluye desarrollo, adquisición del cliente ni
-impuestos a la renta; el margen comercial no está demostrado.
+La inferencia es el único costo variable: con menos casos el margen sube, y en
+el tope de 1.600 casos el margen conservador sigue en CLP 88.000 (20 %). No
+incluye desarrollo, adquisición del cliente ni impuestos a la renta; el margen
+comercial no está demostrado.
 
-Vía de entrada propuesta: **Compra Ágil**, si el total de la contratación queda
-dentro de **100 UTM** y se cumplen las condiciones del procedimiento. Solicita
-al menos tres cotizaciones y promueve participación de empresas de menor tamaño;
-no garantiza adjudicación. Verificar UTM, impuestos y elegibilidad al cotizar.
+**Valor para la DT.** Con un costo de oportunidad de CLP 9.000 por hora de
+funcionario (supuesto del equipo), el precio equivale a unos **2 minutos por
+caso**, incluida la adopción (15 usuarios × 2 h, amortizada en un año). Si el
+sistema libera más de 2 minutos netos por caso, el piloto se paga en capacidad.
+Ese ahorro es la hipótesis que mide el piloto; no está demostrado.
+
+Vía de entrada propuesta: **Compra Ágil**, si el total de la contratación, con
+IVA (unos CLP 6.426.000), queda dentro de **100 UTM** y se cumplen las
+condiciones del procedimiento. El valor de la UTM al cotizar queda
+`PENDIENTE_VERIFICAR`. Solicita al menos tres cotizaciones y promueve la
+participación de empresas de menor tamaño; no garantiza adjudicación.
 
 ## Costos estimados de operación
+
+### Demostración pública
 
 | Concepto | Costo mensual |
 |---|---:|
@@ -80,14 +99,39 @@ no garantiza adjudicación. Verificar UTM, impuestos y elegibilidad al cotizar.
 | Inferencia de demostración, según uso | Presupuesto USD 3 |
 | **Demo, total referencial** | **USD 15** |
 
-En la corrida histórica v2 se estimaron USD 0,1889 / 6 casos con LLM =
-**USD 0,0315 por caso** (incluidos reintentos de esa muestra). No es costo
-garantizado ni tarifa del proveedor conciliada. La nueva corrida v3 estima
-USD 0,1600 / 9 casos = **USD 0,0178 por caso**. **USD 0,10 por caso es un
-presupuesto conservador**, aproximadamente tres veces ese valor, para variación
-de longitud y reintentos; no es el costo observado. A 1.000 casos/mes: presupuesto
-de inferencia USD 100, más USD 12 de infraestructura, antes de soporte y desarrollo.
-Las tarifas codificadas aún deben conciliarse con factura vigente.
+### Piloto: 1.581 casos al mes, 10 analistas y 5 supervisores
+
+| Concepto | Observado | Presupuesto |
+|---|---:|---:|
+| Inferencia por caso | USD 0,0178 | USD 0,10 |
+| Inferencia, 1.581 casos | USD 28,11 | USD 158,10 |
+| Heroku Basic + Postgres Essential-0 | USD 12 | USD 12 |
+| **Total mensual de plataforma** | **USD 40,11** | **USD 170,10** |
+
+El costo observado sale de la corrida v3: USD 0,16 para nueve casos con IA (dos
+llamadas por caso). En la corrida histórica v2 se estimaron USD 0,0315 por caso,
+con los reintentos de esa muestra. Se supone que todos los casos usan IA; los
+que las reglas deterministas resuelven antes (sector público, registro
+incompleto) cuestan cero, así que el cálculo es conservador. **USD 0,10 por caso
+es el presupuesto de planificación**, unas cinco veces lo observado
+(0,10 / 0,0178 ≈ 5,6), para cubrir relatos más largos y reintentos. Las tarifas
+del código siguen pendientes de conciliar con la factura del proveedor.
+
+**Carga por persona.** Cada analista revisa unos 158 casos al mes (7,5 por día
+hábil). La segunda firma de los descartes recae en los supervisores: si se
+mantiene la proporción del balance oficial (40,7 % preclasificado como no Ley
+Karin), son unos 643 descartes al mes, 129 por supervisor (6 por día hábil).
+
+**Capacidad.** Un dyno Basic atiende a 15 usuarios con esta carga. Postgres
+Essential-0 tiene 1 GB: con un supuesto conservador de 50 KB por caso, incluida
+la auditoría, se usan unos 77 MB al mes y alcanza para cerca de un año; después
+corresponde Essential-1 (USD 9, 10 GB, `PENDIENTE_VERIFICAR` al cotizar).
+
+**Topes de gasto para operar.** Los topes de la demo (200 llamadas y USD 3 al
+día) frenarían el piloto: en un día normal se hacen unas 150 llamadas, hasta 226
+con reintentos, y el presupuesto diario es USD 7,53. Para operar se fijan
+**400 llamadas y USD 8 al día** en código y **USD 170 al mes** en la consola de
+Anthropic ([`LIMITE_GASTO.md`](LIMITE_GASTO.md)).
 
 ### Despliegue nacional proyectado (400 usuarios, 4.305 casos/mes)
 
@@ -108,7 +152,7 @@ USD 77. Con holgura para 5.000 casos/mes, el total sube a unos CLP 1.460.000.
 La adopción de 400 usuarios (2 h por persona a CLP 9.000) suma CLP 7.200.000
 una vez. No incluye desarrollo institucional, integración con Mi DT ni
 ClaveÚnica. Ese monto supera el límite de Compra Ágil y requeriría otro
-procedimiento de compra; la tarifa por inspección cubre solo el piloto.
+procedimiento de compra; la tarifa por unidad de recepción cubre solo el piloto.
 
 ## Adopción, protección y validación
 

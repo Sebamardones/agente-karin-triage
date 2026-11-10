@@ -69,8 +69,8 @@ derivar a mediación o descartar, y si hay urgencia de medidas de resguardo. El
 funcionario confirma o corrige, y lo que corrige queda registrado.
 
 La ficha de una página está en [`docs/FICHA_NEGOCIO.pdf`](docs/FICHA_NEGOCIO.pdf)
-y el caso de negocio completo, con precio del piloto, margen por inspección y
-costo del despliegue nacional, en [`docs/FICHA_NEGOCIO.md`](docs/FICHA_NEGOCIO.md).
+y el caso de negocio completo, con precio del piloto por unidad de recepción,
+margen, consumo mensual a 1.581 casos y costo del despliegue nacional, en [`docs/FICHA_NEGOCIO.md`](docs/FICHA_NEGOCIO.md).
 
 ## Cómo usar la aplicación
 

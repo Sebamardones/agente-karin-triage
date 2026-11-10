@@ -35,6 +35,19 @@ golden set cuesta entre USD 0,16 y 0,28 y un caso nuevo cerca de USD 0,018
 (`docs/MEJORA_PROMPTS.md`). El tope diario de USD 3 evita que un abuso consuma
 el mes completo en un día; el límite mensual es el techo absoluto.
 
+### Valores para operar el piloto (1.581 casos al mes, 10 analistas y 5 supervisores)
+
+Los valores anteriores son los de la demo. Con 1.581 casos al mes (unos 75 por
+día hábil), los topes de la demo frenarían la operación: en un día normal se
+hacen unas 150 llamadas, hasta 226 con reintentos, y el presupuesto diario es
+USD 7,53. Detalle del cálculo en [FICHA_NEGOCIO.md](FICHA_NEGOCIO.md).
+
+| Capa | Demo | Piloto |
+|---|---:|---:|
+| `KARIN_TOPE_LLAMADAS_DIA` | 200 | 400 |
+| `KARIN_TOPE_USD_DIA` | 3,0 | 8,0 |
+| Límite mensual en la consola | USD 20 | USD 170 |
+
 ## Por qué un workspace propio y una clave nueva
 
 La consola no permite fijar un límite propio al workspace por defecto: este
