@@ -54,6 +54,10 @@ def main() -> None:
         pagina.add_init_script(f"window.MONTAJE = {json.dumps(config)};")
         pagina.goto((AQUI / "escenas.html").as_uri(), wait_until="networkidle")
         pagina.evaluate("window.__listo")
+        # Efectos de sonido que la página registró al construir el timeline.
+        eventos = pagina.evaluate("window.__sfx")
+        (args.config.parent / "sfx-eventos.json").write_text(json.dumps(eventos, indent=0))
+        print(f"{len(eventos)} efectos de sonido registrados")
         errores: list[str] = []
         pagina.on("pageerror", lambda e: errores.append(str(e)))
 
